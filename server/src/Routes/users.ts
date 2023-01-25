@@ -1,9 +1,10 @@
 import usersControllers from '../Controllers/users';
 
-// import express from "express";
+const express = require( "express" );
 
-// const router = express.Router();
 
-// router.get('/games/:id', gamesControllers.getGameById);
+const router = express.Router();
 
-// export default router; 
+router.get('/games/:id', gamesControllers.getGameById);
+
+export default router; 
