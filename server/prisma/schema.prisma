@@ -13,54 +13,54 @@ datasource db {
 model User {
   id       Int    @id @default(autoincrement())
   name    String
-  email String
+  username String
   games GameUser[]
-  teams UserTeam[]
-  // auth   String
+  teams TeamUser[]
 }
 
 model Role {
   id       Int    @id @default(autoincrement())
   name     String
+  gameUser  GameUser[]
 }
+
 model Character {
   id       Int    @id @default(autoincrement())
   name    String
+  teams Team[]
 }
+
 model GameUser { 
   id       Int    @id @default(autoincrement())
   game     Game  @relation(fields: [gameId], references: [id])
   gameId    Int
   user   User  @relation(fields: [userId], references: [id])
   userId    Int
+  role  Role   @relation(fields: [roleId], references: [id])
   roleId    Int
 }
-model UserTeam {
+
+model TeamUser {
   id       Int    @id @default(autoincrement())
   team     Team  @relation(fields: [teamId], references: [id])
   teamId    Int
   user   User  @relation(fields: [userId], references: [id])
   userId    Int
-  playerControl String
+  verticalOrHorizontalControl String
 }
 
 model Team {
   id       Int    @id @default(autoincrement())
-  gameId   Int
-  characterId  Int
+  game   Game   @relation(fields: [gameId], references: [id])
+  gameId    Int
   teamName   String
-  users UserTeam[]
-  //horizontalUserId   User  @relation(fields: [user1Id], references: [id])
-  //user1Id    Int
-  //verticalUserId   User  @relation(fields: [user2Id], references: [id])
-  //user2Id    Int
+  users TeamUser[]
   score     Int
-}
-model TeamMechanics {
-  id       Int    @id @default(autoincrement())
+  character   Character  @relation(fields: [characterId], references: [id])
+  characterId    Int
   currentDirectionMoving   String
-  nextDirection    String
-  // powerUp    Boolean
+  nextDirection    String   
+  powerUp    Boolean
 }
 
 model Game {
@@ -69,6 +69,7 @@ model Game {
   boardArray Json[]
   pelletCount Int
   users GameUser[]
+  teams Team[]
 }
 
 
