@@ -1,4 +1,4 @@
-// import usersRouter from './Routes/users';
+import usersRouter from './Routes/users';
 import cors from 'cors';
 import express from 'express';
 
@@ -11,8 +11,8 @@ app.use(cors({
 
 app.use(express.json());
 
-// app.use(
-// 	usersRouter
-// );
+app.use(
+	usersRouter
+);
 
 export default app;
