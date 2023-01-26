@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  name     String
+  username String
+  games    GameUser[]
+  teams    TeamUser[]
+}
+
+model Role {
+  id       Int        @id @default(autoincrement())
+  name     String
+  gameUser GameUser[]
+}
+
+model Character {
+  id    Int    @id @default(autoincrement())
+  name  String
+  teams Team[]
+}
+
+model GameUser {
+  id     Int  @id @default(autoincrement())
+  gameId Int
+  userId Int
+  roleId Int
+  game   Game @relation(fields: [gameId], references: [id])
+  role   Role @relation(fields: [roleId], references: [id])
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model TeamUser {
+  id                          Int    @id @default(autoincrement())
+  teamId                      Int
+  userId                      Int
+  verticalOrHorizontalControl String
+  team                        Team   @relation(fields: [teamId], references: [id])
+  user                        User   @relation(fields: [userId], references: [id])
+}
+
+model Team {
+  id                     Int        @id @default(autoincrement())
+  gameId                 Int
+  teamName               String
+  score                  Int
+  characterId            Int
+  currentDirectionMoving String
+  nextDirection          String
+  powerUp                Boolean
+  character              Character  @relation(fields: [characterId], references: [id])
+  game                   Game       @relation(fields: [gameId], references: [id])
+  users                  TeamUser[]
+}
+
+model Game {
+  id          Int        @id @default(autoincrement())
+  timeLeft    Int
+  boardArray  Json[]
+  pelletCount Int
+  users       GameUser[]
+  teams       Team[]
+}
