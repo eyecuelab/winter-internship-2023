@@ -1,9 +1,9 @@
-import Welcome from "./components/welcome";
+import Login from "./components/Login";
 
 export default function App() {
   return (
   <>
-  <div>Hello World</div>
+    <Login />
   </>
   );
   }
