@@ -1,10 +1,8 @@
 import usersControllers from '../Controllers/users';
-
-const express = require( "express" );
-
+import express from "express";
 
 const router = express.Router();
 
-router.get('/games/:id', gamesControllers.getGameById);
+router.get('/users/:id', usersControllers.getUserById);
 
 export default router; 
