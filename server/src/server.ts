@@ -8,6 +8,8 @@ import { Server, Socket } from 'socket.io';
 //app.use(cors());
 //lines 3,6, and 8 take everything that we would have made in app.ts
 
+import googleRoutes from './Routes/google-routes';
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
