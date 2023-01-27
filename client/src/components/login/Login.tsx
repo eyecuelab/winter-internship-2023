@@ -1,14 +1,13 @@
 import { useGoogleLogin } from "@react-oauth/google"
-// import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
 
 // import { IconGitHub, IconGoogle } from "../../assets/icons"
 
 // const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID
-
 const Login = () => {
-//  const navigate = useNavigate()
+ const navigate = useNavigate()
 
 //  const loginToGithub = () => {
 //   localStorage.setItem("loginWith", "GitHub")
@@ -19,7 +18,7 @@ const Login = () => {
   onSuccess: tokenResponse => {
    localStorage.setItem("loginWith", "Google")
    localStorage.setItem("accessToken", tokenResponse.access_token)
-   navigate("/home")
+   navigate("/lobby")
   },
  })
 

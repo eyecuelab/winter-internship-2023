@@ -1,13 +1,11 @@
-//import Login from "./components/Login";
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-//import io from 'socket.io-client';
-import * as io from 'socket.io-client';
-import { useEffect, useState } from "react";
-
-const socket = io.connect("http://localhost:3001");
-
+import Login from "./components/login/Login";
+import Canvas from "./components/canvas/Canvas";
+import Lobby from "./components/lobby/Lobby";
 
 function App() {
+
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
   let roomNumber = "";
@@ -55,55 +53,16 @@ function App() {
      {messageReceived} */}
      <button onClick={joinPublic}>Join a public game!</button>
     </div>
-  );
-}
 
-
-// reference: https://github.com/machadop1407/socket-io-react-example/blob/main/client/src/App.js
-export default App;
-
-
-
-
-
-
-
-
-//IT DOESN'T LIKE IO.CONNECT FOR SOME REASON SO I'M GONNA COPY PASTE THE OLD APP.JS FILE FROM YESTERDAY
-/*
-import io from 'socket.io-client';
-import { useEffect, useState } from "react";
-
-const socket = io.connect("http://localhost:3001");
-
-function App() {
-  const testFunction = () => {
-
-  };
-}
-
-
-
-
-
-
-
-
-
-
-export default App;
-*/
-
-
-
-
-
-/*
-export default function App() {
   return (
-  <>
-     <Login /> 
-  </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />}></Route>
+        <Route path="/lobby" element={<Lobby />}></Route>
+        <Route path="/game" element={<Canvas />}></Route>
+      </Routes>
+    </Router>
+
   );
-  }
-  */
+}
+export default App;
