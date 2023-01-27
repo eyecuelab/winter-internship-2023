@@ -48,5 +48,5 @@ io.on("connection", (socket) => {
 export default io;
 
 server.listen(3001, () =>
-  console.log('Server ready at: http://localhost:3000 or maybe 3001 idk'),
+  console.log('Server ready at: http://localhost:3001'),
 )
