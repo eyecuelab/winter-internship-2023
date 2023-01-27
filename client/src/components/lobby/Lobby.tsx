@@ -1,10 +1,30 @@
 import * as io from 'socket.io-client';
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"
+import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react"
+
+import { getUserDataGoogle } from "./services/lobby-services"
+
+interface UserdataGoogle {
+  name: string
+  picture: string
+  email: string
+ }
+
 const socket = io.connect("http://localhost:3001");
 
 const Lobby = () => {
+
+  //sockets
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
+
+  //user auth
+  const [userDataGoogle, setUserDataGoogle] = useState<null | UserdataGoogle>(null)
+
+  const loginWith = useRef(localStorage.getItem("loginWith"))
+
+  const navigate = useNavigate()
 
   // every communication that we want to run will be declared here as a const
   // this one is sendMessage, the "send_message" in the emit is what the backend is looking for
@@ -27,8 +47,52 @@ const Lobby = () => {
       //alert(data.message);
     });
   }, [socket]);
+
+  //user auth
+  // useEffect(() => {
+  //   const queryString = window.location.search
+  //   const urlParams = new URLSearchParams(queryString)
+  //   const codeParam = urlParams.get("code")
+  
+  //   const accessToken = localStorage.getItem("accessToken")
+  
+  //   if (codeParam && !accessToken && loginWith.current === "GitHub") {
+  //    getAccessTokenGithub(codeParam).then(resp => {
+  //     localStorage.setItem("accessToken", resp.access_token)
+  //     getUserDataGithub(resp.access_token).then((resp: UserDataGithub) => {
+  //      setUserDataGithub(resp)
+  //     })
+  //    })
+  //   } else if (codeParam && accessToken && loginWith.current === "GitHub") {
+  //    getUserDataGithub(accessToken).then((resp: UserDataGithub) => {
+  //     localStorage.setItem("accessToken", accessToken)
+  //     setUserDataGithub(resp)
+  //    })
+  //   }
+  //  }, [loginWith])
+  
+   useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken")
+  
+    if (accessToken && loginWith.current === "Google") {
+     getUserDataGoogle(accessToken).then(resp => {
+      setUserDataGoogle(resp)
+     })
+    }
+   }, [loginWith])
+  
+   const setLogOut = () => {
+    localStorage.removeItem("accessToken")
+    localStorage.removeItem("loginWith")
+    navigate("/")
+   }
+  //  if (!userDataGithub && !userDataGoogle) return null
+   if (!userDataGoogle) return null
+
   return (
-<div className="App">
+    <>
+    {/* sockets */}
+        <div className="App">
           <input placeholder='Message...' onChange={(event) => {
             setMessage(event.target.value);
           }}/>
@@ -36,6 +100,41 @@ const Lobby = () => {
           <h1>Message: </h1>
           {messageReceived}
         </div>
+        {/* Google Auth */}
+        <Navbar isBordered variant='sticky'>
+    <Navbar.Brand>
+     <User
+      bordered
+      color='primary'
+      size='lg'
+      src={userDataGoogle?.picture}
+      name={userDataGoogle?.name}
+      description={userDataGoogle?.email}
+     />
+    </Navbar.Brand>
+    <Navbar.Content>
+     <Navbar.Item>
+      <Button
+       auto
+       flat
+       size='sm'
+      //  icon={<LogOutIcon fill='currentColor' />}
+       color='primary'
+       onClick={() => setLogOut()}
+      >
+       Log out
+      </Button>
+     </Navbar.Item>
+    </Navbar.Content>
+   </Navbar>
+   <Container gap={0}>
+    <Row gap={1}>
+     <Col>
+      <Text h2>Login with {loginWith.current}</Text>
+     </Col>
+    </Row>
+   </Container>
+  </>
   )
 }
 
