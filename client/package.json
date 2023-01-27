@@ -11,9 +11,10 @@
     "port": "vite --port 3001"
   },
   "dependencies": {
+    "@types/socket.io": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-google-login": "^5.2.2"
+    "socket.io-client": "^4.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.26",
