@@ -7,7 +7,7 @@ import googleRoutes from './Routes/google-routes';
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000', 
+  origin: '*', 
   methods: ['GET', 'POST', 'DELETE', 'PUT'], 
 	credentials: true,}));
 
