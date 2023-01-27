@@ -10,6 +10,7 @@ const socket = io.connect("http://localhost:3001");
 function App() {
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
+  let roomNumber = "";
 
   // every communication that we want to run will be declared here as a const
   // this one is sendMessage, the "send_message" in the emit is what the backend is looking for
@@ -22,8 +23,20 @@ function App() {
     socket.emit("send_message", {message: message}); //since the message and the variable are the same, you can just do {message}, I left it in there tho in case we want an example on how to send other information
   };
 
+  const joinPublic = () => {
+    console.log("user is trying to join a public game");
+    socket.emit("join_public")
+  }
 
   useEffect(() => {
+    socket.on("receive_room_number", (data) => {
+      console.log("previous room number: " + roomNumber)
+      roomNumber = data;
+      console.log(roomNumber);
+      // so the server puts the client in a room, sends the room number to the client
+      // we need the client to be able to store that information
+    })
+
     socket.on("receive_message", (data) => {
       setMessageReceived(data.message);
       
@@ -34,12 +47,13 @@ function App() {
 
   return (
     <div className="App">
-     <input placeholder='Message...' onChange={(event) => {
+     {/* <input placeholder='Message...' onChange={(event) => {
       setMessage(event.target.value);
      }}/>
      <button onClick={sendMessage}>Send Message</button>
      <h1>Message: </h1>
-     {messageReceived}
+     {messageReceived} */}
+     <button onClick={joinPublic}>Join a public game!</button>
     </div>
   );
 }
