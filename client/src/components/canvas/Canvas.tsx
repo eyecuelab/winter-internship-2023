@@ -3,9 +3,9 @@ import frameRenderer from "./frameRenderer";
 
 function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const requestIdRef = useRef(null);
+  const requestIdRef = useRef<any>(null);
   const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
-  const size = { width: 400, height: 250 };
+  const size = { width: 700, height: 700 };
 
   const updateBall = () => {
     const ball = ballRef.current;
@@ -38,8 +38,8 @@ function Canvas() {
     if(!context) {
       return;
     } 
-    updateBall();
-    frameRenderer.call(context, size, ballRef.current);
+    updateBall(); //links ball movements with canvas element
+    frameRenderer.call(context, size, ballRef.current);//draws ball on canvas
     
   };
 
@@ -47,11 +47,14 @@ function Canvas() {
   const tick = () => {
     if (!canvasRef.current) return;//breakout error handling
     renderFrame();//updates properties of drawn elements (ball in example) and then draws it on canvas
-    requestAnimationFrame(tick);//recursively re-run tick and thus animate our canvas by displaying new frames
+    requestIdRef.current = requestAnimationFrame(tick);//recursively re-run tick and thus animate our canvas by displaying new frames. we pass the returned value of requestAnimationFrame to the requestIdRef reference object. The returned value is a so-called request ID, meaning that it’s an identifier of the frame that was started by calling it.
   };
 
   useEffect(() => {
-    requestAnimationFrame(tick);//once component mounts our canvas animation is initiated with our recursive tick function.
+    requestIdRef.current = requestAnimationFrame(tick);//once component mounts our canvas animation is initiated with our recursive tick function.
+    return () => {//callback clean up function to end animation ticks when component unmounts
+      cancelAnimationFrame(requestIdRef.current);
+    };
   }, []);
 
   return <canvas {...size} ref={canvasRef} />;//pass canvasRef to canvas element-we will be able to access a reference to the canvas element in our DOM so we can access its 2D drawing context, later on. a call to useRef will return a mutable object. This means that we can alter the value of its .current property without unexpected behavior or side effects. we can alter that value and it will not cause a rerender of our component.  Mutating the .current property doesn’t cause a re-render.Okay. So by using useRef we can:

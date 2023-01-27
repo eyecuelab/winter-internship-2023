@@ -1,4 +1,4 @@
-function frameRenderer(this: any, size: { width: any; height: any; }, ball: { x: any; y: any; radius: any; }) {
+function frameRenderer(this: any, size: { width: any; height: any; }, ball: { x: any; y: any; radius: any; }) {//takes 
   this.clearRect(0, 0, size.width, size.height);
 
   const drawCircle = (x: any, y: any, radius: any, color: string, alpha: undefined) => {
