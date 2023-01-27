@@ -3,12 +3,12 @@ import app from './app';
 //const app = express();
 import http from 'http';
 import { Server, Socket } from 'socket.io';
+import googleRoutes from './Routes/google-routes';
 //import cors from 'cors';
 
 //app.use(cors());
 //lines 3,6, and 8 take everything that we would have made in app.ts
 
-import googleRoutes from './Routes/google-routes';
 
 const server = http.createServer(app);
 
@@ -45,8 +45,10 @@ io.on("connection", (socket) => {
   */
 //})
 
-export default io;
+
 
 server.listen(3001, () =>
   console.log('Server ready at: http://localhost:3001'),
 )
+
+export default io;
