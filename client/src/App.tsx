@@ -48,16 +48,6 @@ function App() {
     </>
   );
 }
-/*
-export default function App() {
-  return (
-  <>
-     <Login /> 
-  </>
-  );
-  }
-  */
-
 
 // reference: https://github.com/machadop1407/socket-io-react-example/blob/main/client/src/App.js
 export default App;
