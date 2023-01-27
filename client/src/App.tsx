@@ -1,4 +1,4 @@
-//import Login from "./components/Login";
+import Login from "./components/login/Login";
 
 //import io from 'socket.io-client';
 import * as io from 'socket.io-client';
@@ -33,6 +33,7 @@ function App() {
   }, [socket]);
 
   return (
+    <>
     <div className="App">
      <input placeholder='Message...' onChange={(event) => {
       setMessage(event.target.value);
@@ -41,8 +42,19 @@ function App() {
      <h1>Message: </h1>
      {messageReceived}
     </div>
+    <Login />
+    </>
   );
 }
+/*
+export default function App() {
+  return (
+  <>
+     <Login /> 
+  </>
+  );
+  }
+  */
 
 
 // reference: https://github.com/machadop1407/socket-io-react-example/blob/main/client/src/App.js
@@ -67,29 +79,5 @@ function App() {
 
   };
 }
-
-
-
-
-
-
-
-
-
-
 export default App;
 */
-
-
-
-
-
-/*
-export default function App() {
-  return (
-  <>
-     <Login /> 
-  </>
-  );
-  }
-  */

@@ -6,7 +6,7 @@ import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
 // import { IconGitHub, IconGoogle } from "../../assets/icons"
 
 // const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID
-
+console.log()
 const Login = () => {
 //  const navigate = useNavigate()
 
@@ -19,7 +19,7 @@ const Login = () => {
   onSuccess: tokenResponse => {
    localStorage.setItem("loginWith", "Google")
    localStorage.setItem("accessToken", tokenResponse.access_token)
-   navigate("/home")
+  //  navigate("/home")
   },
  })
 
