@@ -1,7 +1,23 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 
 function Canvas() {
+  const [keys, setKeys] = useState({
+    w: {
+      pressed: false,
+    },
+    a: {
+      pressed: false,
+    },
+    s: {
+      pressed: false,
+    },
+    d: {
+      pressed: false,
+    },
+  })
+  const [lastKey, setLastKey] = useState('')
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
@@ -57,7 +73,65 @@ function Canvas() {
     };
   }, []);
 
-  return <canvas {...size} ref={canvasRef} />;//pass canvasRef to canvas element-we will be able to access a reference to the canvas element in our DOM so we can access its 2D drawing context, later on. a call to useRef will return a mutable object. This means that we can alter the value of its .current property without unexpected behavior or side effects. we can alter that value and it will not cause a rerender of our component.  Mutating the .current property doesn’t cause a re-render.Okay. So by using useRef we can:
+  const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case 'w':
+        setKeys({...keys, w: {pressed: true}});
+        setLastKey('w');
+        break;
+      case 'a':
+        setKeys({...keys, a: {pressed: true}});
+        setLastKey('a');
+        break;
+      case 's':
+        setKeys({...keys, s: {pressed: true}});
+        setLastKey('s');
+        break;
+      case 'd':
+        setKeys({...keys, d: {pressed: true}});
+        setLastKey('d');
+        break;
+    }
+    console.log('keydown:', lastKey, keys)
+  }
+
+  const handleKeyUpEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    
+    switch (e.key) {
+      case 'w':
+        setKeys({...keys, w: {pressed: false}});
+        break;
+      case 'a':
+        setKeys({...keys, a: {pressed: false}});
+        break;
+      case 's':
+        setKeys({...keys, s: {pressed: false}});
+        break;
+      case 'd':
+        setKeys({...keys, d: {pressed: false}});
+        break;
+    }
+    console.log('keyup:', keys)
+  }
+
+  return (
+    <div 
+      onKeyDown = {(e)=> handleKeyDownEvent(e)}
+      onKeyUp = {(e)=> handleKeyUpEvent(e)}
+      >
+        <input 
+          type="text" 
+          id="fname" 
+          name="fname"
+          onKeyDown = {(e)=> handleKeyDownEvent(e)}
+        onKeyUp = {(e)=> handleKeyUpEvent(e)}>
+        </input>
+        <p>welcome to da game</p>
+        
+      <canvas {...size} ref={canvasRef} />
+    </div>
+  );
+  //pass canvasRef to canvas element-we will be able to access a reference to the canvas element in our DOM so we can access its 2D drawing context, later on. a call to useRef will return a mutable object. This means that we can alter the value of its .current property without unexpected behavior or side effects. we can alter that value and it will not cause a rerender of our component.  Mutating the .current property doesn’t cause a re-render.Okay. So by using useRef we can:
   // Store a value inside an object
   // Manipulate that value whenever we want without causing a rerender of our component
   // Access that same value on every rerender
