@@ -10,7 +10,7 @@ datasource db {
 model User {
   id       Int        @id @default(autoincrement())
   name     String
-  username String
+  email String
   games    GameUser[]
   teams    TeamUser[]
 }
@@ -55,6 +55,8 @@ model Team {
   currentDirectionMoving String
   nextDirection          String
   powerUp                Boolean
+  kartid                 Int
+  kart                   Kart @relation(fields: [kartid], references: [id])
   character              Character  @relation(fields: [characterId], references: [id])
   game                   Game       @relation(fields: [gameId], references: [id])
   users                  TeamUser[]
@@ -67,4 +69,13 @@ model Game {
   pelletCount Int
   users       GameUser[]
   teams       Team[]
+}
+
+model Kart {
+  id              Int       @id @default(autoincrement())
+  name            String
+  topSpeed        Int
+  acceleration    Int
+  handling        Int
+  teams Team[]
 }
