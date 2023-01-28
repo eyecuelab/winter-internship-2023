@@ -6,6 +6,7 @@ import Lobby from "./components/lobby/Lobby";
 import SocketHandling from "./components/socketHandling/socketHandling";
 
 function App() {
+
   return (
     <Router>
       <Routes>
