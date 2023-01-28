@@ -1,11 +1,9 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-import Login from "./components/login/Login";
-import Canvas from "./components/canvas/Canvas";
-import Lobby from "./components/lobby/Lobby";
-
-function App() {
-
+//import Login from "./components/Login";
+//import io from 'socket.io-client';
+import * as io from 'socket.io-client';
+import { useEffect, useState } from "react";
+const socket = io.connect("http://localhost:3001");
+function SocketHandling() {
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
   let roomNumber = "";
@@ -37,14 +35,14 @@ function App() {
 
     socket.on("receive_message", (data) => {
       setMessageReceived(data.message);
-      
+
       //this below would do a window alert with literally just "Hello" from the sendMessage function, we've changed it since tho
       //alert(data.message);
     });
   }, [socket]);
 
   return (
-    <div className="App">
+    <div className="SocketHandling">
      {/* <input placeholder='Message...' onChange={(event) => {
       setMessage(event.target.value);
      }}/>
@@ -53,16 +51,13 @@ function App() {
      {messageReceived} */}
      <button onClick={joinPublic}>Join a public game!</button>
     </div>
-
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />}></Route>
-        <Route path="/lobby" element={<Lobby />}></Route>
-        <Route path="/game" element={<Canvas />}></Route>
-      </Routes>
-    </Router>
-
   );
 }
-export default App;
+// reference: https://github.com/machadop1407/socket-io-react-example/blob/main/client/src/SocketHandling.js
+export default SocketHandling;
+//IT DOESN'T LIKE IO.CONNECT FOR SOME REASON SO I'M GONNA COPY PASTE THE OLD APP.JS FILE FROM YESTERDAY
+/*
+import io from 'socket.io-client';
+import { useEffect, useState } from "react";
+const socket = io.connect("http://localhost:3001");
+function SocketHandling() { */
