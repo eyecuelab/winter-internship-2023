@@ -56,7 +56,6 @@ function Canvas() {
     } 
     updateBall(); //links ball movements with canvas element
     frameRenderer.call(context, size, ballRef.current);//draws ball on canvas
-    
   };
 
 
@@ -111,7 +110,7 @@ function Canvas() {
         setKeys({...keys, d: {pressed: false}});
         break;
     }
-    console.log('keyup:', keys)
+    console.log('keyup:',lastKey, keys)
   }
 
   return (
@@ -123,8 +122,9 @@ function Canvas() {
           type="text" 
           id="fname" 
           name="fname"
-          onKeyDown = {(e)=> handleKeyDownEvent(e)}
-        onKeyUp = {(e)=> handleKeyUpEvent(e)}>
+          // onKeyDown = {(e)=> handleKeyDownEvent(e)}
+          // onKeyUp = {(e)=> handleKeyUpEvent(e)}
+          >
         </input>
         <p>welcome to da game</p>
         
