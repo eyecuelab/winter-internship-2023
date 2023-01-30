@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
+import { Boundary, Player } from "./gameClasses";
 
 function Canvas() {
   const [keys, setKeys] = useState({
@@ -20,6 +21,7 @@ function Canvas() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
+
   const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
   const size = { width: 700, height: 700 };
 
@@ -67,6 +69,17 @@ function Canvas() {
 
   useEffect(() => {
     requestIdRef.current = requestAnimationFrame(tick);//once component mounts our canvas animation is initiated with our recursive tick function.
+    const tempPlayer = new Player({
+      position: {
+        x: Boundary.width + Boundary.width / 2,
+        y: Boundary.height + Boundary.height / 2,
+      },
+      velocity: {
+        x: 0,
+        y: 0,
+      },
+    })
+    console.log(tempPlayer);
     return () => {//callback clean up function to end animation ticks when component unmounts
       cancelAnimationFrame(requestIdRef.current);
     };
