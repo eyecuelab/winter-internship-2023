@@ -22,9 +22,9 @@ function Canvas() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
 
-  const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
+  // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 3.9, y: 3.3}, radius: 15 })
-  const mapRef = useRef([
+  const mapRef = useRef<any[]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
@@ -36,7 +36,7 @@ function Canvas() {
     ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
     ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
     ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '-', '-'],
+    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ])
 
@@ -76,7 +76,7 @@ function Canvas() {
       return;
     } 
     updatePlayer(); //links ball movements with canvas element
-    frameRenderer.call(context, size, playerRef.current);//draws ball on canvas
+    frameRenderer.call(context, size, playerRef.current, mapRef.current);//draws ball on canvas
   };
 
 
