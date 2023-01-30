@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
+import { Boundary, Player } from "./gameClasses";
 
 function Canvas() {
   const [keys, setKeys] = useState({
@@ -20,30 +21,50 @@ function Canvas() {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
+
   const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
+  const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 3.9, y: 3.3}, radius: 15 })
+  const mapRef = useRef([
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '_', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '-', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ])
+
   const size = { width: 700, height: 700 };
 
-  const updateBall = () => {
-    const ball = ballRef.current;
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-    if (ball.x + ball.radius >= size.width) {
-      ball.vx = -ball.vx;
-      ball.x = size.width - ball.radius;
+  const updatePlayer = () => {
+    const player = playerRef.current;
+    player.position.x += player.velocity.x;
+    player.position.y += player.velocity.y;
+    if (player.position.x + player.radius >= size.width) {
+      player.velocity.x = -player.velocity.x;
+      player.position.x = size.width - player.radius;
     }
-    if (ball.x - ball.radius <= 0) {
-      ball.vx = -ball.vx;
-      ball.x = ball.radius;
+    if (player.position.x - player.radius <= 0) {
+      player.velocity.x = -player.velocity.x;
+      player.position.x = player.radius;
     }
-    if (ball.y + ball.radius >= size.height) {
-      ball.vy = -ball.vy;
-      ball.y = size.height - ball.radius;
+    if (player.position.y + player.radius >= size.height) {
+      player.velocity.y = -player.velocity.y;
+      player.position.y = size.height - player.radius;
     }
-    if (ball.y - ball.radius <= 0) {
-      ball.vy = -ball.vy;
-      ball.y = ball.radius;
+    if (player.position.y - player.radius <= 0) {
+      player.velocity.y = -player.velocity.y;
+      player.position.y = player.radius;
     }
   };
+
+
   
   const renderFrame = () => {//updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
@@ -54,8 +75,8 @@ function Canvas() {
     if(!context) {
       return;
     } 
-    updateBall(); //links ball movements with canvas element
-    frameRenderer.call(context, size, ballRef.current);//draws ball on canvas
+    updatePlayer(); //links ball movements with canvas element
+    frameRenderer.call(context, size, playerRef.current);//draws ball on canvas
   };
 
 
