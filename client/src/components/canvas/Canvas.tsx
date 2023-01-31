@@ -23,7 +23,7 @@ function Canvas() {
   const requestIdRef = useRef<any>(null);
 
   // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
-  const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 3.9, y: 3.3}, radius: 15 })
+  const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
@@ -45,18 +45,18 @@ function Canvas() {
   const size = { width: 700, height: 700 };
 
   //collision detection function:
-function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectangle: any}) {
-  return (
-    circle.position.y - circle.radius + circle.velocity.y <=
-      rectangle.position.y + rectangle.height &&
-    circle.position.x + circle.radius + circle.velocity.x >=
-      rectangle.position.x &&
-    circle.position.y + circle.radius + circle.velocity.y >=
-      rectangle.position.y &&
-    circle.position.x - circle.radius + circle.velocity.x <=
-      rectangle.position.x + rectangle.width
-  );
-}
+  function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectangle: any}) {
+    return (
+      circle.position.y - circle.radius + circle.velocity.y <=
+        rectangle.position.y + rectangle.height &&
+      circle.position.x + circle.radius + circle.velocity.x >=
+        rectangle.position.x &&
+      circle.position.y + circle.radius + circle.velocity.y >=
+        rectangle.position.y &&
+      circle.position.x - circle.radius + circle.velocity.x <=
+        rectangle.position.x + rectangle.width
+    );
+  }
 
   const updateBoundaries = () => {
     const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
@@ -81,6 +81,7 @@ function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectan
 
   const updatePlayer = () => {
     const player = playerRef.current;
+    console.log(player);
     if (keys.w.pressed && lastKey === 'w') {
       for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
@@ -101,6 +102,7 @@ function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectan
         } else {
           player.velocity.y = -5; //if not colliding, move player up
         }
+        
       }
     } else if (keys.a.pressed && lastKey === 'a') {
       for (let i = 0; i < boundaries.length; i++) {
@@ -143,6 +145,7 @@ function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectan
         } else {
           player.velocity.y = 5;
         }
+        console.log(player);
       }
     } else if (keys.d.pressed && lastKey === 'd') {
       for (let i = 0; i < boundaries.length; i++) {
@@ -180,8 +183,6 @@ function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectan
       }
     });
   };
-
-
   
   const renderFrame = () => {//updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
@@ -248,11 +249,7 @@ function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectan
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [])
-
-  console.log('keys:', keys)
-      console.log('last key:', lastKey)
   
-
   return (
     <div 
       // onKeyDown = {(e)=> handleKeyDownEvent(e)}
