@@ -1,8 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
+import { Boundary, Player } from "./gameClasses";
 
 function Canvas() {
-  const [keys, setKeys] = useState({
+  // const [keys, setKeys] = useState({
+  //   w: {
+  //     pressed: false,
+  //   },
+  //   a: {
+  //     pressed: false,
+  //   },
+  //   s: {
+  //     pressed: false,
+  //   },
+  //   d: {
+  //     pressed: false,
+  //   },
+  // })
+  // const [lastKey, setLastKey] = useState('')
+  const lastKeyRef = useRef(''); //because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store our game objects in ref containers
+  const keysPressedRef = useRef({
     w: {
       pressed: false,
     },
@@ -15,34 +32,171 @@ function Canvas() {
     d: {
       pressed: false,
     },
-  })
-  const [lastKey, setLastKey] = useState('')
-
+  }) 
+  const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
+  const mapRef = useRef<any[][]>([
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '_', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
+    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
+    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
+    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+  ])
+  const [boundaries, setBoundaries] = useState<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
-  const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
   const size = { width: 700, height: 700 };
 
-  const updateBall = () => {
-    const ball = ballRef.current;
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-    if (ball.x + ball.radius >= size.width) {
-      ball.vx = -ball.vx;
-      ball.x = size.width - ball.radius;
-    }
-    if (ball.x - ball.radius <= 0) {
-      ball.vx = -ball.vx;
-      ball.x = ball.radius;
-    }
-    if (ball.y + ball.radius >= size.height) {
-      ball.vy = -ball.vy;
-      ball.y = size.height - ball.radius;
-    }
-    if (ball.y - ball.radius <= 0) {
-      ball.vy = -ball.vy;
-      ball.y = ball.radius;
-    }
+  //collision detection function:
+  function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
+    return (
+      circle.position.y - circle.radius + circle.velocity.y <=
+        rectangle.position.y + Boundary.height &&
+      circle.position.x + circle.radius + circle.velocity.x >=
+        rectangle.position.x &&
+      circle.position.y + circle.radius + circle.velocity.y >=
+        rectangle.position.y &&
+      circle.position.x - circle.radius + circle.velocity.x <=
+        rectangle.position.x + Boundary.width
+    );
+  }
+
+  //updates Boundaries flat array based on map.
+  const updateBoundaries = () => {
+    const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
+    mapRef.current.forEach((row: any[], i: number) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case '-':
+            tempBoundaries.push(
+              new Boundary({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                }
+              })
+            );
+            break;
+        }
+      });
+    });
+    setBoundaries(tempBoundaries)
+  }
+
+  //updates player movement based on collision detection
+  const updatePlayer = () => {
+    const player = playerRef.current;//immutable reference
+    if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 0,
+                y: -5,
+              },
+            },
+            rectangle: boundary,
+          })//are we colliding with any boundaries in the next frame if we move up or press 'w'?
+        ) {
+          player.velocity.y = 0; //if collision is detected-- stop player movement
+          break;
+        } else {
+          player.velocity.y = -5; //if not colliding, move player up
+        }
+        
+      }
+    } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === 'a') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: -5,
+                y: 0,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          player.velocity.x = 0;
+          break;
+        } else {
+          player.velocity.x = -5;
+        }
+      }
+    } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === 's') {
+      for (let i = 0; i < boundaries.length; i++) {
+        console.log(player);
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 0,
+                y: 5,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          player.velocity.y = 0;
+          break;
+        } else {
+          player.velocity.y = 5;
+        }
+        
+      }
+    } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === 'd') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 5,
+                y: 0,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          playerRef.current = {...playerRef.current, velocity: {x: 0, y: 0} };
+          break;
+        } else {
+          playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
+        }
+      }
+    } 
+
+    player.position.x += player.velocity.x;
+    player.position.y += player.velocity.y;
+
+    boundaries.forEach((boundary) => {
+
+      if (
+        circleCollidesWithRectangle({
+          circle: player,
+          rectangle: boundary,
+        })
+      ) {
+        player.velocity.y = 0;
+        player.velocity.x = 0;
+      }
+    });
   };
   
   const renderFrame = () => {//updates properties of drawn elements (ball in example) and then draws it on canvas
@@ -54,8 +208,9 @@ function Canvas() {
     if(!context) {
       return;
     } 
-    updateBall(); //links ball movements with canvas element
-    frameRenderer.call(context, size, ballRef.current);//draws ball on canvas
+    updateBoundaries();
+    updatePlayer(); //updates player velocity and location using collision detection logic
+    frameRenderer.call(context, size, playerRef.current, mapRef.current);//draws ball on canvas
   };
 
 
@@ -72,60 +227,43 @@ function Canvas() {
     };
   }, []);
 
-  const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    switch (e.key) {
-      case 'w':
-        setKeys({...keys, w: {pressed: true}});
-        setLastKey('w');
-        break;
-      case 'a':
-        setKeys({...keys, a: {pressed: true}});
-        setLastKey('a');
-        break;
-      case 's':
-        setKeys({...keys, s: {pressed: true}});
-        setLastKey('s');
-        break;
-      case 'd':
-        setKeys({...keys, d: {pressed: true}});
-        setLastKey('d');
-        break;
+  
+  //add keyboard event listeners when component mounts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
+        lastKeyRef.current = e.key;
+        keysPressedRef.current = {
+          ...keysPressedRef.current, 
+          [e.key]: {
+          pressed: true,
+        }}
+      }
     }
-    console.log('keydown:', lastKey, keys)
-  }
 
-  const handleKeyUpEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    
-    switch (e.key) {
-      case 'w':
-        setKeys({...keys, w: {pressed: false}});
-        break;
-      case 'a':
-        setKeys({...keys, a: {pressed: false}});
-        break;
-      case 's':
-        setKeys({...keys, s: {pressed: false}});
-        break;
-      case 'd':
-        setKeys({...keys, d: {pressed: false}});
-        break;
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
+        keysPressedRef.current = {
+          ...keysPressedRef.current, 
+          [e.key]: {
+          pressed: false,
+        }}
+      }
     }
-    console.log('keyup:',lastKey, keys)
-  }
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [])
 
   return (
     <div 
-      onKeyDown = {(e)=> handleKeyDownEvent(e)}
-      onKeyUp = {(e)=> handleKeyUpEvent(e)}
+      // onKeyDown = {(e)=> handleKeyDownEvent(e)}
+      // onKeyUp = {(e)=> handleKeyUpEvent(e)}
       >
-        <input 
-          type="text" 
-          id="fname" 
-          name="fname"
-          // onKeyDown = {(e)=> handleKeyDownEvent(e)}
-          // onKeyUp = {(e)=> handleKeyUpEvent(e)}
-          >
-        </input>
         <p>welcome to da game</p>
         
       <canvas {...size} ref={canvasRef} />
