@@ -2,10 +2,11 @@
 //import io from 'socket.io-client';
 import * as io from 'socket.io-client';
 import { useEffect, useState } from "react";
+import { KeyboardOptions } from '@nextui-org/react';
 const socket = io.connect("http://localhost:3001");
 function SocketHandling() {
   const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState("");
+  const [lastInput, setLastInput] = useState("");
   let roomNumber = "";
 
   // every communication that we want to run will be declared here as a const
@@ -23,22 +24,47 @@ function SocketHandling() {
     console.log("user is trying to join a public game");
     socket.emit("join_public")
   }
+//building a keypress in the client side, we need a function to send it out (below), a way for the file to recognize keypresses, and a way to display the other's keypresses
+  const keypress = (key: string) => {
+    console.log("this is the key being sent out: " + key)
+    socket.emit("key_press", { key, roomNumber})
+  }
 
   useEffect(() => {
     socket.on("receive_room_number", (data) => {
       console.log("previous room number: " + roomNumber)
       roomNumber = data;
       console.log(roomNumber);
+      document.addEventListener('keypress', handleKeyPress);
       // so the server puts the client in a room, sends the room number to the client
       // we need the client to be able to store that information
     })
 
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message);
+    // socket.on("receive_message", (data) => {
+    //   setMessageReceived(data.message)
 
-      //this below would do a window alert with literally just "Hello" from the sendMessage function, we've changed it since tho
-      //alert(data.message);
+    //   //this below would do a window alert with literally just "Hello" from the sendMessage function, we've changed it since tho
+    //   //alert(data.message);
+    // });
+
+    function handleKeyPress(e: KeyboardEvent) { //
+      console.log(e);// arrow keys don't work yet
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === " ") { //this works to recognize the key
+        console.log("send it !!!!!"); // wasd and space are sorted, we can now send that information to the server
+        console.log(typeof(e.key));
+        keypress(e.key);
+      }
+      else {
+        console.log("don't send it");
+      }
+      // else if (e.key === 'd'){
+      //   console.log('its d');
+      // }
+    }
+    socket.on("receive_key", (data) => {
+      setLastInput(data.key)
     });
+    //document.addEventListener('keypress', handleKeyPress);
   }, [socket]);
 
   return (
@@ -50,6 +76,8 @@ function SocketHandling() {
      <h1>Message: </h1>
      {messageReceived} */}
      <button onClick={joinPublic}>Join a public game!</button>
+     <h1>inputs below:</h1>
+     {lastInput}
     </div>
   );
 }

@@ -48,16 +48,21 @@ io.on("connection", (socket) => {
       if (publicRoomSpace === 4) {
         roomfull = true;
       }
-    }
-    // the join public function: uses roomfull, publicRoomSpace, and roomNumber. if the most recent room is full (or there was never a room (server just started)), then it will increase the roomNumber and create a room with that code, everyone else will go to that created room
-
-  })
+    }} // the join public function: uses roomfull, publicRoomSpace, and roomNumber. if the most recent room is full (or there was never a room (server just started)), then it will increase the roomNumber and create a room with that code, everyone else will go to that created room
+  )
  // https://socket.io/docs/v3/rooms/
 
   // so room is basically a string the user can declare, so honestly we can probably just make something that auto increments the rooms for us
 
   //socket.join(data) is how we send them to a specific room
   //socket.to(data.room).emit("function_name", data) to send data to that room from the server
+
+  socket.on("key_press", (data) => {//data is the key that is pressed
+    console.log(data.key);
+    console.log(data.roomNumber)
+    //socket.emit("receive_key", data);
+    socket.to(data.roomNumber).emit("receive_key", data);
+  })
 
   socket.on("send_message", (data) => {
     socket.broadcast.emit("receive_message", data);
