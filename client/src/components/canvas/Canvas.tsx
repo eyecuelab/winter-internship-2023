@@ -32,7 +32,7 @@ function Canvas() {
     d: {
       pressed: false,
     },
-  })
+  }) 
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -92,7 +92,7 @@ function Canvas() {
 
   //updates player movement based on collision detection
   const updatePlayer = () => {
-    const player = playerRef.current;
+    const player = playerRef.current;//immutable reference
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
       for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
@@ -180,7 +180,7 @@ function Canvas() {
           playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
         }
       }
-    }
+    } 
 
     player.position.x += player.velocity.x;
     player.position.y += player.velocity.y;
