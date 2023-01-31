@@ -17,10 +17,10 @@ export class Boundary {
 }
 
 export class Player {
-  position: object;
-  velocity: object;
+  position:  {x:number, y:number};
+  velocity:  {x:number, y:number};
   radius: number;
-  constructor({ position, velocity }: {position: object, velocity: object}) {
+  constructor({ position, velocity }: {position: {x:number, y:number}, velocity:  {x:number, y:number}}) {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;

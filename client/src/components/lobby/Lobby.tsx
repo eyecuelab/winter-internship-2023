@@ -9,7 +9,7 @@ interface UserdataGoogle {
   name: string
   picture: string
   email: string
- }
+}
 
 const socket = io.connect("http://localhost:3001");
 
@@ -71,27 +71,27 @@ const Lobby = () => {
   //   }
   //  }, [loginWith])
   
-   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken")
-  
-    if (accessToken && loginWith.current === "Google") {
-     getUserDataGoogle(accessToken).then(resp => {
-      setUserDataGoogle(resp)
-     })
+    useEffect(() => {
+      const accessToken = localStorage.getItem("accessToken")
+    
+      if (accessToken && loginWith.current === "Google") {
+      getUserDataGoogle(accessToken).then(resp => {
+        setUserDataGoogle(resp)
+      })
+      }
+    }, [loginWith])
+    
+    const setLogOut = () => {
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("loginWith")
+      navigate("/")
     }
-   }, [loginWith])
-  
-   const setLogOut = () => {
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("loginWith")
-    navigate("/")
-   }
-  //  if (!userDataGithub && !userDataGoogle) return null
-   if (!userDataGoogle) return null
+    //  if (!userDataGithub && !userDataGoogle) return null
+    if (!userDataGoogle) return null
 
   return (
     <>
-    {/* sockets */}
+      {/* sockets */}
         <div className="App">
           <input placeholder='Message...' onChange={(event) => {
             setMessage(event.target.value);
@@ -100,41 +100,41 @@ const Lobby = () => {
           <h1>Message: </h1>
           {messageReceived}
         </div>
-        {/* Google Auth */}
-        <Navbar isBordered variant='sticky'>
-    <Navbar.Brand>
-     <User
-      bordered
-      color='primary'
-      size='lg'
-      src={userDataGoogle?.picture}
-      name={userDataGoogle?.name}
-      description={userDataGoogle?.email}
-     />
-    </Navbar.Brand>
-    <Navbar.Content>
-     <Navbar.Item>
-      <Button
-       auto
-       flat
-       size='sm'
-      //  icon={<LogOutIcon fill='currentColor' />}
-       color='primary'
-       onClick={() => setLogOut()}
-      >
-       Log out
-      </Button>
-     </Navbar.Item>
-    </Navbar.Content>
-   </Navbar>
-   <Container gap={0}>
-    <Row gap={1}>
-     <Col>
-      <Text h2>Login with {loginWith.current}</Text>
-     </Col>
-    </Row>
-   </Container>
-  </>
+      {/* Google Auth */}
+      <Navbar isBordered variant='sticky'>
+      <Navbar.Brand>
+        <User
+          bordered
+          color='primary'
+          size='lg'
+          src={userDataGoogle?.picture}
+          name={userDataGoogle?.name}
+          description={userDataGoogle?.email}
+        />
+        </Navbar.Brand>
+        <Navbar.Content>
+        <Navbar.Item>
+          <Button
+          auto
+          flat
+          size='sm'
+          //  icon={<LogOutIcon fill='currentColor' />}
+          color='primary'
+          onClick={() => setLogOut()}
+          >
+          Log out
+          </Button>
+        </Navbar.Item>
+      </Navbar.Content>
+      </Navbar>
+      <Container gap={0}>
+        <Row gap={1}>
+        <Col>
+          <Text h2>Login with {loginWith.current}</Text>
+        </Col>
+        </Row>
+      </Container>
+    </>
   )
 }
 
