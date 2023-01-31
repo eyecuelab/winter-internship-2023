@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
       roomNumber ++;
       console.log("room number: " + roomNumber);
       socket.join(roomNumber.toString());
-      socket.emit("receive_room_number", roomNumber.toString());
+      socket.emit("receive_room_number", [roomNumber.toString(), true, socket.id]);
       roomfull = false;
       publicRoomSpace = 1;
       //if the room is full, we create a new room and send them there, if not we send the user to an existing room
@@ -43,21 +43,32 @@ io.on("connection", (socket) => {
     else {
       console.log("user is joining room " + roomNumber)
       socket.join(roomNumber.toString());
-      socket.emit("receive_room_number", roomNumber.toString());
+      socket.emit("receive_room_number", [roomNumber.toString(), false]);
+      socket.to(roomNumber.toString()).emit("mod_receive_user", socket.id)
       publicRoomSpace ++;
       if (publicRoomSpace === 4) {
         roomfull = true;
+        socket.to(roomNumber.toString()).emit("room_full")
       }
-    }
-    // the join public function: uses roomfull, publicRoomSpace, and roomNumber. if the most recent room is full (or there was never a room (server just started)), then it will increase the roomNumber and create a room with that code, everyone else will go to that created room
-
-  })
+    }} // the join public function: uses roomfull, publicRoomSpace, and roomNumber. if the most recent room is full (or there was never a room (server just started)), then it will increase the roomNumber and create a room with that code, everyone else will go to that created room
+  )
  // https://socket.io/docs/v3/rooms/
 
   // so room is basically a string the user can declare, so honestly we can probably just make something that auto increments the rooms for us
 
   //socket.join(data) is how we send them to a specific room
   //socket.to(data.room).emit("function_name", data) to send data to that room from the server
+
+  socket.on("key_press", (data) => {//data is the key that is pressed
+    console.log(data.key);
+    console.log(data.roomNumber)
+    //socket.emit("receive_key", data);
+    socket.to(data.roomNumber).emit("receive_key", [data, socket.id]);
+  })
+
+  socket.on("mod_sends_user_list", (data) => {
+    socket.to(data.roomNumber).emit("get_user_list", data.userList)
+  })
 
   socket.on("send_message", (data) => {
     socket.broadcast.emit("receive_message", data);
