@@ -18,7 +18,7 @@ function Canvas() {
   //   },
   // })
   // const [lastKey, setLastKey] = useState('')
-  const lastKeyRef = useRef('');
+  const lastKeyRef = useRef(''); //because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store our game objects in ref containers
   const keysPressedRef = useRef({
     w: {
       pressed: false,
@@ -33,11 +33,6 @@ function Canvas() {
       pressed: false,
     },
   })
-
-  
-  // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });
-  //because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
-
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -54,28 +49,26 @@ function Canvas() {
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ])
-
   const [boundaries, setBoundaries] = useState<Boundary[]>([]);
-
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
   //collision detection function:
   function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
-    console.log(circle, rectangle);
     return (
       circle.position.y - circle.radius + circle.velocity.y <=
-        rectangle.position.y + rectangle.height &&
+        rectangle.position.y + Boundary.height &&
       circle.position.x + circle.radius + circle.velocity.x >=
         rectangle.position.x &&
       circle.position.y + circle.radius + circle.velocity.y >=
         rectangle.position.y &&
       circle.position.x - circle.radius + circle.velocity.x <=
-        rectangle.position.x + rectangle.width
+        rectangle.position.x + Boundary.width
     );
   }
 
+  //updates Boundaries flat array based on map.
   const updateBoundaries = () => {
     const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
     mapRef.current.forEach((row: any[], i: number) => {
@@ -97,7 +90,7 @@ function Canvas() {
     setBoundaries(tempBoundaries)
   }
 
-
+  //updates player movement based on collision detection
   const updatePlayer = () => {
     const player = playerRef.current;
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
@@ -113,13 +106,11 @@ function Canvas() {
               },
             },
             rectangle: boundary,
-          })//are we colliding with any rectangles in the next frame if we move left.. or press 'w'
+          })//are we colliding with any boundaries in the next frame if we move up or press 'w'?
         ) {
-          console.log("upward collision detected")
           player.velocity.y = 0; //if collision is detected-- stop player movement
           break;
         } else {
-          console.log("no upward collision detected")
           player.velocity.y = -5; //if not colliding, move player up
         }
         
@@ -190,15 +181,18 @@ function Canvas() {
         }
       }
     }
+
+    player.position.x += player.velocity.x;
+    player.position.y += player.velocity.y;
+
     boundaries.forEach((boundary) => {
-  
+
       if (
         circleCollidesWithRectangle({
           circle: player,
           rectangle: boundary,
         })
       ) {
-        console.log('choque!');
         player.velocity.y = 0;
         player.velocity.x = 0;
       }
@@ -234,7 +228,7 @@ function Canvas() {
   }, []);
 
   
-
+  //add keyboard event listeners when component mounts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
