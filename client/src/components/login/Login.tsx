@@ -1,32 +1,48 @@
 import { useGoogleLogin } from "@react-oauth/google"
 import { useNavigate } from "react-router-dom"
 import { getData, postData } from '../../ApiHelper';
-
+import React, { Dispatch, SetStateAction } from 'react';
+import { User } from '../../types/Types';
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
-
+interface Props {
+	userData: User | undefined;
+	setUserData: Dispatch<SetStateAction<User | undefined>>;
+	logout: () => void;
+}
 // import { IconGitHub, IconGoogle } from "../../assets/icons"
 
 // const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID
-const Login = () => {
+const Login = (props: Props) => {
  const navigate = useNavigate()
-
+ const { userData, setUserData, logout } = props;
 //  const loginToGithub = () => {
 //   localStorage.setItem("loginWith", "GitHub")
 //   window.location.assign(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`)
 //  }
-
+//   } )}
  const loginToGoogle = useGoogleLogin({
-  onSuccess: tokenResponse => {
-   localStorage.setItem("loginWith", "Google");
-   localStorage.setItem("accessToken", tokenResponse.access_token);
-  //  const user = JSON.parse(localStorage.getItem('user') as string);
-  //  getData(`/moderators/${user.email}`).then((moderator) => {
-  //   !moderator && postData('/moderators', { email: user.email });
-  // }) ;
+  onSuccess: (response) => {
+    localStorage.clear();
+    localStorage.setItem("loginWith", "Google");
+    localStorage.setItem("accessToken", response.access_token);
+  //   fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+	// 			headers: {
+	// 				'Authorization': `Bearer ${response.access_token}`
+	// 			},
+	// 		})
+	// 		.then(response => response.json())
+  //     .then(data => {
+  //       localStorage.setItem('user', JSON.stringify(data));
+  //     const user = JSON.parse(localStorage.getItem('user') as string);
+  //     console.log(user);
+  //     getData(`/user/${user.email}`).then((user) => {
+  //       !user && postData('/user', { email: user.email });
+  // });
   // setUserData(data);
    navigate("/lobby")
-  },
- })
+  // });
+ }
+})
 
  return (
   <>

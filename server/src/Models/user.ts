@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { stringify } from 'querystring';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +16,7 @@ export const createUser = async (email: string, name: string) => {
     data: {
                   ...{
                     email: email,
-                    name: name,
+                    name: name
                   }
     }
   });
