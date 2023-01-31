@@ -43,13 +43,13 @@ function SocketHandling() {
 
   return (
     <div className="SocketHandling">
-     {/* <input placeholder='Message...' onChange={(event) => {
-      setMessage(event.target.value);
-     }}/>
-     <button onClick={sendMessage}>Send Message</button>
-     <h1>Message: </h1>
-     {messageReceived} */}
-     <button onClick={joinPublic}>Join a public game!</button>
+      {/* <input placeholder='Message...' onChange={(event) => {
+        setMessage(event.target.value);
+      }}/>
+      <button onClick={sendMessage}>Send Message</button>
+      <h1>Message: </h1>
+      {messageReceived} */}
+      <button onClick={joinPublic}>Join a public game!</button>
     </div>
   );
 }

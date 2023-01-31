@@ -93,60 +93,53 @@ function Canvas() {
     };
   }, []);
 
-  const handleKeyDownEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    switch (e.key) {
-      case 'w':
-        setKeys({...keys, w: {pressed: true}});
-        setLastKey('w');
-        break;
-      case 'a':
-        setKeys({...keys, a: {pressed: true}});
-        setLastKey('a');
-        break;
-      case 's':
-        setKeys({...keys, s: {pressed: true}});
-        setLastKey('s');
-        break;
-      case 'd':
-        setKeys({...keys, d: {pressed: true}});
-        setLastKey('d');
-        break;
-    }
-    console.log('keydown:', lastKey, keys)
-  }
+  
 
-  const handleKeyUpEvent = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    
-    switch (e.key) {
-      case 'w':
-        setKeys({...keys, w: {pressed: false}});
-        break;
-      case 'a':
-        setKeys({...keys, a: {pressed: false}});
-        break;
-      case 's':
-        setKeys({...keys, s: {pressed: false}});
-        break;
-      case 'd':
-        setKeys({...keys, d: {pressed: false}});
-        break;
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
+        setLastKey(e.key);
+        setKeys(prevKeys => {
+          return {
+            ...prevKeys,
+            [e.key]: {
+              pressed: true,
+            },
+          };
+        });
+      }
     }
-    console.log('keyup:',lastKey, keys)
-  }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
+        setKeys(prevKeys => {
+          return {
+            ...prevKeys,
+            [e.key]: {
+              pressed: false,
+            },
+          };
+        });
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [])
+
+  console.log('keys:', keys)
+      console.log('last key:', lastKey)
+  
 
   return (
     <div 
-      onKeyDown = {(e)=> handleKeyDownEvent(e)}
-      onKeyUp = {(e)=> handleKeyUpEvent(e)}
+      // onKeyDown = {(e)=> handleKeyDownEvent(e)}
+      // onKeyUp = {(e)=> handleKeyUpEvent(e)}
       >
-        <input 
-          type="text" 
-          id="fname" 
-          name="fname"
-          // onKeyDown = {(e)=> handleKeyDownEvent(e)}
-          // onKeyUp = {(e)=> handleKeyUpEvent(e)}
-          >
-        </input>
         <p>welcome to da game</p>
         
       <canvas {...size} ref={canvasRef} />
