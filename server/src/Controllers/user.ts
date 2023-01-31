@@ -1,4 +1,4 @@
-import { getOneUser, createUser } from '../Models/user'
+import { getOneUser, createUser, findUserByEmail } from '../Models/user'
 
 const userControllers = {
   async getUserById(req: any, res: any) {
@@ -7,11 +7,19 @@ const userControllers = {
     res.json(user);
   },
 
+  async getUserByEmail(req: any, res: any) {
+		const { email } = req.params;
+    const user = await findUserByEmail(email);
+    res.json(user);
+  },
+
   async createUser(req: any, res: any) {
 		const { email, name } = req.body;
 		const newUser = await createUser(email, name);
 		res.status(201).json(newUser);
 	},
+
+  
 }
 
 export default userControllers;

@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { stringify } from 'querystring';
 
 const prisma = new PrismaClient();
 
@@ -9,6 +8,15 @@ export const getOneUser = async (id: number) => {
       id: Number(id)
     }
   });
+}
+
+export const findUserByEmail = async (email: string) => {
+  const users = await prisma.user.findMany({
+    where: {
+      email
+  }
+});
+  return users[0];
 }
 
 export const createUser = async (email: string, name: string) => {
