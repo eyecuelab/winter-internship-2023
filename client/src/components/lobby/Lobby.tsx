@@ -1,6 +1,7 @@
 import * as io from 'socket.io-client';
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"
+import { getData, postData } from '../../ApiHelper';
 import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react"
 
 import { getUserDataGoogle } from "./services/lobby-services"
@@ -73,11 +74,15 @@ const Lobby = () => {
   
    useEffect(() => {
     const accessToken = localStorage.getItem("accessToken")
-  
     if (accessToken && loginWith.current === "Google") {
      getUserDataGoogle(accessToken).then(resp => {
       setUserDataGoogle(resp)
      })
+     if (userDataGoogle) {
+     getData(`/user/${userDataGoogle.email}`).then((user) => {
+             !user && postData('/user', { email: userDataGoogle.email });
+      });
+    }
     }
    }, [loginWith])
   
