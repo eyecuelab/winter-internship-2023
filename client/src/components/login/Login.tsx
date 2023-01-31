@@ -1,5 +1,6 @@
 import { useGoogleLogin } from "@react-oauth/google"
 import { useNavigate } from "react-router-dom"
+import { getData, postData } from '../../ApiHelper';
 
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
 
@@ -16,13 +17,19 @@ const Login = () => {
 
  const loginToGoogle = useGoogleLogin({
   onSuccess: tokenResponse => {
-   localStorage.setItem("loginWith", "Google")
-   localStorage.setItem("accessToken", tokenResponse.access_token)
+   localStorage.setItem("loginWith", "Google");
+   localStorage.setItem("accessToken", tokenResponse.access_token);
+  //  const user = JSON.parse(localStorage.getItem('user') as string);
+  //  getData(`/moderators/${user.email}`).then((moderator) => {
+  //   !moderator && postData('/moderators', { email: user.email });
+  // }) ;
+  // setUserData(data);
    navigate("/lobby")
   },
  })
 
  return (
+  <>
   <Container display='flex' alignItems='center' justify='center' css={{ minHeight: "100vh" }}>
    <Card css={{ mw: "420px", p: "20px" }}>
     <Text
@@ -50,6 +57,7 @@ const Login = () => {
     </Button>
    </Card>
   </Container>
+  </>
  )
 }
 

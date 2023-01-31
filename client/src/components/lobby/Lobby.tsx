@@ -89,6 +89,11 @@ const Lobby = () => {
   //  if (!userDataGithub && !userDataGoogle) return null
    if (!userDataGoogle) return null
 
+   const createUser = (event: any) => {
+    event.preventDefault();
+  console.log(event);
+   }
+
   return (
     <>
     {/* sockets */}
@@ -100,7 +105,15 @@ const Lobby = () => {
           <h1>Message: </h1>
           {messageReceived}
         </div>
+        <hr/>
         {/* Google Auth */}
+        <div>
+  <form>
+    <label htmlFor="name">Game Display Name:</label>
+    <input type="text" placeholder='Name'></input>
+    <button onClick={createUser}>Create Game User</button>
+  </form>
+</div>
         <Navbar isBordered variant='sticky'>
     <Navbar.Brand>
      <User
