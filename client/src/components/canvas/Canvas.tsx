@@ -3,7 +3,23 @@ import frameRenderer from "./frameRenderer";
 import { Boundary, Player } from "./gameClasses";
 
 function Canvas() {
-  const [keys, setKeys] = useState({
+  // const [keys, setKeys] = useState({
+  //   w: {
+  //     pressed: false,
+  //   },
+  //   a: {
+  //     pressed: false,
+  //   },
+  //   s: {
+  //     pressed: false,
+  //   },
+  //   d: {
+  //     pressed: false,
+  //   },
+  // })
+  // const [lastKey, setLastKey] = useState('')
+  const lastKeyRef = useRef('');
+  const keysPressedRef = useRef({
     w: {
       pressed: false,
     },
@@ -17,12 +33,11 @@ function Canvas() {
       pressed: false,
     },
   })
-  const [lastKey, setLastKey] = useState('')
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const requestIdRef = useRef<any>(null);
+  
+  // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });
+  //because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
 
-  // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -42,10 +57,13 @@ function Canvas() {
 
   const [boundaries, setBoundaries] = useState<Boundary[]>([]);
 
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
   //collision detection function:
-  function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectangle: any}) {
+  function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
+    console.log(circle, rectangle);
     return (
       circle.position.y - circle.radius + circle.velocity.y <=
         rectangle.position.y + rectangle.height &&
@@ -79,10 +97,10 @@ function Canvas() {
     setBoundaries(tempBoundaries)
   }
 
+
   const updatePlayer = () => {
     const player = playerRef.current;
-    console.log(player);
-    if (keys.w.pressed && lastKey === 'w') {
+    if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
       for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
@@ -97,14 +115,16 @@ function Canvas() {
             rectangle: boundary,
           })//are we colliding with any rectangles in the next frame if we move left.. or press 'w'
         ) {
+          console.log("upward collision detected")
           player.velocity.y = 0; //if collision is detected-- stop player movement
           break;
         } else {
+          console.log("no upward collision detected")
           player.velocity.y = -5; //if not colliding, move player up
         }
         
       }
-    } else if (keys.a.pressed && lastKey === 'a') {
+    } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === 'a') {
       for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
@@ -125,8 +145,9 @@ function Canvas() {
           player.velocity.x = -5;
         }
       }
-    } else if (keys.s.pressed && lastKey === 's') {
+    } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === 's') {
       for (let i = 0; i < boundaries.length; i++) {
+        console.log(player);
         const boundary = boundaries[i];
         if (
           circleCollidesWithRectangle({
@@ -145,9 +166,9 @@ function Canvas() {
         } else {
           player.velocity.y = 5;
         }
-        console.log(player);
+        
       }
-    } else if (keys.d.pressed && lastKey === 'd') {
+    } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === 'd') {
       for (let i = 0; i < boundaries.length; i++) {
         const boundary = boundaries[i];
         if (
@@ -162,10 +183,10 @@ function Canvas() {
             rectangle: boundary,
           })
         ) {
-          player.velocity.x = 0;
+          playerRef.current = {...playerRef.current, velocity: {x: 0, y: 0} };
           break;
         } else {
-          player.velocity.x = 5;
+          playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
         }
       }
     }
@@ -194,7 +215,7 @@ function Canvas() {
       return;
     } 
     updateBoundaries();
-    updatePlayer(); //links ball movements with canvas element
+    updatePlayer(); //updates player velocity and location using collision detection logic
     frameRenderer.call(context, size, playerRef.current, mapRef.current);//draws ball on canvas
   };
 
@@ -217,28 +238,22 @@ function Canvas() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
-        setLastKey(e.key);
-        setKeys(prevKeys => {
-          return {
-            ...prevKeys,
-            [e.key]: {
-              pressed: true,
-            },
-          };
-        });
+        lastKeyRef.current = e.key;
+        keysPressedRef.current = {
+          ...keysPressedRef.current, 
+          [e.key]: {
+          pressed: true,
+        }}
       }
     }
 
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
-        setKeys(prevKeys => {
-          return {
-            ...prevKeys,
-            [e.key]: {
-              pressed: false,
-            },
-          };
-        });
+        keysPressedRef.current = {
+          ...keysPressedRef.current, 
+          [e.key]: {
+          pressed: false,
+        }}
       }
     }
 
@@ -249,7 +264,7 @@ function Canvas() {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, [])
-  
+
   return (
     <div 
       // onKeyDown = {(e)=> handleKeyDownEvent(e)}
