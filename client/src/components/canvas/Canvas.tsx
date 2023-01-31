@@ -24,7 +24,7 @@ function Canvas() {
 
   // const ballRef = useRef({ x: 50, y: 50, vx: 3.9, vy: 3.3, radius: 20 });//because we want to keep those properties across rerenders, and because we want to be able to manipulate those values without causing rerenders of our React component, we store the ball object in a ref container
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 3.9, y: 3.3}, radius: 15 })
-  const mapRef = useRef<any[]>([
+  const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
@@ -40,28 +40,145 @@ function Canvas() {
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ])
 
+  const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+
   const size = { width: 700, height: 700 };
+
+  //collision detection function:
+function circleCollidesWithRectangle({ circle, rectangle }: {circle: any, rectangle: any}) {
+  return (
+    circle.position.y - circle.radius + circle.velocity.y <=
+      rectangle.position.y + rectangle.height &&
+    circle.position.x + circle.radius + circle.velocity.x >=
+      rectangle.position.x &&
+    circle.position.y + circle.radius + circle.velocity.y >=
+      rectangle.position.y &&
+    circle.position.x - circle.radius + circle.velocity.x <=
+      rectangle.position.x + rectangle.width
+  );
+}
+
+  const updateBoundaries = () => {
+    const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
+    mapRef.current.forEach((row: any[], i: number) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case '-':
+            tempBoundaries.push(
+              new Boundary({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                }
+              })
+            );
+            break;
+        }
+      });
+    });
+    setBoundaries(tempBoundaries)
+  }
 
   const updatePlayer = () => {
     const player = playerRef.current;
-    player.position.x += player.velocity.x;
-    player.position.y += player.velocity.y;
-    if (player.position.x + player.radius >= size.width) {
-      player.velocity.x = -player.velocity.x;
-      player.position.x = size.width - player.radius;
+    if (keys.w.pressed && lastKey === 'w') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 0,
+                y: -5,
+              },
+            },
+            rectangle: boundary,
+          })//are we colliding with any rectangles in the next frame if we move left.. or press 'w'
+        ) {
+          player.velocity.y = 0; //if collision is detected-- stop player movement
+          break;
+        } else {
+          player.velocity.y = -5; //if not colliding, move player up
+        }
+      }
+    } else if (keys.a.pressed && lastKey === 'a') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: -5,
+                y: 0,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          player.velocity.x = 0;
+          break;
+        } else {
+          player.velocity.x = -5;
+        }
+      }
+    } else if (keys.s.pressed && lastKey === 's') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 0,
+                y: 5,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          player.velocity.y = 0;
+          break;
+        } else {
+          player.velocity.y = 5;
+        }
+      }
+    } else if (keys.d.pressed && lastKey === 'd') {
+      for (let i = 0; i < boundaries.length; i++) {
+        const boundary = boundaries[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...player,
+              velocity: {
+                x: 5,
+                y: 0,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          player.velocity.x = 0;
+          break;
+        } else {
+          player.velocity.x = 5;
+        }
+      }
     }
-    if (player.position.x - player.radius <= 0) {
-      player.velocity.x = -player.velocity.x;
-      player.position.x = player.radius;
-    }
-    if (player.position.y + player.radius >= size.height) {
-      player.velocity.y = -player.velocity.y;
-      player.position.y = size.height - player.radius;
-    }
-    if (player.position.y - player.radius <= 0) {
-      player.velocity.y = -player.velocity.y;
-      player.position.y = player.radius;
-    }
+    boundaries.forEach((boundary) => {
+  
+      if (
+        circleCollidesWithRectangle({
+          circle: player,
+          rectangle: boundary,
+        })
+      ) {
+        console.log('choque!');
+        player.velocity.y = 0;
+        player.velocity.x = 0;
+      }
+    });
   };
 
 
@@ -75,6 +192,7 @@ function Canvas() {
     if(!context) {
       return;
     } 
+    updateBoundaries();
     updatePlayer(); //links ball movements with canvas element
     frameRenderer.call(context, size, playerRef.current, mapRef.current);//draws ball on canvas
   };
