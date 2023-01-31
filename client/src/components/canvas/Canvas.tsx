@@ -134,11 +134,21 @@ function Canvas() {
     console.log('keyup:',lastKey, keys)
   }
 
+  function handleKeyPress(e: KeyboardEvent) { //
+    console.log(e);// arrow keys don't work yet
+    if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === " ") { //this works to recognize the key
+      console.log("send it !!!!!"); // wasd and space are sorted, we can now send that information to the server
+      //keypress(e.key);
+    }
+    else {
+      console.log("don't send it");
+    };
   return (
     <div 
       onKeyDown = {(e)=> handleKeyDownEvent(e)}
       onKeyUp = {(e)=> handleKeyUpEvent(e)}
       >
+
         <input 
           type="text" 
           id="fname" 
@@ -156,6 +166,7 @@ function Canvas() {
   // Store a value inside an object
   // Manipulate that value whenever we want without causing a rerender of our component
   // Access that same value on every rerender
+}
 }
 
 export default Canvas;
