@@ -5,17 +5,17 @@ import Login from "./components/login/Login";
 import Canvas from "./components/canvas/Canvas";
 import Lobby from "./components/lobby/Lobby";
 import SocketHandling from "./components/socketHandling/socketHandling";
-import { User } from './types/Types';
+import { userType } from './types/Types';
 
 
 function App() {
 
-  const [userData, setUserData] = useState<User | undefined>();
+  const [userData, setUserData] = useState<userType | undefined>();
 
-  useEffect(() => {
-		setUserData(userData);
-	}, []);
-
+  const handleUserData = (newData: userType) => {
+    setUserData(newData);
+  }
+console.log(userData);
   const handleLogout = () => {
 		setUserData(undefined);
 		localStorage.clear();
@@ -25,8 +25,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login setUserData={setUserData} userData={userData} logout={handleLogout}/>} />
-        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/" element={<Login />} />
+        <Route path="/lobby" element={<Lobby updateUserData={handleUserData} userData={userData} logout={handleLogout}/>} />
         <Route path="/sockets" element={<SocketHandling />} />
         {/* <Route path="/game" element={<Canvas />} /> */}
       </Routes>

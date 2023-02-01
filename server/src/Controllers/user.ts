@@ -8,10 +8,15 @@ const userControllers = {
   // },
 
   async getUserByEmail(req: any, res: any) {
+    
 		const { email } = req.params;
     console.log(email);
     const user = await findUserByEmail(email);
-    res.json(user);
+    if (!user) {
+      res.status(204).send();
+    } else {
+      res.status(200).json(user);
+    }
   },
 
   async createUser(req: any, res: any) {

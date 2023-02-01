@@ -2,26 +2,33 @@ import * as io from 'socket.io-client';
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"
 import { getData, postData } from '../../ApiHelper';
-import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react"
+import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react";
+import { userType } from '../../types/Types';
 
 import { getUserDataGoogle } from "./services/lobby-services"
 
-interface UserdataGoogle {
+interface UserDataGoogle {
   name: string
   picture: string
   email: string
  }
+ interface Props {
+	userData: userType | undefined;
+	updateUserData: (newData: userType) => void;
+	logout: () => void;
+}
 
 const socket = io.connect("http://localhost:3001");
 
-const Lobby = () => {
+const Lobby = (props: Props) => {
 
+  const { userData, updateUserData } = props;
   //sockets
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
 
   //user auth
-  const [userDataGoogle, setUserDataGoogle] = useState<null | UserdataGoogle>(null)
+  const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(null)
 
   const loginWith = useRef(localStorage.getItem("loginWith"))
 
@@ -81,34 +88,30 @@ const Lobby = () => {
     if (accessToken && loginWith.current === "Google") {
      getUserDataGoogle(accessToken).then(resp => {
       setUserDataGoogle(resp)
+      updateUserData(resp)
       tempObj.email = resp.email
       tempObj.name = resp.name
-      console.log(tempObj)
-      console.log(resp)
-      testFunction(tempObj)
-     })/*.then((tempObj: any) => {
-      console.log(tempObj.email);
-        getData(`/user/${tempObj.email}`).then((user) => {
-        console.log(user);
-            !user && postData('/user', { email: tempObj.email, name: tempObj.name });
-      });
-    })*/
+      accessOrCreateUser(tempObj)
+     })
    }
   }, [loginWith])
 
-  const testFunction = (object: any) => {
-    console.log(object.email);
-    try{
-      getData(`/user/${object.email}`)
-    }
-    catch {
-      postData('/user', { email: object.email, name: object.name })
-    }
-        /*getData(`/user/${object.email}`).then((user) => {
-        console.log(user);
-            !user && postData('/user', { email: object.email, name: object.name });
-      });
-  }*/
+  const accessOrCreateUser = (object: any) => {
+
+    // console.log(object.email);
+    // try{
+    //   getData(`/user/${object.email}`)
+    //   console.log( getData(`/user/${object.email}`));
+    // }
+    // catch {
+    //   postData('/user', { email: object.email, name: object.name })
+    // }
+
+    getData(`/user/${object.email}`).then((user) => {
+        if (!user) {
+          postData('/user', { email: object.email, name: object.name })
+        }
+  });
 }
   
    const setLogOut = () => {

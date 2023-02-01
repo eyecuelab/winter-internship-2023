@@ -7,17 +7,16 @@ const BASE_HEADERS = {
 };
 
 const handleResponse = async (response: Response) => {
-  const json = await response.json();
-
-  if (!response.ok) {
-    throw Error(json.error);
-  } else {
-    return json;
+  if (response.status === 204) {
+   
   }
+else {
+  const json = await response.json();
+  return json;
+}
 };
 
 export const getData = async (endpoint: string) => {
-  console.log(endpoint)
   const url = `${API_ENDPOINT}${endpoint}`;
   const response = await fetch(url, {...BASE_HEADERS, method: 'GET'});
   console.log(response, typeof(response))
