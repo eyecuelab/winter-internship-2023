@@ -17,8 +17,10 @@ const handleResponse = async (response: Response) => {
 };
 
 export const getData = async (endpoint: string) => {
+  console.log(endpoint)
   const url = `${API_ENDPOINT}${endpoint}`;
   const response = await fetch(url, {...BASE_HEADERS, method: 'GET'});
+  console.log(response, typeof(response))
   return handleResponse(response);
 };
 

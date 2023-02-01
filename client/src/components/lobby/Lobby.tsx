@@ -73,18 +73,43 @@ const Lobby = () => {
   //  }, [loginWith])
   
    useEffect(() => {
+    let tempObj = {
+      email: '',
+      name: ''
+    };
     const accessToken = localStorage.getItem("accessToken")
     if (accessToken && loginWith.current === "Google") {
      getUserDataGoogle(accessToken).then(resp => {
       setUserDataGoogle(resp)
-     })
-     if (userDataGoogle) {
-     getData(`/user/${userDataGoogle.email}`).then((user) => {
-             !user && postData('/user', { email: userDataGoogle.email });
+      tempObj.email = resp.email
+      tempObj.name = resp.name
+      console.log(tempObj)
+      console.log(resp)
+      testFunction(tempObj)
+     })/*.then((tempObj: any) => {
+      console.log(tempObj.email);
+        getData(`/user/${tempObj.email}`).then((user) => {
+        console.log(user);
+            !user && postData('/user', { email: tempObj.email, name: tempObj.name });
       });
+    })*/
+   }
+  }, [loginWith])
+
+  const testFunction = (object: any) => {
+    console.log(object.email);
+    try{
+      getData(`/user/${object.email}`)
     }
+    catch {
+      postData('/user', { email: object.email, name: object.name })
     }
-   }, [loginWith])
+        /*getData(`/user/${object.email}`).then((user) => {
+        console.log(user);
+            !user && postData('/user', { email: object.email, name: object.name });
+      });
+  }*/
+}
   
    const setLogOut = () => {
     localStorage.removeItem("accessToken")
