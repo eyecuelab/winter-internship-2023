@@ -44,13 +44,11 @@ function frameRenderer(this: any, size: { width: any; height: any; }, player: { 
   });
 
   const drawPlayer = (x: number, y: number, radius: number, color: string) => {
-    this.save();
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
     this.fillStyle = color;
     this.fill();
     this.closePath();
-    this.restore();
   }
 
   drawPlayer(player.position.x, player.position.y, player.radius, 'yellow')
