@@ -248,6 +248,15 @@ function Canvas() {
     };
   }, [])
 
+  function handleKeyPress(e: KeyboardEvent) { //
+    console.log(e);// arrow keys don't work yet
+    if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === " ") { //this works to recognize the key
+      console.log("send it !!!!!"); // wasd and space are sorted, we can now send that information to the server
+      //keypress(e.key);
+    }
+    else {
+      console.log("don't send it");
+    };
   return (
     <div>
       <p>welcome to da game</p>
@@ -255,6 +264,7 @@ function Canvas() {
       <SocketHandling />
     </div>
   );
+}
 }
 
 export default Canvas;

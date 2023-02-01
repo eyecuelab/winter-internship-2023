@@ -1,4 +1,4 @@
-import usersRouter from './Routes/users';
+import usersRouter from './Routes/user';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';

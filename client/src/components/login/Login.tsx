@@ -1,28 +1,35 @@
 import { useGoogleLogin } from "@react-oauth/google"
 import { useNavigate } from "react-router-dom"
-
+import { getData, postData } from '../../ApiHelper';
+import React, { Dispatch, SetStateAction } from 'react';
+import { userType } from '../../types/Types';
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
-
+interface Props {
+	userData: userType | undefined;
+	setUserData: Dispatch<SetStateAction<userType | undefined>>;
+	logout: () => void;
+}
 // import { IconGitHub, IconGoogle } from "../../assets/icons"
 
 // const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID
 const Login = () => {
  const navigate = useNavigate()
-
 //  const loginToGithub = () => {
 //   localStorage.setItem("loginWith", "GitHub")
 //   window.location.assign(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`)
 //  }
-
+//   } )}
  const loginToGoogle = useGoogleLogin({
-  onSuccess: tokenResponse => {
-   localStorage.setItem("loginWith", "Google")
-   localStorage.setItem("accessToken", tokenResponse.access_token)
+  onSuccess: (response) => {
+    localStorage.clear();
+    localStorage.setItem("loginWith", "Google");
+    localStorage.setItem("accessToken", response.access_token);
    navigate("/lobby")
-  },
- })
+ }
+})
 
  return (
+  <>
   <Container display='flex' alignItems='center' justify='center' css={{ minHeight: "100vh" }}>
    <Card css={{ mw: "420px", p: "20px" }}>
     <Text
@@ -50,6 +57,7 @@ const Login = () => {
     </Button>
    </Card>
   </Container>
+  </>
  )
 }
 
