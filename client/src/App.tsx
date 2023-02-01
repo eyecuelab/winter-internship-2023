@@ -15,7 +15,7 @@ function App() {
   const handleUserData = (newData: userType) => {
     setUserData(newData);
   }
-console.log(userData);
+
   const handleLogout = () => {
 		setUserData(undefined);
 		localStorage.clear();
@@ -28,7 +28,7 @@ console.log(userData);
         <Route path="/" element={<Login />} />
         <Route path="/lobby" element={<Lobby updateUserData={handleUserData} userData={userData} logout={handleLogout}/>} />
         <Route path="/sockets" element={<SocketHandling />} />
-        {/* <Route path="/game" element={<Canvas />} /> */}
+        <Route path="/game" element={<Canvas />} />
       </Routes>
     </Router>
   );

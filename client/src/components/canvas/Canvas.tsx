@@ -257,14 +257,15 @@ function Canvas() {
     else {
       console.log("don't send it");
     };
-  return (
-    <div>
+  }
+  document.body.classList.add('background-black');
+  return ( 
+    <div  style={{color: "white", backgroundColor: "black"}}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
       <SocketHandling />
     </div>
   );
-}
 }
 
 export default Canvas;
