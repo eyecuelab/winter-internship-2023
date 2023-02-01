@@ -86,14 +86,14 @@ function SocketHandling() {
 
   return (
     <div className="SocketHandling">
-     <button onClick={joinPublic}>Join a public game!</button>
-     <h1>inputs below:</h1>
-     <ul>
-      <li>{user1}: {user1Input}</li>
-      <li>{user2}: {user2Input}</li>
-      <li>{user3}: {user3Input}</li>
-      <li>{user4}: {user4Input}</li>
-     </ul>
+      <button onClick={joinPublic}>Join a public game!</button>
+      <h1>inputs below:</h1>
+      <ul>
+        <li>{user1}: {user1Input}</li>
+        <li>{user2}: {user2Input}</li>
+        <li>{user3}: {user3Input}</li>
+        <li>{user4}: {user4Input}</li>
+      </ul>
     </div>
   );
 }
