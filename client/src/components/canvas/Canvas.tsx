@@ -22,6 +22,7 @@ function Canvas() {
       pressed: false,
     },
   }) 
+  
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -38,10 +39,40 @@ function Canvas() {
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ])
-  const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+  // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+  const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
+
+  //socketHandling state:
+  const [user1, setUser1] = useState("");
+  const [user2, setUser2] = useState("");
+  const [user3, setUser3] = useState("");
+  const [user4, setUser4] = useState("");
+  const [user1Input, setUser1Input] = useState("");
+  const [user2Input, setUser2Input] = useState("");
+  const [user3Input, setUser3Input] = useState("");
+  const [user4Input, setUser4Input] = useState("");
+  let roomNumber = "";
+  let ifModerator: boolean = false;
+  let userList: Array<string> = [];
+
+  //socketHandling logic:
+  const joinPublic = () => {
+    socket.emit("join_public");
+  };
+  const keypress = (key: string) => {
+    socket.emit("key_press", { key, roomNumber });
+  };
+
+  const sendUsers = (data: Array<string>) => {
+    setUser1(userList[0]);
+    setUser2(userList[1]);
+    setUser3(userList[2]);
+    setUser4(userList[3]);
+    socket.emit("mod_sends_user_list", { userList, roomNumber });
+  };
 
   //collision detection function:
   function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
@@ -76,15 +107,16 @@ function Canvas() {
         }
       });
     });
-    setBoundaries(tempBoundaries)
+    // setBoundaries(tempBoundaries)
+    boundariesRef.current = tempBoundaries;
   }
 
   //updates player movement based on collision detection
   const updatePlayer = () => {
     const player = playerRef.current;
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -105,8 +137,8 @@ function Canvas() {
         
       }
     } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === 'a') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -126,9 +158,8 @@ function Canvas() {
         }
       }
     } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === 's') {
-      for (let i = 0; i < boundaries.length; i++) {
-        console.log(player);
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -149,8 +180,8 @@ function Canvas() {
         
       }
     } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === 'd') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -169,12 +200,12 @@ function Canvas() {
           playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
         }
       }
-    } 
+    }  
 
     player.position.x += player.velocity.x;
     player.position.y += player.velocity.y;
 
-    boundaries.forEach((boundary) => {
+    boundariesRef.current.forEach((boundary) => {
 
       if (
         circleCollidesWithRectangle({
@@ -199,6 +230,12 @@ function Canvas() {
     } 
     updateBoundaries();
     updatePlayer();
+
+    if (ifModerator){
+      const tempPlayer = playerRef.current;
+      socket.emit("player_update", { tempPlayer, roomNumber});
+    }
+
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
 
@@ -216,6 +253,46 @@ function Canvas() {
     };
   }, []);
 
+  useEffect(() => {
+    socket.on("receive_player_update", (data) => {
+      playerRef.current = data;
+    })
+
+    socket.on("receive_room_number", (data: Array<any>) => {
+      console.log(data);
+      roomNumber = data[0];
+      ifModerator = data[1];
+    })
+
+    //socketHandling useEffect:
+    socket.on("receive_room_number", (data: Array<any>) => {
+      roomNumber = data[0];
+      ifModerator = data[1];
+      if (ifModerator) {
+        userList.push(data[2]);
+      }
+    });
+
+    socket.on("mod_receive_user", (data) => {
+      if (ifModerator) {
+        userList.push(data);
+      }
+    });
+    socket.on("room_full", () => {
+      if (ifModerator) {
+        sendUsers(userList);
+      }
+    });
+
+    socket.on("get_user_list", (data: Array<string>) => {
+      setUser1(data[0]);
+      setUser2(data[1]);
+      setUser3(data[2]);
+      setUser4(data[3]);
+      userList = data;
+    });
+
+  }, [socket])
   
   //add keyboard event listeners when component mounts
   useEffect(() => {
@@ -228,6 +305,7 @@ function Canvas() {
           pressed: true,
         }}
       }
+      console.log("handleKeyDown state:", lastKeyRef.current)
     }
 
     const handleKeyUp = (e: KeyboardEvent) => { 
@@ -238,6 +316,7 @@ function Canvas() {
           pressed: false,
         }}
       }
+      console.log("handleKeyUp state:", lastKeyRef.current)
     }
 
     window.addEventListener('keydown', handleKeyDown);
@@ -248,22 +327,32 @@ function Canvas() {
     };
   }, [])
 
-  function handleKeyPress(e: KeyboardEvent) { //
-    console.log(e);// arrow keys don't work yet
-    if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === " ") { //this works to recognize the key
-      console.log("send it !!!!!"); // wasd and space are sorted, we can now send that information to the server
-      //keypress(e.key);
-    }
-    else {
-      console.log("don't send it");
-    };
-  }
-  document.body.classList.add('background-black');
+ 
+
   return ( 
     <div  style={{color: "white", backgroundColor: "black"}}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
-      <SocketHandling />
+      
+      {/* socketHandling: */}
+      <div className="SocketHandling">
+      <button onClick={joinPublic}>Join a public game!</button>
+      <h1>inputs below:</h1>
+      <ul>
+        <li>
+          {user1}: {user1Input}
+        </li>
+        <li>
+          {user2}: {user2Input}
+        </li>
+        <li>
+          {user3}: {user3Input}
+        </li>
+        <li>
+          {user4}: {user4Input}
+        </li>
+      </ul>
+    </div>
     </div>
   );
 }

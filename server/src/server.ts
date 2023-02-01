@@ -45,6 +45,9 @@ io.on("connection", (socket) => {
     }} 
   )
 
+  socket.on("player_update", (data) => {
+    socket.to(data.roomNumber).emit("receive_player_update", data.tempPlayer);
+  })
 
   socket.on("key_press", (data) => {
     socket.to(data.roomNumber).emit("receive_key", [data, socket.id]);
