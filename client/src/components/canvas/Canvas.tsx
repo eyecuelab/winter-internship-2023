@@ -22,6 +22,7 @@ function Canvas() {
       pressed: false,
     },
   }) 
+  
   const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
   const mapRef = useRef<any[][]>([
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -38,7 +39,8 @@ function Canvas() {
     ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
     ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ])
-  const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+  // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+  const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
@@ -76,15 +78,16 @@ function Canvas() {
         }
       });
     });
-    setBoundaries(tempBoundaries)
+    // setBoundaries(tempBoundaries)
+    boundariesRef.current = tempBoundaries;
   }
 
   //updates player movement based on collision detection
   const updatePlayer = () => {
     const player = playerRef.current;
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -105,8 +108,8 @@ function Canvas() {
         
       }
     } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === 'a') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -126,9 +129,8 @@ function Canvas() {
         }
       }
     } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === 's') {
-      for (let i = 0; i < boundaries.length; i++) {
-        console.log(player);
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -149,8 +151,8 @@ function Canvas() {
         
       }
     } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === 'd') {
-      for (let i = 0; i < boundaries.length; i++) {
-        const boundary = boundaries[i];
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
@@ -169,12 +171,12 @@ function Canvas() {
           playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
         }
       }
-    } 
+    }  
 
     player.position.x += player.velocity.x;
     player.position.y += player.velocity.y;
 
-    boundaries.forEach((boundary) => {
+    boundariesRef.current.forEach((boundary) => {
 
       if (
         circleCollidesWithRectangle({
@@ -228,6 +230,7 @@ function Canvas() {
           pressed: true,
         }}
       }
+      console.log("handleKeyDown state:", lastKeyRef.current)
     }
 
     const handleKeyUp = (e: KeyboardEvent) => { 
@@ -238,6 +241,7 @@ function Canvas() {
           pressed: false,
         }}
       }
+      console.log("handleKeyUp state:", lastKeyRef.current)
     }
 
     window.addEventListener('keydown', handleKeyDown);
@@ -255,10 +259,10 @@ function Canvas() {
       //keypress(e.key);
     }
     else {
-      console.log("don't send it");
+      console.log("don't send it"); 
     };
   }
-  document.body.classList.add('background-black');
+
   return ( 
     <div  style={{color: "white", backgroundColor: "black"}}>
       <p>welcome to da game</p>
