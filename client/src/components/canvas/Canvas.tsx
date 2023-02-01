@@ -45,6 +45,35 @@ function Canvas() {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
+  //socketHandling state:
+  const [user1, setUser1] = useState("");
+  const [user2, setUser2] = useState("");
+  const [user3, setUser3] = useState("");
+  const [user4, setUser4] = useState("");
+  const [user1Input, setUser1Input] = useState("");
+  const [user2Input, setUser2Input] = useState("");
+  const [user3Input, setUser3Input] = useState("");
+  const [user4Input, setUser4Input] = useState("");
+  let roomNumber = "";
+  let ifModerator: boolean = false;
+  let userList: Array<string> = [];
+
+  //socketHandling logic:
+  const joinPublic = () => {
+    socket.emit("join_public");
+  };
+  const keypress = (key: string) => {
+    socket.emit("key_press", { key, roomNumber });
+  };
+
+  const sendUsers = (data: Array<string>) => {
+    setUser1(userList[0]);
+    setUser2(userList[1]);
+    setUser3(userList[2]);
+    setUser4(userList[3]);
+    socket.emit("mod_sends_user_list", { userList, roomNumber });
+  };
+
   //collision detection function:
   function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
     return (
@@ -201,6 +230,12 @@ function Canvas() {
     } 
     updateBoundaries();
     updatePlayer();
+
+    if (ifModerator){
+      const tempPlayer = playerRef.current;
+      socket.emit("player_update", { tempPlayer, roomNumber});
+    }
+
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
 
@@ -218,6 +253,46 @@ function Canvas() {
     };
   }, []);
 
+  useEffect(() => {
+    socket.on("receive_player_update", (data) => {
+      playerRef.current = data;
+    })
+
+    socket.on("receive_room_number", (data: Array<any>) => {
+      console.log(data);
+      roomNumber = data[0];
+      ifModerator = data[1];
+    })
+
+    //socketHandling useEffect:
+    socket.on("receive_room_number", (data: Array<any>) => {
+      roomNumber = data[0];
+      ifModerator = data[1];
+      if (ifModerator) {
+        userList.push(data[2]);
+      }
+    });
+
+    socket.on("mod_receive_user", (data) => {
+      if (ifModerator) {
+        userList.push(data);
+      }
+    });
+    socket.on("room_full", () => {
+      if (ifModerator) {
+        sendUsers(userList);
+      }
+    });
+
+    socket.on("get_user_list", (data: Array<string>) => {
+      setUser1(data[0]);
+      setUser2(data[1]);
+      setUser3(data[2]);
+      setUser4(data[3]);
+      userList = data;
+    });
+
+  }, [socket])
   
   //add keyboard event listeners when component mounts
   useEffect(() => {
@@ -252,22 +327,32 @@ function Canvas() {
     };
   }, [])
 
-  function handleKeyPress(e: KeyboardEvent) { //
-    console.log(e);// arrow keys don't work yet
-    if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d" || e.key === " ") { //this works to recognize the key
-      console.log("send it !!!!!"); // wasd and space are sorted, we can now send that information to the server
-      //keypress(e.key);
-    }
-    else {
-      console.log("don't send it"); 
-    };
-  }
+ 
 
   return ( 
     <div  style={{color: "white", backgroundColor: "black"}}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
-      <SocketHandling />
+      
+      {/* socketHandling: */}
+      <div className="SocketHandling">
+      <button onClick={joinPublic}>Join a public game!</button>
+      <h1>inputs below:</h1>
+      <ul>
+        <li>
+          {user1}: {user1Input}
+        </li>
+        <li>
+          {user2}: {user2Input}
+        </li>
+        <li>
+          {user3}: {user3Input}
+        </li>
+        <li>
+          {user4}: {user4Input}
+        </li>
+      </ul>
+    </div>
     </div>
   );
 }
