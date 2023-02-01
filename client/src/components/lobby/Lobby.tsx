@@ -22,7 +22,7 @@ const socket = io.connect("http://localhost:3001");
 
 const Lobby = (props: Props) => {
 
-  const { userData, updateUserData } = props;
+  const { updateUserData } = props;
   //sockets
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState("");
@@ -98,7 +98,6 @@ const Lobby = (props: Props) => {
 
   const accessOrCreateUser = (object: any) => {
 
-    // console.log(object.email);
     // try{
     //   getData(`/user/${object.email}`)
     //   console.log( getData(`/user/${object.email}`));
