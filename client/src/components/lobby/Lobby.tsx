@@ -47,7 +47,7 @@ const Lobby = (props: Props) => {
     await postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
       .then((resp) => {
         gameId = resp.id;
-        postData(`/gameUser`, { gameId: resp.id, userId: 1, roleId: 1 });
+        postData(`/gameUser`, { gameId: resp.id, userId: userData?.id, roleId: 1 });
       })
       .then((resp) => {
         const teamData = postData(`/team`, {
@@ -64,7 +64,7 @@ const Lobby = (props: Props) => {
       })
       .then((teamData) => {
         const teamId = teamData.id; 
-        postData(`/teamUser`, { teamId: teamId, userId: 1, verticalOrHorizontalControl: "vertical" });
+        postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
 
         socket.emit("join_public");
         navigate(`/Game/${gameId}`);
@@ -81,7 +81,6 @@ const Lobby = (props: Props) => {
     if (accessToken && loginWith.current === "Google") {
       getUserDataGoogle(accessToken).then((resp) => {
         setUserDataGoogle(resp);
-        updateUserData(resp);
         tempObj.email = resp.email;
         tempObj.name = resp.name;
         accessOrCreateUser(tempObj);
@@ -89,12 +88,33 @@ const Lobby = (props: Props) => {
     }
   }, [loginWith]);
 
+  const handleCreateUser = async (object: any) => {
+    await (postData("/user", {
+      email: object.email,
+      name: object.name,
+    }))
+    .then((resp) => {
+      updateUserData({
+        id: resp.id,
+        email: resp.email,
+        name: resp.name,
+        games: [],
+        teams: []
+      });
+    })
+  }
+
   const accessOrCreateUser = (object: any) => {
     getData(`/user/${object.email}`).then((user) => {
       if (!user) {
-        const resp = postData("/user", {
-          email: object.email,
-          name: object.name,
+        handleCreateUser(object);
+      } else {
+        updateUserData({
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          games: [],
+          teams: []
         });
       }
     });

@@ -12,6 +12,7 @@ import GamePage from "./pages/GamePage";
 
 function App() {
   const [userData, setUserData] = useState<userType | undefined>();
+  console.log(userData);
 
   const handleUserData = (newData: userType) => {
     setUserData(newData);
