@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { getData, postData } from '../../ApiHelper';
 import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react";
 import { userType } from '../../types/Types';
+import { socketID, socket } from './../../GlobalSocket';
 
 import { getUserDataGoogle } from "./services/lobby-services"
 
@@ -27,7 +28,10 @@ const Lobby = (props: Props) => {
   const loginWith = useRef(localStorage.getItem("loginWith"))
 
   const navigate = useNavigate()
-  
+  function sendToGame() {
+    socket.emit("join_public"); //added from sockethandling and canvas
+    navigate("/Game");
+  }
   
    useEffect(() => {
     let tempObj = {
@@ -109,7 +113,11 @@ const Lobby = (props: Props) => {
      </Col>
     </Row>
    </Container>
+   <div className='theButton'>
+    <button onClick={sendToGame}>Start a Public Game!</button>
+   </div>
   </>
+
   )
 }
 
