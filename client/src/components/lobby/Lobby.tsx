@@ -1,106 +1,98 @@
-import * as io from 'socket.io-client';
+import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom"
-import { Button, Col, Container, Navbar, Row, Text, User } from "@nextui-org/react"
 
-import { getUserDataGoogle } from "./services/lobby-services"
+import { useNavigate } from "react-router-dom";
+import { getData, postData } from "../../ApiHelper";
+import {
+  Button,
+  Col,
+  Container,
+  Navbar,
+  Row,
+  Text,
+  User,
+} from "@nextui-org/react";
+import { userType } from "../../types/Types";
+import { socketID, socket } from './../../GlobalSocket';
 
-interface UserdataGoogle {
-  name: string
-  picture: string
-  email: string
- }
 
-const socket = io.connect("http://localhost:3001");
+import { getUserDataGoogle } from "./services/lobby-services";
 
-const Lobby = () => {
+interface UserDataGoogle {
+  name: string;
+  picture: string;
+  email: string;
+}
+interface Props {
+  userData: userType | undefined;
+  updateUserData: (newData: userType) => void;
+  logout: () => void;
+}
 
-  //sockets
-  const [message, setMessage] = useState("");
-  const [messageReceived, setMessageReceived] = useState("");
+const Lobby = (props: Props) => {
+  const { updateUserData } = props;
 
-  //user auth
-  const [userDataGoogle, setUserDataGoogle] = useState<null | UserdataGoogle>(null)
+  const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
+    null
+  );
 
-  const loginWith = useRef(localStorage.getItem("loginWith"))
+  const loginWith = useRef(localStorage.getItem("loginWith"));
+
 
   const navigate = useNavigate()
-
-  // every communication that we want to run will be declared here as a const
-  // this one is sendMessage, the "send_message" in the emit is what the backend is looking for
-  // if we want to send data, the message is where we would send it
-  // so with this, "Hello" is the data sent
-  // we will build functions that just need to send the data over to the server based on the specific input
-  // as long as the input receiver is good and differentiated, then none of that really matters what were sending
-  // *unless its data like username or something
-  
-  const sendMessage = () => {
-    socket.emit("send_message", {message: message}); //since the message and the variable are the same, you can just do {message}, I left it in there tho in case we want an example on how to send other information
-  };
-
-
-  useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageReceived(data.message);
-      
-      //this below would do a window alert with literally just "Hello" from the sendMessage function, we've changed it since tho
-      //alert(data.message);
-    });
-  }, [socket]);
-
-  //user auth
-  // useEffect(() => {
-  //   const queryString = window.location.search
-  //   const urlParams = new URLSearchParams(queryString)
-  //   const codeParam = urlParams.get("code")
-  
-  //   const accessToken = localStorage.getItem("accessToken")
-  
-  //   if (codeParam && !accessToken && loginWith.current === "GitHub") {
-  //    getAccessTokenGithub(codeParam).then(resp => {
-  //     localStorage.setItem("accessToken", resp.access_token)
-  //     getUserDataGithub(resp.access_token).then((resp: UserDataGithub) => {
-  //      setUserDataGithub(resp)
-  //     })
-  //    })
-  //   } else if (codeParam && accessToken && loginWith.current === "GitHub") {
-  //    getUserDataGithub(accessToken).then((resp: UserDataGithub) => {
-  //     localStorage.setItem("accessToken", accessToken)
-  //     setUserDataGithub(resp)
-  //    })
-  //   }
-  //  }, [loginWith])
+  function sendToGame() {
+    socket.emit("join_public"); //added from sockethandling and canvas
+    navigate("/Game");
+  }
   
    useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken")
-  
+
+    let tempObj = {
+      email: "",
+      name: "",
+    };
+    const accessToken = localStorage.getItem("accessToken");
     if (accessToken && loginWith.current === "Google") {
-     getUserDataGoogle(accessToken).then(resp => {
-      setUserDataGoogle(resp)
-     })
+      getUserDataGoogle(accessToken).then((resp) => {
+        setUserDataGoogle(resp);
+        updateUserData(resp);
+        tempObj.email = resp.email;
+        tempObj.name = resp.name;
+        accessOrCreateUser(tempObj);
+      });
     }
-   }, [loginWith])
-  
-   const setLogOut = () => {
-    localStorage.removeItem("accessToken")
-    localStorage.removeItem("loginWith")
-    navigate("/")
-   }
-  //  if (!userDataGithub && !userDataGoogle) return null
-   if (!userDataGoogle) return null
+  }, [loginWith]);
+
+  const accessOrCreateUser = (object: any) => {
+    getData(`/user/${object.email}`).then((user) => {
+      if (!user) {
+        postData("/user", { email: object.email, name: object.name });
+      }
+    });
+  };
+
+  const setLogOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("loginWith");
+    navigate("/");
+  };
+  if (!userDataGoogle) return null;
+
+  const createUser = (event: any) => {
+    event.preventDefault();
+    console.log(event);
+  };
 
   return (
     <>
-    {/* sockets */}
-        <div className="App">
-          <input placeholder='Message...' onChange={(event) => {
-            setMessage(event.target.value);
-          }}/>
-          <button onClick={sendMessage}>Send Message</button>
-          <h1>Message: </h1>
-          {messageReceived}
-        </div>
-        {/* Google Auth */}
+
+  <div>    
+  <form>
+    <label htmlFor="name">Game Display Name:</label>
+    <input type="text" placeholder='Name'></input>
+    <button onClick={createUser}>Create Game User</button>
+  </form>
+</div>
         <Navbar isBordered variant='sticky'>
     <Navbar.Brand>
      <User
@@ -134,7 +126,11 @@ const Lobby = () => {
      </Col>
     </Row>
    </Container>
+   <div className='theButton'>
+    <button onClick={sendToGame}>Start a Public Game!</button>
+   </div>
   </>
+
   )
 }
 
