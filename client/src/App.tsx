@@ -6,6 +6,7 @@ import Canvas from "./components/canvas/Canvas";
 import Lobby from "./components/lobby/Lobby";
 import SocketHandling from "./components/socketHandling/socketHandling";
 import { userType } from "./types/Types";
+import GamePage from "./pages/GamePage";
 
 function App() {
   const [userData, setUserData] = useState<userType | undefined>();
@@ -36,6 +37,7 @@ function App() {
         />
         <Route path="/sockets" element={<SocketHandling />} />
         <Route path="/game" element={<Canvas />} />
+        <Route path="/game/:gameId" element={<GamePage />} />
       </Routes>
     </Router>
   );
