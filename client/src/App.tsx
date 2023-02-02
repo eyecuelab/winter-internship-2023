@@ -8,6 +8,7 @@ import Test1 from './Test1';
 import Test2 from './Test2';
 import SocketHandling from "./components/socketHandling/socketHandling";
 import { userType } from "./types/Types";
+import GamePage from "./pages/GamePage";
 
 function App() {
   const [userData, setUserData] = useState<userType | undefined>();
@@ -38,8 +39,12 @@ function App() {
         />
         <Route path="/sockets" element={<SocketHandling />} />
         <Route path="/game" element={<Canvas />} />
+
+        <Route path="/game/:gameId" element={<GamePage />} />
+
         <Route path="/Test1" element={<Test1 />} />
         <Route path="/Test2" element={<Test2 />} />
+
       </Routes>
     </Router>
   );
