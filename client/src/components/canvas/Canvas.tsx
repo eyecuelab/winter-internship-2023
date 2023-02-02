@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Player } from "./gameClasses";
+import { socketID, socket } from './../../GlobalSocket';
 
-import SocketHandling from "../socketHandling/socketHandling";
-import * as io from 'socket.io-client';
-const socket = io.connect("http://localhost:3001");
+// import SocketHandling from "../socketHandling/socketHandling";
+// import * as io from 'socket.io-client';
+// const socket = io.connect("http://localhost:3001");
 
 function Canvas() {
   const lastKeyRef = useRef('');
@@ -59,9 +60,9 @@ function Canvas() {
   let userList: Array<string> = [];
 
   //socketHandling logic:
-  const joinPublic = () => {
-    socket.emit("join_public");
-  };
+  // const joinPublic = () => {
+  //   socket.emit("join_public");
+  // };
   const keypress = (key: string) => {
     socket.emit("key_press", { key, roomNumber });
   };
@@ -336,7 +337,7 @@ function Canvas() {
       
       {/* socketHandling: */}
       <div className="SocketHandling">
-      <button onClick={joinPublic}>Join a public game!</button>
+      {/* <button onClick={joinPublic}>Join a public game!</button> */}
       <h1>inputs below:</h1>
       <ul>
         <li>

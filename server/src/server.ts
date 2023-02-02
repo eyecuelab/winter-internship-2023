@@ -61,6 +61,11 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("receive_message", data);
 
   })
+  socket.on("disconnect", (reason) => {
+    console.log(socket.id + " disconnected")
+  })
+
+  
 })
 
 server.listen(3001, () =>

@@ -25,7 +25,13 @@ A fun party game where teams of two control karts on a 2d pacman-like map.
 
 ##### useful tidbits for dev team:
 
-* run client - npm run dev run server - npm start
 
-* env file for database:
+
+
+run client - npm run dev
+run server - npm start
+
+
+env file for database:
 DATABASE_URL=postgresql://<USERNAME>:<PASSWORD>@localhost:5432/<DB_NAME>
+

@@ -1,9 +1,12 @@
-import { useGoogleLogin } from "@react-oauth/google";
-import { useNavigate } from "react-router-dom";
-import { getData, postData } from "../../ApiHelper";
-import React, { Dispatch, SetStateAction } from "react";
-import { userType } from "../../types/Types";
-import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
+
+import { useGoogleLogin } from "@react-oauth/google"
+import { useNavigate } from "react-router-dom"
+import { getData, postData } from '../../ApiHelper';
+import React, { Dispatch, SetStateAction } from 'react';
+import { userType } from '../../types/Types';
+import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
+import { socketID, socket } from './../../GlobalSocket';
+
 interface Props {
   userData: userType | undefined;
   setUserData: Dispatch<SetStateAction<userType | undefined>>;
