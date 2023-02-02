@@ -13,8 +13,7 @@ import {
   User,
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
-import { socketID, socket } from './../../GlobalSocket';
-
+import { socketID, socket } from "./../../GlobalSocket";
 
 import { getUserDataGoogle } from "./services/lobby-services";
 
@@ -30,23 +29,33 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
-  const { updateUserData } = props;
-
+  const { userData, updateUserData } = props;
+  const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
-
   const loginWith = useRef(localStorage.getItem("loginWith"));
 
+  //start game functions:
+  const createGame = (gameData: any) => {
+    return postData(`/game`, gameData)
+  };
 
-  const navigate = useNavigate()
-  function sendToGame() {
-    socket.emit("join_public"); //added from sockethandling and canvas
+  const createGameUser = (gameUserData: any) => {
+    postData(`/gameUser`, gameUserData);
+  };
+
+  const handleStartGameClick = async () => {
+    const resp = await createGame({ timeLeft: 0, boardArray: {}, pelletCount: 0 });
+    const gameId = resp.id;
+    createGameUser({gameId: gameId, userId: 1, roleId: 1})
+
+    socket.emit("join_public");
     navigate("/Game");
   }
-  
-   useEffect(() => {
 
+  //create user with Google user data functions:
+  useEffect(() => {
     let tempObj = {
       email: "",
       name: "",
@@ -66,7 +75,7 @@ const Lobby = (props: Props) => {
   const accessOrCreateUser = (object: any) => {
     getData(`/user/${object.email}`).then((user) => {
       if (!user) {
-        postData("/user", { email: object.email, name: object.name });
+        const resp = postData("/user", { email: object.email, name: object.name })
       }
     });
   };
@@ -76,6 +85,8 @@ const Lobby = (props: Props) => {
     localStorage.removeItem("loginWith");
     navigate("/");
   };
+
+  //what is this if-clause doing?
   if (!userDataGoogle) return null;
 
   const createUser = (event: any) => {
@@ -85,53 +96,51 @@ const Lobby = (props: Props) => {
 
   return (
     <>
-
-  <div>    
-  <form>
-    <label htmlFor="name">Game Display Name:</label>
-    <input type="text" placeholder='Name'></input>
-    <button onClick={createUser}>Create Game User</button>
-  </form>
-</div>
-        <Navbar isBordered variant='sticky'>
-    <Navbar.Brand>
-     <User
-      bordered
-      color='primary'
-      size='lg'
-      src={userDataGoogle?.picture}
-      name={userDataGoogle?.name}
-      description={userDataGoogle?.email}
-     />
-    </Navbar.Brand>
-    <Navbar.Content>
-     <Navbar.Item>
-      <Button
-       auto
-       flat
-       size='sm'
-      //  icon={<LogOutIcon fill='currentColor' />}
-       color='primary'
-       onClick={() => setLogOut()}
-      >
-       Log out
-      </Button>
-     </Navbar.Item>
-    </Navbar.Content>
-   </Navbar>
-   <Container gap={0}>
-    <Row gap={1}>
-     <Col>
-      <Text h2>Login with {loginWith.current}</Text>
-     </Col>
-    </Row>
-   </Container>
-   <div className='theButton'>
-    <button onClick={sendToGame}>Start a Public Game!</button>
-   </div>
-  </>
-
-  )
-}
+      <div>
+        <form>
+          <label htmlFor="name">Game Display Name:</label>
+          <input type="text" placeholder="Name"></input>
+          <button onClick={createUser}>Create Game User</button>
+        </form>
+      </div>
+      <Navbar isBordered variant="sticky">
+        <Navbar.Brand>
+          <User
+            bordered
+            color="primary"
+            size="lg"
+            src={userDataGoogle?.picture}
+            name={userDataGoogle?.name}
+            description={userDataGoogle?.email}
+          />
+        </Navbar.Brand>
+        <Navbar.Content>
+          <Navbar.Item>
+            <Button
+              auto
+              flat
+              size="sm"
+              //  icon={<LogOutIcon fill='currentColor' />}
+              color="primary"
+              onClick={() => setLogOut()}
+            >
+              Log out
+            </Button>
+          </Navbar.Item>
+        </Navbar.Content>
+      </Navbar>
+      <Container gap={0}>
+        <Row gap={1}>
+          <Col>
+            <Text h2>Login with {loginWith.current}</Text>
+          </Col>
+        </Row>
+      </Container>
+      <div className="theButton">
+        <button onClick={handleStartGameClick}>Start a Public Game!</button>
+      </div>
+    </>
+  );
+};
 
 export default Lobby;
