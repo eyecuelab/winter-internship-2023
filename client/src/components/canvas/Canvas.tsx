@@ -273,7 +273,6 @@ function Canvas() {
     });
 
     socket.on("receive_room_number", (data: Array<any>) => {
-      console.log(data);
       roomNumber = data[0];
       ifModerator = data[1];
     });

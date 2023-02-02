@@ -2,6 +2,7 @@ import { createGame, updateGame, getGameById } from "../Models/game";
 
 const gameControllers = {
   async createGameController(req: any, res: any) {
+    console.log(req.body);
     const { timeLeft, boardArray, pelletCount } = req.body;
     const newGame = await createGame(timeLeft, boardArray, pelletCount);
     res.status(200).json(newGame);

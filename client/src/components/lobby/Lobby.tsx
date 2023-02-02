@@ -30,27 +30,28 @@ interface Props {
 
 const Lobby = (props: Props) => {
   const { updateUserData } = props;
-
+  const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
-
   const loginWith = useRef(localStorage.getItem("loginWith"));
 
-  const navigate = useNavigate();
+  //start game functions:
+  const createGame = (gameData: any) => {
+    return postData(`/game`, gameData)
+  };
 
-  function handleStartGameClick() {
-    createGame({timeLeft: 0,
-      boardArray: {},
-      pelletCount: 0})
+  const createGameUser = (gameUserData: any) => {
+    postData(`/gameUser`, gameUserData);
+  };
+
+  const handleStartGameClick = async () => {
+    const resp = await createGame({ timeLeft: 0, boardArray: {}, pelletCount: 0 });
     socket.emit("join_public");
     navigate("/Game");
   }
 
-  const createGame = (gameData: any) => {
-    postData(`/game`, gameData)
-    };
-
+  //create user with Google user data functions:
   useEffect(() => {
     let tempObj = {
       email: "",
@@ -81,6 +82,8 @@ const Lobby = (props: Props) => {
     localStorage.removeItem("loginWith");
     navigate("/");
   };
+
+  //what is this if-clause doing?
   if (!userDataGoogle) return null;
 
   const createUser = (event: any) => {

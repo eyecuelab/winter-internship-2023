@@ -1,4 +1,8 @@
-import usersRouter from './Routes/user';
+import userRouter from './Routes/user';
+import gameRouter from './Routes/game';
+import teamRouter from './Routes/team';
+import teamUserRouter from './Routes/teamUser';
+import gameUserRouter from './Routes/gameUser';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';
@@ -14,7 +18,11 @@ app.use(cors({
 app.use(express.json());
 
 app.use(
-	usersRouter
+	userRouter,
+  gameRouter,
+  teamRouter,
+  gameUserRouter,
+  teamUserRouter
 );
 
 // app.use('/api/github', githubRoutes);
