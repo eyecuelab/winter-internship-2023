@@ -59,8 +59,10 @@ function Canvas() {
   const [user2Input, setUser2Input] = useState("");
   const [user3Input, setUser3Input] = useState("");
   const [user4Input, setUser4Input] = useState("");
+
+  //useMemo() and create a useEffect just for these 3 vars:
   let roomNumber = "";
-  let ifModerator: boolean = false;
+  let ifModerator: boolean = false; //isModerator
   let userList: Array<string> = [];
 
   //socketHandling logic:

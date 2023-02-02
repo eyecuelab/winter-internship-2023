@@ -35,24 +35,30 @@ const Lobby = (props: Props) => {
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
+  let gameId = 0;
+  let teamId = 0;
+  // const [gameId, setGameId] = useState(null);
 
   //start game functions:
-  const createGame = (gameData: any) => {
-    return postData(`/game`, gameData)
-  };
-
-  const createGameUser = (gameUserData: any) => {
-    postData(`/gameUser`, gameUserData);
-  };
 
   const handleStartGameClick = async () => {
-    const resp = await createGame({ timeLeft: 0, boardArray: {}, pelletCount: 0 });
-    const gameId = resp.id;
-    createGameUser({gameId: gameId, userId: 1, roleId: 1})
-
-    socket.emit("join_public");
-    navigate("/Game");
-  }
+    //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
+    await postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
+      .then((resp) => {
+        // setGameId(resp.id);
+        gameId = resp.id
+        postData(`/gameUser`, { gameId: resp.id, userId: 1, roleId: 1 });
+        postData(`/team`, { gameId: resp.id, teamName: "team1", score: 0, characterId: 1, currentDirectionMoving: "", nextDirection: "left", powerUp: false, kartId: 1 });
+        //create team , return team data w/ id
+      })
+      .then((data) => {
+        //create a team user with teamId and userId
+        // postData(`/teamUser`, { teamId: resp.id, userId: 1, roleId: 1 });
+        console.log(data);
+        socket.emit("join_public");
+        navigate(`/Game/${gameId}`);
+      });
+  };
 
   //create user with Google user data functions:
   useEffect(() => {
@@ -75,7 +81,10 @@ const Lobby = (props: Props) => {
   const accessOrCreateUser = (object: any) => {
     getData(`/user/${object.email}`).then((user) => {
       if (!user) {
-        const resp = postData("/user", { email: object.email, name: object.name })
+        const resp = postData("/user", {
+          email: object.email,
+          name: object.name,
+        });
       }
     });
   };
