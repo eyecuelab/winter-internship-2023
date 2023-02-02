@@ -29,7 +29,7 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
-  const { updateUserData } = props;
+  const { userData, updateUserData } = props;
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
@@ -47,6 +47,9 @@ const Lobby = (props: Props) => {
 
   const handleStartGameClick = async () => {
     const resp = await createGame({ timeLeft: 0, boardArray: {}, pelletCount: 0 });
+    const gameId = resp.id;
+    createGameUser({gameId: gameId, userId: 1, roleId: 1})
+
     socket.emit("join_public");
     navigate("/Game");
   }
@@ -72,7 +75,7 @@ const Lobby = (props: Props) => {
   const accessOrCreateUser = (object: any) => {
     getData(`/user/${object.email}`).then((user) => {
       if (!user) {
-        postData("/user", { email: object.email, name: object.name });
+        const resp = postData("/user", { email: object.email, name: object.name })
       }
     });
   };

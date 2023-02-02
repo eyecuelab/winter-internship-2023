@@ -7,6 +7,7 @@ export const createGameUser = async (
   userId: number,
   roleId: number
 ) => {
+  console.log(gameId, userId, roleId)
   return await prisma.gameUser.create({
     data: {
       ...{

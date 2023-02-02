@@ -7,7 +7,6 @@ export const createGame = async (
   boardArray: Prisma.JsonArray,
   pelletCount: number
 ) => {
-  console.log("create game model");
   return await prisma.game.create({
     data: {
       ...{
