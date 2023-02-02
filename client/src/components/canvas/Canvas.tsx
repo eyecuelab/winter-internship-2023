@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Player } from "./gameClasses";
-import { socketID, socket } from './../../GlobalSocket';
+import { socketID, socket } from "./../../GlobalSocket";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
 // const socket = io.connect("http://localhost:3001");
 
 function Canvas() {
-  const lastKeyRef = useRef('');
+  const lastKeyRef = useRef("");
   const keysPressedRef = useRef({
     w: {
       pressed: false,
@@ -22,24 +22,28 @@ function Canvas() {
     d: {
       pressed: false,
     },
-  }) 
-  
-  const playerRef = useRef({position: {x: 60, y: 60}, velocity: {x: 0, y: 0}, radius: 15 })
+  });
+
+  const playerRef = useRef({
+    position: { x: 60, y: 60 },
+    velocity: { x: 0, y: 0 },
+    radius: 15,
+  });
   const mapRef = useRef<any[][]>([
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
-    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '_', '.', '.', '.', '.', '-'],
-    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
-    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
-    ['-', '.', '-', '-', '.', '.', '.', '-', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '-', '.', '.', '.', '.', '-'],
-    ['-', '.', '-', '.', '-', '-', '-', '.', '-', '.', '-'],
-    ['-', '.', '.', '.', '.', '.', '.', '.', '.', '.', '-'],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ])
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+    ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
+    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
+    ["-", ".", ".", ".", ".", "_", ".", ".", ".", ".", "-"],
+    ["-", ".", "-", "-", ".", ".", ".", "-", "-", ".", "-"],
+    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
+    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
+    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
+    ["-", ".", "-", "-", ".", ".", ".", "-", "-", ".", "-"],
+    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
+    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
+    ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
+    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
+  ]);
   // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -76,7 +80,13 @@ function Canvas() {
   };
 
   //collision detection function:
-  function circleCollidesWithRectangle({ circle, rectangle }: {circle: Player, rectangle: Boundary}) {
+  function circleCollidesWithRectangle({
+    circle,
+    rectangle,
+  }: {
+    circle: Player;
+    rectangle: Boundary;
+  }) {
     return (
       circle.position.y - circle.radius + circle.velocity.y <=
         rectangle.position.y + Boundary.height &&
@@ -95,13 +105,13 @@ function Canvas() {
     mapRef.current.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
-          case '-':
+          case "-":
             tempBoundaries.push(
               new Boundary({
                 position: {
                   x: Boundary.width * j,
                   y: Boundary.height * i,
-                }
+                },
               })
             );
             break;
@@ -110,12 +120,12 @@ function Canvas() {
     });
     // setBoundaries(tempBoundaries)
     boundariesRef.current = tempBoundaries;
-  }
+  };
 
   //updates player movement based on collision detection
   const updatePlayer = () => {
     const player = playerRef.current;
-    if (keysPressedRef.current.w.pressed && lastKeyRef.current === 'w') {
+    if (keysPressedRef.current.w.pressed && lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -135,9 +145,8 @@ function Canvas() {
         } else {
           player.velocity.y = -5;
         }
-        
       }
-    } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === 'a') {
+    } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -158,7 +167,7 @@ function Canvas() {
           player.velocity.x = -5;
         }
       }
-    } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === 's') {
+    } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === "s") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -178,9 +187,8 @@ function Canvas() {
         } else {
           player.velocity.y = 5;
         }
-        
       }
-    } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === 'd') {
+    } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === "d") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -195,19 +203,24 @@ function Canvas() {
             rectangle: boundary,
           })
         ) {
-          playerRef.current = {...playerRef.current, velocity: {x: 0, y: 0} };
+          playerRef.current = {
+            ...playerRef.current,
+            velocity: { x: 0, y: 0 },
+          };
           break;
         } else {
-          playerRef.current = {...playerRef.current, velocity: {x: 5, y: 0} };
+          playerRef.current = {
+            ...playerRef.current,
+            velocity: { x: 5, y: 0 },
+          };
         }
       }
-    }  
+    }
 
     player.position.x += player.velocity.x;
     player.position.y += player.velocity.y;
 
     boundariesRef.current.forEach((boundary) => {
-
       if (
         circleCollidesWithRectangle({
           circle: player,
@@ -219,27 +232,27 @@ function Canvas() {
       }
     });
   };
-  
-  const renderFrame = () => {//updates properties of drawn elements (ball in example) and then draws it on canvas
+
+  const renderFrame = () => {
+    //updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
-    if(!canvas) {
+    if (!canvas) {
       return;
     }
-    const context = canvas.getContext('2d');
-    if(!context) {
+    const context = canvas.getContext("2d");
+    if (!context) {
       return;
-    } 
+    }
     updateBoundaries();
     updatePlayer();
 
-    if (ifModerator){
+    if (ifModerator) {
       const tempPlayer = playerRef.current;
-      socket.emit("player_update", { tempPlayer, roomNumber});
+      socket.emit("player_update", { tempPlayer, roomNumber });
     }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
-
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -257,13 +270,13 @@ function Canvas() {
   useEffect(() => {
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
-    })
+    });
 
     socket.on("receive_room_number", (data: Array<any>) => {
       console.log(data);
       roomNumber = data[0];
       ifModerator = data[1];
-    })
+    });
 
     //socketHandling useEffect:
     socket.on("receive_room_number", (data: Array<any>) => {
@@ -292,68 +305,65 @@ function Canvas() {
       setUser4(data[3]);
       userList = data;
     });
+  }, [socket]);
 
-  }, [socket])
-  
   //add keyboard event listeners when component mounts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
         keysPressedRef.current = {
-          ...keysPressedRef.current, 
+          ...keysPressedRef.current,
           [e.key]: {
-          pressed: true,
-        }}
+            pressed: true,
+          },
+        };
       }
-      console.log("handleKeyDown state:", lastKeyRef.current)
-    }
-
-    const handleKeyUp = (e: KeyboardEvent) => { 
-      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d"){
-        keysPressedRef.current = {
-          ...keysPressedRef.current, 
-          [e.key]: {
-          pressed: false,
-        }}
-      }
-      console.log("handleKeyUp state:", lastKeyRef.current)
-    }
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [])
 
- 
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
+        keysPressedRef.current = {
+          ...keysPressedRef.current,
+          [e.key]: {
+            pressed: false,
+          },
+        };
+      }
+    };
 
-  return ( 
-    <div  style={{color: "white", backgroundColor: "black"}}>
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
+
+  return (
+    <div style={{ color: "white", backgroundColor: "black" }}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
-      
+
       {/* socketHandling: */}
       <div className="SocketHandling">
-      {/* <button onClick={joinPublic}>Join a public game!</button> */}
-      <h1>inputs below:</h1>
-      <ul>
-        <li>
-          {user1}: {user1Input}
-        </li>
-        <li>
-          {user2}: {user2Input}
-        </li>
-        <li>
-          {user3}: {user3Input}
-        </li>
-        <li>
-          {user4}: {user4Input}
-        </li>
-      </ul>
-    </div>
+        {/* <button onClick={joinPublic}>Join a public game!</button> */}
+        <h1>inputs below:</h1>
+        <ul>
+          <li>
+            {user1}: {user1Input}
+          </li>
+          <li>
+            {user2}: {user2Input}
+          </li>
+          <li>
+            {user3}: {user3Input}
+          </li>
+          <li>
+            {user4}: {user4Input}
+          </li>
+        </ul>
+      </div>
     </div>
   );
 }
