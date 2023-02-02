@@ -18,6 +18,14 @@ export const createGame = async (
   });
 };
 
+export const getGameById = async (id: number) => {
+  return await prisma.game.findUnique({
+        where: {
+          id: Number(id)
+        }
+      });
+};
+
 export const updateGame = async (
   id: number,
   timeLeft: number,
@@ -27,6 +35,7 @@ export const updateGame = async (
     where: {
       id: id,
     },
+    
     data: {
       timeLeft: timeLeft,
       pelletCount: pelletCount,

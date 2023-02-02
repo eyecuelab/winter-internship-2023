@@ -1,4 +1,4 @@
-import { createGame, updateGame } from "../Models/game";
+import { createGame, updateGame, getGameById } from "../Models/game";
 
 const gameControllers = {
   async createGameController(req: any, res: any) {
@@ -7,9 +7,15 @@ const gameControllers = {
     res.status(200).json(newGame);
   },
 
+  async getGameController(req: any, res: any) {
+    const { id } = req.params;
+    const foundGame = await getGameById(id);
+    res.json(foundGame);
+  },
+  
   async updateGameController(req: any, res: any) {
-    const { id, timeLeft, boardArray, pelletCount } = req.params;
-    const updatedGame = await updateGame(timeLeft, boardArray, pelletCount);
+    const { id, timeLeft, pelletCount } = req.params;
+    const updatedGame = await updateGame(id, timeLeft, pelletCount);
     res.status(200).json(updatedGame);
   },
 };
