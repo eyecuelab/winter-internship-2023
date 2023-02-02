@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -13,19 +13,19 @@ const prisma = new PrismaClient();
 export const findUserByEmail = async (email: string) => {
   const users = await prisma.user.findMany({
     where: {
-      email: email
-  }
-});
+      email: email,
+    },
+  });
   return users[0];
-}
+};
 
 export const createUser = async (email: string, name: string) => {
   return await prisma.user.create({
     data: {
-                  ...{
-                    email: email,
-                    name: name
-                  }
-    }
+      ...{
+        email: email,
+        name: name,
+      },
+    },
   });
-}
+};
