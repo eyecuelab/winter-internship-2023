@@ -37,7 +37,7 @@ async function main() {
       where: { id: i },
 			update: {},
       create: {
-        name: characters[i]["name"]
+        name: roles[i]["name"]
       },
     });
   }
