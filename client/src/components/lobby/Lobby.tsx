@@ -22,6 +22,7 @@ interface UserDataGoogle {
   picture: string;
   email: string;
 }
+
 interface Props {
   userData: userType | undefined;
   updateUserData: (newData: userType) => void;
@@ -45,16 +46,26 @@ const Lobby = (props: Props) => {
     //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
     await postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
       .then((resp) => {
-        // setGameId(resp.id);
-        gameId = resp.id
+        gameId = resp.id;
         postData(`/gameUser`, { gameId: resp.id, userId: 1, roleId: 1 });
-        postData(`/team`, { gameId: resp.id, teamName: "team1", score: 0, characterId: 1, currentDirectionMoving: "", nextDirection: "left", powerUp: false, kartId: 1 });
-        //create team , return team data w/ id
       })
-      .then((data) => {
-        //create a team user with teamId and userId
-        // postData(`/teamUser`, { teamId: resp.id, userId: 1, roleId: 1 });
-        console.log(data);
+      .then((resp) => {
+        const teamData = postData(`/team`, {
+          gameId: gameId,
+          teamName: "team1",
+          score: 0,
+          characterId: 1,
+          currentDirectionMoving: "",
+          nextDirection: "left",
+          powerUp: false,
+          kartId: 1,
+        });
+        return teamData;
+      })
+      .then((teamData) => {
+        const teamId = teamData.id; 
+        postData(`/teamUser`, { teamId: teamId, userId: 1, verticalOrHorizontalControl: "vertical" });
+
         socket.emit("join_public");
         navigate(`/Game/${gameId}`);
       });
