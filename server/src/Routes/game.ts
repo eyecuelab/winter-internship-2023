@@ -3,6 +3,7 @@ import express from "express";
 
 const router = express.Router();
 
+router.get("/game/:id", gameControllers.getGameController)
 router.patch("/game/:id", gameControllers.updateGameController);
 router.post("/game", gameControllers.createGameController);
 
