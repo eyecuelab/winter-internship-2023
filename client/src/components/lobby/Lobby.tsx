@@ -38,11 +38,16 @@ const Lobby = (props: Props) => {
   const loginWith = useRef(localStorage.getItem("loginWith"));
   let gameId = 0;
   let teamId = 0;
+  let gameUsers = [];
   // const [gameId, setGameId] = useState(null);
 
   //start game functions:
 
   const handleStartGameClick = async () => {
+    await getData(`/game/${gameId}/gameUser`).then((resp) => {
+      gameUsers = resp;
+      console.log(gameUsers);
+    })
     //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
     await postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
       .then((resp) => {
