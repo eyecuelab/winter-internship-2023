@@ -36,70 +36,87 @@ const Lobby = (props: Props) => {
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
-  let gameId = 1;
-  let teamId = 1;
-  let gameUsers = [];
-  // const [gameId, setGameId] = useState(null);
+  const [gameId, setGameId] = useState(null);
 
   //start game functions:
 
-  const handleStartGameClick = async () => {
-  //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
-    await getData(`/game/${gameId}/gameUser`).then((resp) => {
-      gameUsers = resp;
-      console.log(gameUsers);
-      if (gameUsers.length !== 0 && gameUsers.length < 4) {
-        postData(`/gameUser`, { gameId: gameId, userId: userData?.id, roleId: 1 })
-        .then((resp) => {
-          const teamData = postData(`/team`, {
-            gameId: gameId,
-            teamName: "team1",
-            score: 0,
-            characterId: 1,
-            currentDirectionMoving: "",
-            nextDirection: "left",
-            powerUp: false,
-            kartId: 1,
-          });
-          return teamData;
-        })
-        .then((teamData) => {
-          const teamId = teamData.id; 
-          postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+  const handleJoinAGame = (gameUsers: any) => {
+  postData(`/gameUser`, { gameId: gameUsers[0].gameId, userId: userData?.id, roleId: 1 })
+    .then((gameUser) => {
+      postData(`/team`, {
+        gameId: gameUser.gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      })
+        .then((team) => {
+          postData(`/teamUser`, { teamId: team.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
 
+          setGameId(team.gameId);
           socket.emit("join_public");
-          navigate(`/Game/${gameId}`);
-      })
-    }
-      else if (gameUsers.length = 0 | 4) {
-        postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
-      .then((resp) => {
-        gameId = resp.id;
-        postData(`/gameUser`, { gameId: resp.id, userId: userData?.id, roleId: 1 });
-      })
-      .then((resp) => {
-        const teamData = postData(`/team`, {
-          gameId: gameId,
-          teamName: "team1",
-          score: 0,
-          characterId: 1,
-          currentDirectionMoving: "",
-          nextDirection: "left",
-          powerUp: false,
-          kartId: 1,
-        });
-        return teamData;
-      })
-      .then((teamData) => {
-        const teamId = teamData.id; 
-        postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
-
-        socket.emit("join_public");
-        navigate(`/Game/${gameId}`);
+          navigate(`/Game/${team.gameId}`);
       });
-      } 
+    });
+};
+
+const handleStartAGame = () => {
+  postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
+  .then((newGame) => {
+    postData(`/gameUser`, { gameId: newGame.id, userId: userData?.id, roleId: 1 })
+    .then((newGameUser) => {
+      postData(`/team`, {
+        gameId: newGameUser.gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      })
+      .then((newTeam) => {
+        postData(`/teamUser`, { teamId: newTeam.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+
+        setGameId(newTeam.gameId);
+        socket.emit("join_public");
+        navigate(`/Game/${newTeam.gameId}`);
+      });
+    });
+  });
+};
+
+  const handleStartGameClick = async () => {
+  //game doesn't start until 4 people are in the room
+  //maybe delete the gameUser association if they leave the room
+  //connect sockets 
+  //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
+  //cleanup function for gameId, get request for the last game 
+  //start button: map through game table check if theres any open games
+  //phase 2- MVP- list out buttons for open games
+
+//get request to look for the last gameId posted
+await getData(`/game/lastpost/desc`)
+  .then((lastPost) => {
+    if (!lastPost) {
+      handleStartAGame();
+    } else {
+        console.log(lastPost);
+        getData(`/game/${lastPost.id}/gameUser`)
+          .then((gameUsers) => {
+            if (gameUsers.length !== 0 && gameUsers.length < 4) {
+            handleJoinAGame(gameUsers);
+            }
+            else if (gameUsers.length = 0 | 4) {
+              handleStartAGame();
+          }
+        })
+      }
     })
-  };
+}
 
   //create user with Google user data functions:
   useEffect(() => {
@@ -213,6 +230,7 @@ const Lobby = (props: Props) => {
       </div>
     </>
   );
-};
+}
+
 
 export default Lobby;

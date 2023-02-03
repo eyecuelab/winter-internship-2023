@@ -26,6 +26,14 @@ export const getGameById = async (id: number) => {
       });
 };
 
+export const getLastGame = async () => {
+  return await prisma.game.findFirst({
+  orderBy: {
+    id: "desc"
+    }
+  });
+};
+
 export const updateGame = async (
   id: number,
   timeLeft: number,
