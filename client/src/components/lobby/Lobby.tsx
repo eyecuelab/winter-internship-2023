@@ -36,13 +36,58 @@ const Lobby = (props: Props) => {
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
-  // let gameId = 1;
-  // let teamId = 1;
-  // let gameUsers = [];
-
-  // const [gameId, setGameId] = useState(null);
+  const [gameId, setGameId] = useState(null);
 
   //start game functions:
+
+  const handleJoinAGame = (gameUsers: any) => {
+  postData(`/gameUser`, { gameId: gameUsers[0].gameId, userId: userData?.id, roleId: 1 })
+    .then((gameUser) => {
+      postData(`/team`, {
+        gameId: gameUser.gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      })
+        .then((team) => {
+          postData(`/teamUser`, { teamId: team.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+
+          setGameId(team.gameId);
+          socket.emit("join_public");
+          navigate(`/Game/${team.gameId}`);
+      });
+    });
+};
+
+const handleStartAGame = () => {
+  postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
+  .then((newGame) => {
+    postData(`/gameUser`, { gameId: newGame.id, userId: userData?.id, roleId: 1 })
+    .then((newGameUser) => {
+      postData(`/team`, {
+        gameId: newGameUser.gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      })
+      .then((newTeam) => {
+        postData(`/teamUser`, { teamId: newTeam.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+
+        setGameId(newTeam.gameId);
+        socket.emit("join_public");
+        navigate(`/Game/${newTeam.gameId}`);
+      });
+    });
+  });
+};
 
   const handleStartGameClick = async () => {
   //game doesn't start until 4 people are in the room
@@ -54,61 +99,23 @@ const Lobby = (props: Props) => {
   //phase 2- MVP- list out buttons for open games
 
 //get request to look for the last gameId posted
-await getData(`/game/lastpost/desc`).then((lastPost) => {
-  //handle if result is null
-    const gameUsers = getData(`/game/${lastPost.gameId}/gameUser`)
-    return gameUsers;
-})
-.then((gameUsers) => {
-
-      if (gameUsers.length !== 0 && gameUsers.length < 4) {
-       postData(`/gameUser`, { gameId: gameUsers[0].gameId, userId: userData?.id, roleId: 1 })
-
-        .then((gameUser) => {
-         postData(`/team`, {
-            gameId: gameUser.gameId,
-            teamName: "team1",
-            score: 0,
-            characterId: 1,
-            currentDirectionMoving: "",
-            nextDirection: "left",
-            powerUp: false,
-            kartId: 1,
-          })
-        .then((team) => {
-          postData(`/teamUser`, { teamId: team.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
-
-          socket.emit("join_public");
-
-          navigate(`/Game/${team.gameId}`);
-      })
-    })
-  }
-      else if (gameUsers.length = 0 | 4) {
-        postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
-      .then((newGame) => {
-        postData(`/gameUser`, { gameId: newGame.id, userId: userData?.id, roleId: 1 })
-      .then((newGameUser) => {
-        postData(`/team`, {
-          gameId: newGameUser.id,
-          teamName: "team1",
-          score: 0,
-          characterId: 1,
-          currentDirectionMoving: "",
-          nextDirection: "left",
-          powerUp: false,
-          kartId: 1,
+await getData(`/game/lastpost/desc`)
+  .then((lastPost) => {
+    if (!lastPost) {
+      handleStartAGame();
+    } else {
+        console.log(lastPost);
+        getData(`/game/${lastPost.id}/gameUser`)
+          .then((gameUsers) => {
+            if (gameUsers.length !== 0 && gameUsers.length < 4) {
+            handleJoinAGame(gameUsers);
+            }
+            else if (gameUsers.length = 0 | 4) {
+              handleStartAGame();
+          }
         })
-      .then((newTeam) => {
-        postData(`/teamUser`, { teamId: newTeam.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
-
-        socket.emit("join_public");
-        navigate(`/Game/${newTeam.gameId}`);
-      })
-      }) 
-      })
-    }
-  })
+      }
+    })
 }
 
   //create user with Google user data functions:
