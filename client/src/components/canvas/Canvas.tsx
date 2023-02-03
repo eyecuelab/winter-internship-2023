@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import frameRenderer from "./FrameRenderer";
-import { Boundary, Player } from "./GameClasses";
+import frameRenderer from "./frameRenderer";
+import { Boundary, Player, Team } from "./gameClasses";
 import { socketID, socket } from "./../../GlobalSocket";
 
 // import SocketHandling from "../socketHandling/socketHandling";
@@ -51,19 +51,35 @@ function Canvas() {
   const size = { width: 700, height: 700 };
 
   //socketHandling state:
-  const [user1, setUser1] = useState("");
-  const [user2, setUser2] = useState("");
-  const [user3, setUser3] = useState("");
-  const [user4, setUser4] = useState("");
-  const [user1Input, setUser1Input] = useState("");
-  const [user2Input, setUser2Input] = useState("");
-  const [user3Input, setUser3Input] = useState("");
-  const [user4Input, setUser4Input] = useState("");
+  const socketUsersRef = useRef({
+    activeUser: "",
+    user1: "",
+    user2: "",
+    user3: "",
+    user4: "",
+    user1Input: "",
+    user2Input: "",
+    user3Input: "",
+    user4Input: "",
+  })
+  // const [user1, setUser1] = useState("");
+  // const [user2, setUser2] = useState("");
+  // const [user3, setUser3] = useState("");
+  // const [user4, setUser4] = useState("");
+  
+  // const [user1Input, setUser1Input] = useState("");
+  // const [user2Input, setUser2Input] = useState("");
+  // const [user3Input, setUser3Input] = useState("");
+  // const [user4Input, setUser4Input] = useState("");
 
   //useMemo() and create a useEffect just for these 3 vars:
   let roomNumber = "";
   let ifModerator: boolean = false; //isModerator
   let userList: Array<string> = [];
+
+  useEffect(() => {
+
+  }, [])
 
   //socketHandling logic:
   // const joinPublic = () => {
@@ -74,11 +90,23 @@ function Canvas() {
   };
 
   const sendUsers = (data: Array<string>) => {
-    setUser1(userList[0]);
-    setUser2(userList[1]);
-    setUser3(userList[2]);
-    setUser4(userList[3]);
+    // socketUsersRef.current = ({...socketUsersRef.current, 
+    //   user1: userList[0],
+    //   user2: userList[1],
+    //   user3: userList[2],
+    //   user4: userList[3],
+    // })
+    // // setUser1(userList[0]);
+    // // setUser2(userList[1]);
+    // // setUser3(userList[2]);
+    // // setUser4(userList[3]);
     socket.emit("mod_sends_user_list", { userList, roomNumber });
+  };
+
+  const toggleControl = (id: string) => {
+    socketUsersRef.current = {...socketUsersRef.current, activeUser: id}
+    // setActiveUser(id);
+    socket.emit("toggle_control", { id, roomNumber });
   };
 
   //collision detection function:
@@ -269,6 +297,7 @@ function Canvas() {
     };
   }, []);
 
+  //socketHandling useEffect:
   useEffect(() => {
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
@@ -279,7 +308,6 @@ function Canvas() {
       ifModerator = data[1];
     });
 
-    //socketHandling useEffect:
     socket.on("receive_room_number", (data: Array<any>) => {
       roomNumber = data[0];
       ifModerator = data[1];
@@ -300,10 +328,12 @@ function Canvas() {
     });
 
     socket.on("get_user_list", (data: Array<string>) => {
-      setUser1(data[0]);
-      setUser2(data[1]);
-      setUser3(data[2]);
-      setUser4(data[3]);
+    socketUsersRef.current = ({...socketUsersRef.current, 
+      user1: userList[0],
+      user2: userList[1],
+      user3: userList[2],
+      user4: userList[3],
+    })
       userList = data;
     });
   }, [socket]);
@@ -352,16 +382,16 @@ function Canvas() {
         <h1>inputs below:</h1>
         <ul>
           <li>
-            {user1}: {user1Input}
+            {socketUsersRef.current.user1}: {socketUsersRef.current.user1Input}
           </li>
           <li>
-            {user2}: {user2Input}
+            {socketUsersRef.current.user2}: {socketUsersRef.current.user2Input}
           </li>
           <li>
-            {user3}: {user3Input}
+            {socketUsersRef.current.user3}: {socketUsersRef.current.user3Input}
           </li>
           <li>
-            {user4}: {user4Input}
+            {socketUsersRef.current.user4}: {socketUsersRef.current.user4Input}
           </li>
         </ul>
       </div>
