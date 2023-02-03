@@ -13,7 +13,7 @@ const gameControllers = {
     res.json(foundGame);
   },
 
-  async getLastGameController(res: any) {
+  async getLastGameController(req: any, res: any) {
     const foundGame = await getLastGame();
     res.json(foundGame);
   },
