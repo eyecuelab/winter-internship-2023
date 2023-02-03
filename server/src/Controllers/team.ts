@@ -1,4 +1,4 @@
-import { createTeam, updateTeam } from "../Models/team";
+import { createTeam, updateTeam } from "../models/team";
 
 const teamControllers = {
   async createTeam(req: any, res: any) {

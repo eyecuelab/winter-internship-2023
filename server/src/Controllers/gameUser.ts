@@ -1,12 +1,18 @@
-import { createGameUser } from "../Models/gameUser";
+import { createGameUser, findManyGameUsers } from "../models/gameUser";
 
 const gameUserControllers = {
+
   async createGameUser(req: any, res: any) {
-    console.log(req.body);
     const { gameId, userId, roleId } = req.body;
     const newGameUser = await createGameUser(gameId, userId, roleId);
-    res.status(201).json(newGameUser);
+    res.status(200).json(newGameUser);
   },
-};
+
+  async findManyGameUsers(req: any, res: any) {
+    const { gameId } = req.params;
+    const GameUser = await findManyGameUsers(gameId);
+    res.status(200).json(GameUser);
+  }
+}
 
 export default gameUserControllers;

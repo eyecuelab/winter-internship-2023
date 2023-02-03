@@ -1,6 +1,6 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { getData, postData } from "../../ApiHelper";
+import { getData, postData } from "../../apiHelper";
 import React, { Dispatch, SetStateAction } from "react";
 import { userType } from "../../types/Types";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
@@ -30,6 +30,12 @@ const Login = () => {
     },
   });
 
+  const loginAsGuest = () => {
+      localStorage.clear();
+      localStorage.setItem("loginWith", "Guest");
+      navigate("/lobby");
+  }
+
   return (
     <>
       <Container
@@ -55,12 +61,17 @@ const Login = () => {
             <Spacer x={0.5} />
             GitHub
           </Button> */}
-          <Spacer y={1} />
 
           <Button color="gradient" auto ghost onClick={() => loginToGoogle()}>
             {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Google
+          </Button>
+          <Spacer y={1} />
+          <Button color="gradient" auto ghost onClick={() => loginAsGuest()}>
+            {/* <IconGoogle /> */}
+            <Spacer x={.5} />
+            Continue as Guest
           </Button>
         </Card>
       </Container>

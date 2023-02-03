@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import frameRenderer from "./frameRenderer";
-import { Boundary, Player } from "./gameClasses";
+import frameRenderer from "./FrameRenderer";
+import { Boundary, Player } from "./GameClasses";
 import { socketID, socket } from "./../../GlobalSocket";
 
 // import SocketHandling from "../socketHandling/socketHandling";

@@ -7,7 +7,6 @@ export const createGameUser = async (
   userId: number,
   roleId: number
 ) => {
-  console.log(gameId, userId, roleId)
   return await prisma.gameUser.create({
     data: {
       ...{
@@ -15,6 +14,16 @@ export const createGameUser = async (
         user: { connect: { id: userId } },
         role: { connect: { id: roleId } },
       },
+    },
+  });
+};
+
+export const findManyGameUsers = async (
+  gameId: string
+) => {
+  return await prisma.gameUser.findMany({
+    where: {
+        gameId: parseInt(gameId),
     },
   });
 };
