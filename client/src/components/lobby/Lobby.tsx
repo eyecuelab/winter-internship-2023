@@ -37,19 +37,41 @@ const Lobby = (props: Props) => {
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
   let gameId = 1;
-  let teamId = 0;
+  let teamId = 1;
   let gameUsers = [];
   // const [gameId, setGameId] = useState(null);
 
   //start game functions:
 
   const handleStartGameClick = async () => {
+
     await getData(`/game/${gameId}/gameUser`).then((resp) => {
       gameUsers = resp;
-      console.log(gameUsers);
-    })
-    //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
-    await postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
+      if (gameUsers.length !== 0 && gameUsers.length < 4) {
+        postData(`/gameUser`, { gameId: gameId, userId: userData?.id, roleId: 1 })
+        .then((resp) => {
+          const teamData = postData(`/team`, {
+            gameId: gameId,
+            teamName: "team1",
+            score: 0,
+            characterId: 1,
+            currentDirectionMoving: "",
+            nextDirection: "left",
+            powerUp: false,
+            kartId: 1,
+          });
+          return teamData;
+        })
+        .then((teamData) => {
+          const teamId = teamData.id; 
+          postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+          
+          socket.emit("join_public");
+          navigate(`/Game/${gameId}`);
+      })
+    }
+      else if (gameUsers.length = 0 | 4) {
+        postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
       .then((resp) => {
         gameId = resp.id;
         postData(`/gameUser`, { gameId: resp.id, userId: userData?.id, roleId: 1 });
@@ -74,6 +96,9 @@ const Lobby = (props: Props) => {
         socket.emit("join_public");
         navigate(`/Game/${gameId}`);
       });
+      } 
+    })
+    //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
   };
 
   //create user with Google user data functions:
