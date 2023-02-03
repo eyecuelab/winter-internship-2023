@@ -47,7 +47,6 @@ const Lobby = (props: Props) => {
   //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
     await getData(`/game/${gameId}/gameUser`).then((resp) => {
       gameUsers = resp;
-      console.log(gameUsers);
       if (gameUsers.length !== 0 && gameUsers.length < 4) {
         postData(`/gameUser`, { gameId: gameId, userId: userData?.id, roleId: 1 })
         .then((resp) => {
@@ -95,7 +94,7 @@ const Lobby = (props: Props) => {
         postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
 
         socket.emit("join_public");
-        navigate(`/Game/${gameId}`);
+        navigate(`/Game`);
       });
       } 
     })

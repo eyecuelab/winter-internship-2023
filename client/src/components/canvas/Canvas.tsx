@@ -335,7 +335,9 @@ function Canvas() {
       user4: userList[3],
     })
       userList = data;
+      console.log(data);
     });
+
   }, [socket]);
 
   //add keyboard event listeners when component mounts
