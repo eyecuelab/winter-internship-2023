@@ -19,11 +19,11 @@ export const createGameUser = async (
 };
 
 export const findManyGameUsers = async (
-  gameId: number
+  gameId: string
 ) => {
   return await prisma.gameUser.findMany({
     where: {
-        gameId: gameId,
+        gameId: parseInt(gameId),
     },
   });
 };
