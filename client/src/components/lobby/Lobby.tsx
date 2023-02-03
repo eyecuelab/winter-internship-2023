@@ -36,7 +36,7 @@ const Lobby = (props: Props) => {
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
-  let gameId = 0;
+  let gameId = 1;
   let teamId = 0;
   let gameUsers = [];
   // const [gameId, setGameId] = useState(null);
