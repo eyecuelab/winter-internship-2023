@@ -28,15 +28,15 @@ A fun party game where teams of two control karts on a 2d pacman-like map.
 
 
 
-run client - npm run dev
-run server - npm start
+* run client - npm run dev
+* run server - npm start
 
 
-env file for database:
+* env file for database:
 DATABASE_URL=postgresql://<USERNAME>:<PASSWORD>@localhost:5432/<DB_NAME>
 
-db update:
-delete your local instance of the db
-npx prisma db push
-npx prisma db seed
+* db update:
+1. delete your local instance of the db
+2. npx prisma db push
+3. npx prisma db seed
 
