@@ -30,6 +30,12 @@ const Login = () => {
     },
   });
 
+  const loginAsGuest = () => {
+      localStorage.clear();
+      localStorage.setItem("loginWith", "Guest");
+      navigate("/lobby");
+  }
+
   return (
     <>
       <Container
@@ -55,12 +61,17 @@ const Login = () => {
             <Spacer x={0.5} />
             GitHub
           </Button> */}
-          <Spacer y={1} />
 
           <Button color="gradient" auto ghost onClick={() => loginToGoogle()}>
             {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Google
+          </Button>
+          <Spacer y={1} />
+          <Button color="gradient" auto ghost onClick={() => loginAsGuest()}>
+            {/* <IconGoogle /> */}
+            <Spacer x={.5} />
+            Continue as Guest
           </Button>
         </Card>
       </Container>

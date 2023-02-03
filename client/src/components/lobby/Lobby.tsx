@@ -44,9 +44,10 @@ const Lobby = (props: Props) => {
   //start game functions:
 
   const handleStartGameClick = async () => {
-
+  //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
     await getData(`/game/${gameId}/gameUser`).then((resp) => {
       gameUsers = resp;
+      console.log(gameUsers);
       if (gameUsers.length !== 0 && gameUsers.length < 4) {
         postData(`/gameUser`, { gameId: gameId, userId: userData?.id, roleId: 1 })
         .then((resp) => {
@@ -65,7 +66,7 @@ const Lobby = (props: Props) => {
         .then((teamData) => {
           const teamId = teamData.id; 
           postData(`/teamUser`, { teamId: teamId, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
-          
+
           socket.emit("join_public");
           navigate(`/Game/${gameId}`);
       })
@@ -98,7 +99,6 @@ const Lobby = (props: Props) => {
       });
       } 
     })
-    //logic to check if there is already a game with less than 4 players, if so, get the game instead of post
   };
 
   //create user with Google user data functions:
@@ -116,6 +116,16 @@ const Lobby = (props: Props) => {
         accessOrCreateUser(tempObj);
       });
     }
+    if (loginWith.current === "Guest") {
+        tempObj.email = "Guest Email";
+        tempObj.name = "Guest Name";
+        setUserDataGoogle({
+          email: tempObj.email,
+          name: tempObj.name,
+          picture: ""
+        });
+        accessOrCreateUser(tempObj);
+      };
   }, [loginWith]);
 
   const handleCreateUser = async (object: any) => {
@@ -156,23 +166,15 @@ const Lobby = (props: Props) => {
     navigate("/");
   };
 
-  //what is this if-clause doing?
-  if (!userDataGoogle) return null;
-
-  const createUser = (event: any) => {
-    event.preventDefault();
-    console.log(event);
-  };
-
   return (
     <>
-      <div>
+      {/* <div>
         <form>
           <label htmlFor="name">Game Display Name:</label>
           <input type="text" placeholder="Name"></input>
-          <button onClick={createUser}>Create Game User</button>
+          <button>Create Game User</button>
         </form>
-      </div>
+      </div> */}
       <Navbar isBordered variant="sticky">
         <Navbar.Brand>
           <User
