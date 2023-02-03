@@ -1,4 +1,4 @@
-import { /*getOneUser,*/ createUser, findUserByEmail } from '../Models/user'
+import { /*getOneUser,*/ createUser, findUserByEmail } from '../models/user'
 
 const userControllers = {
   // async getUserById(req: any, res: any) {

@@ -1,12 +1,12 @@
-import userRouter from './Routes/user';
-import gameRouter from './Routes/game';
-import teamRouter from './Routes/team';
-import teamUserRouter from './Routes/teamUser';
-import gameUserRouter from './Routes/gameUser';
+import userRouter from './routes/user';
+import gameRouter from './routes/game';
+import teamRouter from './routes/team';
+import teamUserRouter from './routes/teamUser';
+import gameUserRouter from './routes/gameUser';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';
-import googleRoutes from './Routes/google-routes';
+import googleRoutes from './routes/googleRoutes';
 
 const app = express();
 

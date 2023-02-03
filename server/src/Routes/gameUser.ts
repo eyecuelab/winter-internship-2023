@@ -1,4 +1,4 @@
-import gameUserControllers from "../Controllers/gameUser";
+import gameUserControllers from "../controllers/gameUser";
 import express from "express";
 
 const router = express.Router();

@@ -1,4 +1,4 @@
-import { createGameUser, findManyGameUsers } from "../Models/gameUser";
+import { createGameUser, findManyGameUsers } from "../models/gameUser";
 
 const gameUserControllers = {
 
