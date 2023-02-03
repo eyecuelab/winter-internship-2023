@@ -35,3 +35,8 @@ run server - npm start
 env file for database:
 DATABASE_URL=postgresql://<USERNAME>:<PASSWORD>@localhost:5432/<DB_NAME>
 
+db update:
+delete your local instance of the db
+npx prisma db push
+npx prisma db seed
+
