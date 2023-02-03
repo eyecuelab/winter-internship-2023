@@ -1,4 +1,4 @@
-import {Boundary} from './GameClasses';
+import {Boundary} from './gameClasses';
 
 function frameRenderer(this: any, size: { width: any; height: any; }, player: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }, map: any[]) {
   this.clearRect(0, 0, size.width, size.height);
