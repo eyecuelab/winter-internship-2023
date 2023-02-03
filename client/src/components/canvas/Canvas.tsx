@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Player } from "./GameClasses";
+import { Boundary, Player } from "./gameClasses";
 import { socketID, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
