@@ -9,6 +9,7 @@ import { socketID, socket } from "./../../GlobalSocket";
 
 function Canvas() {
   const lastKeyRef = useRef("");
+
   const keysPressedRef = useRef({
     w: {
       pressed: false,
@@ -29,6 +30,7 @@ function Canvas() {
     velocity: { x: 0, y: 0 },
     radius: 15,
   });
+
   const mapRef = useRef<any[][]>([
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
     ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
@@ -44,6 +46,7 @@ function Canvas() {
     ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
   ]);
+
   // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -51,63 +54,23 @@ function Canvas() {
   const size = { width: 700, height: 700 };
 
   //socketHandling state:
-  const socketUsersRef = useRef({
-    activeUser: "",
-    user1: "",
-    user2: "",
-    user3: "",
-    user4: "",
-    user1Input: "",
-    user2Input: "",
-    user3Input: "",
-    user4Input: "",
-  })
-  // const [user1, setUser1] = useState("");
-  // const [user2, setUser2] = useState("");
-  // const [user3, setUser3] = useState("");
-  // const [user4, setUser4] = useState("");
-  
-  // const [user1Input, setUser1Input] = useState("");
-  // const [user2Input, setUser2Input] = useState("");
-  // const [user3Input, setUser3Input] = useState("");
-  // const [user4Input, setUser4Input] = useState("");
+  const [user1, setUser1] = useState("");
+  const [user2, setUser2] = useState("");
+  const [user3, setUser3] = useState("");
+  const [user4, setUser4] = useState("");
+  const [user1Input, setUser1Input] = useState("");
+  const [user2Input, setUser2Input] = useState("");
+  const [user3Input, setUser3Input] = useState("");
+  const [user4Input, setUser4Input] = useState("");
 
-  //useMemo() and create a useEffect just for these 3 vars:
+  const [myTeam, setMyTeam] = useState({players: {x: "", y: ""}});
+  const [test, setTest] = useState({});
+
+  setTest
+
   let roomNumber = "";
-  let ifModerator: boolean = false; //isModerator
+  let ifModerator: boolean = false;
   let userList: Array<string> = [];
-
-  useEffect(() => {
-
-  }, [])
-
-  //socketHandling logic:
-  // const joinPublic = () => {
-  //   socket.emit("join_public");
-  // };
-  const keypress = (key: string) => {
-    socket.emit("key_press", { key, roomNumber });
-  };
-
-  const sendUsers = (data: Array<string>) => {
-    // socketUsersRef.current = ({...socketUsersRef.current, 
-    //   user1: userList[0],
-    //   user2: userList[1],
-    //   user3: userList[2],
-    //   user4: userList[3],
-    // })
-    // // setUser1(userList[0]);
-    // // setUser2(userList[1]);
-    // // setUser3(userList[2]);
-    // // setUser4(userList[3]);
-    socket.emit("mod_sends_user_list", { userList, roomNumber });
-  };
-
-  const toggleControl = (id: string) => {
-    socketUsersRef.current = {...socketUsersRef.current, activeUser: id}
-    // setActiveUser(id);
-    socket.emit("toggle_control", { id, roomNumber });
-  };
 
   //collision detection function:
   function circleCollidesWithRectangle({
@@ -279,6 +242,7 @@ function Canvas() {
     if (ifModerator) {
       const tempPlayer = playerRef.current;
       socket.emit("player_update", { tempPlayer, roomNumber });
+      console.log(test);
     }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
@@ -297,17 +261,18 @@ function Canvas() {
     };
   }, []);
 
-  //socketHandling useEffect:
   useEffect(() => {
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
     });
 
     socket.on("receive_room_number", (data: Array<any>) => {
+      console.log(data);
       roomNumber = data[0];
       ifModerator = data[1];
     });
 
+    //socketHandling useEffect:
     socket.on("receive_room_number", (data: Array<any>) => {
       roomNumber = data[0];
       ifModerator = data[1];
@@ -327,18 +292,32 @@ function Canvas() {
       }
     });
 
+    const startGame = (socketUser1: string, socketUser2: string) => {
+      const tempTeam = new Team({players: {x: socketUser1, y: socketUser2}});
+      setTest(tempTeam);
+      console.log(test);
+    }
+
     socket.on("get_user_list", (data: Array<string>) => {
-    socketUsersRef.current = ({...socketUsersRef.current, 
-      user1: userList[0],
-      user2: userList[1],
-      user3: userList[2],
-      user4: userList[3],
-    })
+      setUser1(data[0]);
+      setUser2(data[1]);
+      setUser3(data[2]);
+      setUser4(data[3]);
       userList = data;
-      console.log(data);
+      startGame(data[0], data[1]);
     });
 
   }, [socket]);
+
+  const sendUsers = (data: Array<string>) => {
+    setUser1(userList[0]);
+    setUser2(userList[1]);
+    setUser3(userList[2]);
+    setUser4(userList[3]);
+    socket.emit("mod_sends_user_list", { userList, roomNumber });
+
+    setTest(new Team({players: {x: userList[0], y: userList[1]}}));
+  };
 
   //add keyboard event listeners when component mounts
   useEffect(() => {
@@ -352,6 +331,7 @@ function Canvas() {
           },
         };
       }
+      console.log("handleKeyDown state:", lastKeyRef.current);
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -363,6 +343,7 @@ function Canvas() {
           },
         };
       }
+      console.log("handleKeyUp state:", lastKeyRef.current);
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -384,16 +365,16 @@ function Canvas() {
         <h1>inputs below:</h1>
         <ul>
           <li>
-            {socketUsersRef.current.user1}: {socketUsersRef.current.user1Input}
+            {user1}: {user1Input}
           </li>
           <li>
-            {socketUsersRef.current.user2}: {socketUsersRef.current.user2Input}
+            {user2}: {user2Input}
           </li>
           <li>
-            {socketUsersRef.current.user3}: {socketUsersRef.current.user3Input}
+            {user3}: {user3Input}
           </li>
           <li>
-            {socketUsersRef.current.user4}: {socketUsersRef.current.user4Input}
+            {user4}: {user4Input}
           </li>
         </ul>
       </div>
