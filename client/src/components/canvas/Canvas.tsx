@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Player, Team } from "./gameClasses";
 import { socketID, socket } from "./../../GlobalSocket";
+import { Time, TimeMath } from "./FPSEngine";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
@@ -242,16 +243,61 @@ function Canvas() {
     if (ifModerator) {
       const tempPlayer = playerRef.current;
       socket.emit("player_update", { tempPlayer, roomNumber });
-      console.log(test);
     }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
 
+
+
   const tick = () => {
     if (!canvasRef.current) return;
-    renderFrame();
+    try {
+      const t = performance.now();
+      const nextTick = TimeMath._lastTick + TimeMath._timestep;
+      let numTicks = 0;
+      if (t > nextTick) {
+        numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
+      }
+      if (numTicks > 4) {
+        console.log(`dropping ${numTicks} frames`);
+        numTicks = 0;
+        TimeMath._lastTick = t;
+      }
+      
+      if (t - TimeMath._lastFpsUpdate > 200) {
+        TimeMath._fps = 0.9 * TimeMath._framesSinceFPSUpdate * 1000 / (t - TimeMath._lastFpsUpdate) + 0.1 * TimeMath._fps;
+        Time.fps = TimeMath._fps;
+        TimeMath._lastFpsUpdate = t;
+        TimeMath._framesSinceFPSUpdate = 0;
+      }
+      
+      TimeMath._framesSinceFPSUpdate++;
+  
+      // Update
+      for (let i = 0; i < numTicks; i++) {
+        TimeMath._lastTick += TimeMath._timestep;
+        Time.t = TimeMath._lastTick - TimeMath._startTime;
+        Time.dt = TimeMath._timestep;
+       
+        //update(); //this does literally nothing
+        renderFrame();
+        console.log("render a frame")
+      }
+  
+      // Draw
+      Time.frame = TimeMath._currentFrame;
+      Time.frameTime = t;
+      //draw(); //this moves the square in a circle
+      
+      TimeMath._currentFrame++;
+    } catch (e) {
+      //cancelAnimationFrame(requestIdRef.current);
+      throw(e);
+    }
+    //renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
+    console.log("every time it checks")
   };
 
   useEffect(() => {
@@ -260,6 +306,10 @@ function Canvas() {
       cancelAnimationFrame(requestIdRef.current);
     };
   }, []);
+
+
+
+
 
   useEffect(() => {
     socket.on("receive_player_update", (data) => {

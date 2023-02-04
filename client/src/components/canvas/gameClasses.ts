@@ -8,12 +8,6 @@ export class Boundary {
     Boundary.height = 40;
     // this.image = image;
   }
-
-  // draw() {
-  //   c.fillStyle = 'blue';
-  //   c.fillRect(this.position.x, this.position.y, this.width, this.height);
-  //   // c.drawImage(this.image, this.position.x, this.position.y);
-  // }
 }
 
 export class Player {
@@ -31,20 +25,6 @@ export class Player {
     this.velocity = velocity;
     this.radius = 15;
   }
-
-  // draw() {
-  //   c.beginPath();
-  //   c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-  //   c.fillStyle = 'yellow';
-  //   c.fill();
-  //   c.closePath();
-  // }
-
-  // update() {
-  //   this.draw();
-  //   this.position.x += this.velocity.x; //updates left/right location by 1 increment of velocity unit
-  //   this.position.y += this.velocity.y; ////updates up/down location by 1 increment of velocity unit
-  // }
 }
 export class Team {
   players: { x: string; y: string };
