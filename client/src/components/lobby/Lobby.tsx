@@ -2,7 +2,7 @@ import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { getData, postData } from "../../ApiHelper";
+import { getData, postData } from "../../apiHelper";
 import {
   Button,
   Col,
@@ -22,7 +22,6 @@ interface UserDataGoogle {
   picture: string;
   email: string;
 }
-
 interface Props {
   userData: userType | undefined;
   updateUserData: (newData: userType) => void;
@@ -40,8 +39,11 @@ const Lobby = (props: Props) => {
 
   //start game functions:
   const handleJoinAGame = (gameUsers: any) => {
-  postData(`/gameUser`, { gameId: gameUsers[0].gameId, userId: userData?.id, roleId: 1 })
-    .then((gameUser) => {
+    postData(`/gameUser`, {
+      gameId: gameUsers[0].gameId,
+      userId: userData?.id,
+      roleId: 1,
+    }).then((gameUser) => {
       postData(`/team`, {
         gameId: gameUser.gameId,
         teamName: "team1",
@@ -51,62 +53,70 @@ const Lobby = (props: Props) => {
         nextDirection: "left",
         powerUp: false,
         kartId: 1,
-      })
-        .then((team) => {
-          postData(`/teamUser`, { teamId: team.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+      }).then((team) => {
+        postData(`/teamUser`, {
+          teamId: team.id,
+          userId: userData?.id,
+          verticalOrHorizontalControl: "vertical",
+        });
 
-          setGameId(team.gameId);
-          socket.emit("join_public");
-          navigate(`/Game/${team.gameId}`);
+        setGameId(team.gameId);
+        socket.emit("join_game_room", team.gameId);
+        navigate(`/Game/${team.gameId}`);
       });
     });
-};
+  };
 
-const handleStartAGame = () => {
-  postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 })
-  .then((newGame) => {
-    postData(`/gameUser`, { gameId: newGame.id, userId: userData?.id, roleId: 1 })
-    .then((newGameUser) => {
-      postData(`/team`, {
-        gameId: newGameUser.gameId,
-        teamName: "team1",
-        score: 0,
-        characterId: 1,
-        currentDirectionMoving: "",
-        nextDirection: "left",
-        powerUp: false,
-        kartId: 1,
-      })
-      .then((newTeam) => {
-        postData(`/teamUser`, { teamId: newTeam.id, userId: userData?.id, verticalOrHorizontalControl: "vertical" });
+  const handleStartAGame = () => {
+    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then(
+      (newGame) => {
+        postData(`/gameUser`, {
+          gameId: newGame.id,
+          userId: userData?.id,
+          roleId: 1,
+        }).then((newGameUser) => {
+          postData(`/team`, {
+            gameId: newGameUser.gameId,
+            teamName: "team1",
+            score: 0,
+            characterId: 1,
+            currentDirectionMoving: "",
+            nextDirection: "left",
+            powerUp: false,
+            kartId: 1,
+          }).then((newTeam) => {
+            postData(`/teamUser`, {
+              teamId: newTeam.id,
+              userId: userData?.id,
+              verticalOrHorizontalControl: "vertical",
+            });
 
-        setGameId(newTeam.gameId);
-        socket.emit("join_public");
-        navigate(`/Game/${newTeam.gameId}`);
-      });
-    });
-  });
-};
+            setGameId(newTeam.gameId);
+            socket.emit("start_game_room", newTeam.gameId);
+            navigate(`/Game/${newTeam.gameId}`);
+          });
+        });
+      }
+    );
+  };
 
   const handleStartGameClick = async () => {
-await getData(`/game/lastpost/desc`)
-  .then((lastPost) => {
-    if (!lastPost) {
-      handleStartAGame();
-    } else {
+    await getData(`/game/lastpost/desc`).then((lastPost) => {
+      if (!lastPost) {
+        handleStartAGame();
+      } else {
         console.log(lastPost);
         getData(`/game/${lastPost.id}/gameUser`)
-          .then((gameUsers) => {
-            if (gameUsers.length !== 0 && gameUsers.length < 4) {
+        .then((gameUsers) => {
+          if (gameUsers.length !== 0 && gameUsers.length < 4) {
             handleJoinAGame(gameUsers);
-            }
-            else if (gameUsers.length = 0 | 4) {
-              handleStartAGame();
+          } else if ((gameUsers.length = 0 || 4)) {
+            handleStartAGame();
           }
-        })
+        });
       }
-    })
-}
+    });
+  };
 
   //create user with Google user data functions:
   useEffect(() => {
@@ -124,32 +134,31 @@ await getData(`/game/lastpost/desc`)
       });
     }
     if (loginWith.current === "Guest") {
-        tempObj.email = "Guest Email";
-        tempObj.name = "Guest Name";
-        setUserDataGoogle({
-          email: tempObj.email,
-          name: tempObj.name,
-          picture: ""
-        });
-        accessOrCreateUser(tempObj);
-      };
+      tempObj.email = "Guest Email";
+      tempObj.name = "Guest Name";
+      setUserDataGoogle({
+        email: tempObj.email,
+        name: tempObj.name,
+        picture: "",
+      });
+      accessOrCreateUser(tempObj);
+    }
   }, [loginWith]);
 
   const handleCreateUser = async (object: any) => {
-    await (postData("/user", {
+    await postData("/user", {
       email: object.email,
       name: object.name,
-    }))
-    .then((resp) => {
+    }).then((resp) => {
       updateUserData({
         id: resp.id,
         email: resp.email,
         name: resp.name,
         games: [],
-        teams: []
+        teams: [],
       });
-    })
-  }
+    });
+  };
 
   const accessOrCreateUser = (object: any) => {
     getData(`/user/${object.email}`).then((user) => {
@@ -161,7 +170,7 @@ await getData(`/game/lastpost/desc`)
           email: user.email,
           name: user.name,
           games: [],
-          teams: []
+          teams: [],
         });
       }
     });
@@ -220,7 +229,6 @@ await getData(`/game/lastpost/desc`)
       </div>
     </>
   );
-}
-
+};
 
 export default Lobby;

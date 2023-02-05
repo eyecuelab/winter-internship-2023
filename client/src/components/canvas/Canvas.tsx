@@ -64,13 +64,13 @@ function Canvas() {
   const [user3Input, setUser3Input] = useState("");
   const [user4Input, setUser4Input] = useState("");
 
-  const [myTeam, setMyTeam] = useState({players: {x: "", y: ""}});
+  const [myTeam, setMyTeam] = useState({ players: { x: "", y: "" } });
   const [test, setTest] = useState({});
 
-  setTest
+  setTest;
 
   let roomNumber = "";
-  let ifModerator: boolean = false;
+  let isModerator: boolean = false;
   let userList: Array<string> = [];
 
   //collision detection function:
@@ -240,15 +240,13 @@ function Canvas() {
     updateBoundaries();
     updatePlayer();
 
-    if (ifModerator) {
+    if (isModerator) {
       const tempPlayer = playerRef.current;
       socket.emit("player_update", { tempPlayer, roomNumber });
     }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
-
-
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -260,44 +258,44 @@ function Canvas() {
         numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
       }
       if (numTicks > 4) {
-        console.log(`dropping ${numTicks} frames`);
         numTicks = 0;
         TimeMath._lastTick = t;
       }
-      
+
       if (t - TimeMath._lastFpsUpdate > 200) {
-        TimeMath._fps = 0.9 * TimeMath._framesSinceFPSUpdate * 1000 / (t - TimeMath._lastFpsUpdate) + 0.1 * TimeMath._fps;
+        TimeMath._fps =
+          (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
+            (t - TimeMath._lastFpsUpdate) +
+          0.1 * TimeMath._fps;
         Time.fps = TimeMath._fps;
         TimeMath._lastFpsUpdate = t;
         TimeMath._framesSinceFPSUpdate = 0;
       }
-      
+
       TimeMath._framesSinceFPSUpdate++;
-  
+
       // Update
       for (let i = 0; i < numTicks; i++) {
         TimeMath._lastTick += TimeMath._timestep;
         Time.t = TimeMath._lastTick - TimeMath._startTime;
         Time.dt = TimeMath._timestep;
-       
+
         //update(); //this does literally nothing
         renderFrame();
-        console.log("render a frame")
       }
-  
+
       // Draw
       Time.frame = TimeMath._currentFrame;
       Time.frameTime = t;
       //draw(); //this moves the square in a circle
-      
+
       TimeMath._currentFrame++;
     } catch (e) {
       //cancelAnimationFrame(requestIdRef.current);
-      throw(e);
+      throw e;
     }
     //renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
-    console.log("every time it checks")
   };
 
   useEffect(() => {
@@ -307,46 +305,37 @@ function Canvas() {
     };
   }, []);
 
-
-
-
-
+  //socketHandling useEffect:
   useEffect(() => {
-    socket.on("receive_player_update", (data) => {
-      playerRef.current = data;
-    });
+    const startGame = (socketUser1: string, socketUser2: string) => {
+      const tempTeam = new Team({
+        players: { x: socketUser1, y: socketUser2 },
+      });
+      setTest(tempTeam);
+      console.log(test);
+    };
 
     socket.on("receive_room_number", (data: Array<any>) => {
-      console.log(data);
       roomNumber = data[0];
-      ifModerator = data[1];
-    });
+      isModerator = data[1];
 
-    //socketHandling useEffect:
-    socket.on("receive_room_number", (data: Array<any>) => {
-      roomNumber = data[0];
-      ifModerator = data[1];
-      if (ifModerator) {
+      if (isModerator) {
         userList.push(data[2]);
       }
+      console.log(data);
     });
 
     socket.on("mod_receive_user", (data) => {
-      if (ifModerator) {
+      if (isModerator) {
         userList.push(data);
       }
     });
+
     socket.on("room_full", () => {
-      if (ifModerator) {
+      if (isModerator) {
         sendUsers(userList);
       }
     });
-
-    const startGame = (socketUser1: string, socketUser2: string) => {
-      const tempTeam = new Team({players: {x: socketUser1, y: socketUser2}});
-      setTest(tempTeam);
-      console.log(test);
-    }
 
     socket.on("get_user_list", (data: Array<string>) => {
       setUser1(data[0]);
@@ -357,6 +346,10 @@ function Canvas() {
       startGame(data[0], data[1]);
     });
 
+
+    socket.on("receive_player_update", (data) => {
+      playerRef.current = data;
+    });
   }, [socket]);
 
   const sendUsers = (data: Array<string>) => {
@@ -366,7 +359,7 @@ function Canvas() {
     setUser4(userList[3]);
     socket.emit("mod_sends_user_list", { userList, roomNumber });
 
-    setTest(new Team({players: {x: userList[0], y: userList[1]}}));
+    setTest(new Team({ players: { x: userList[0], y: userList[1] } }));
   };
 
   //add keyboard event listeners when component mounts
@@ -381,7 +374,6 @@ function Canvas() {
           },
         };
       }
-      console.log("handleKeyDown state:", lastKeyRef.current);
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -393,7 +385,6 @@ function Canvas() {
           },
         };
       }
-      console.log("handleKeyUp state:", lastKeyRef.current);
     };
 
     window.addEventListener("keydown", handleKeyDown);
