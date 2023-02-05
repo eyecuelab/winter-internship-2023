@@ -41,6 +41,10 @@ io.on("connection", (socket) => {
     socket.to(`${data.gameId}`).emit("receive_player_update", data.tempPlayer);
   });
 
+  socket.on("toggle_player_control", (data) => {
+    socket.to(data.myTeammate).emit("receive_toggle_player_control", data.tempTeam);
+  })
+
   socket.on("send_message", (data) => {
     socket.broadcast.emit("receive_message", data);
   });
