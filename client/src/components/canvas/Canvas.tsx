@@ -318,38 +318,23 @@ function Canvas() {
     socket.on("receive_room_number", (data: Array<any>) => {
       roomNumber = data[0];
       isModerator = data[1];
-
-      if (isModerator) {
-        userList.push(data[2]);
-      }
-      console.log(data);
-    });
-
-    socket.on("mod_receive_user", (data) => {
-      if (isModerator) {
-        userList.push(data);
+      const socketIds = data[2]
+      userList = socketIds
+      if (socketIds.length % 2 === 0) {
+        const tempTeam = new Team({ players: { x: socketIds[socketIds.length -2], y: socketIds[socketIds.length -1] } })
+        console.log(tempTeam);
       }
     });
 
-    socket.on("room_full", () => {
-      if (isModerator) {
-        sendUsers(userList);
-      }
-    });
-
-    socket.on("get_user_list", (data: Array<string>) => {
-      setUser1(data[0]);
-      setUser2(data[1]);
-      setUser3(data[2]);
-      setUser4(data[3]);
+    socket.on("new_client_in_room", (data) => {
       userList = data;
-      startGame(data[0], data[1]);
+      console.log(userList)
     });
-
 
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
     });
+
   }, [socket]);
 
   const sendUsers = (data: Array<string>) => {

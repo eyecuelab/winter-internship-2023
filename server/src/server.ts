@@ -20,25 +20,28 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   //room:
-  socket.on("start_game_room", async (data) => {
-    console.log("new room started:", data);
-    console.log(io.sockets)
-    socket.join(data.toString());
-    socket.emit("receive_room_number", [data.toString(), true, socket.id]);
-    const socketsInRoom = await io;
-    console.log(socketsInRoom);
-  });
+  // socket.on("start_game_room", async (data) => {
+  //   console.log("new room started:", data);
+  //   socket.join(data.toString());
+    
+  //   const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${data.toString()}`);
+  //   console.log(socketsInRoom);
+  //   const socketIds = Array.from(socketsInRoom);
+
+  //   socket.emit("receive_room_number", [data.toString(), true, socketsInRoom ? socketsInRoom : []]);
+  // });
 
   socket.on("join_game_room", async (data) => {
     const room = data.toString();
     socket.join(room);
-    console.log(socket.id, "joined room: ", room)
+    console.log(socket.id, "joined room: ", room);
 
-    const socketsInRoom = await io.sockets.adapter.rooms.get(`${room}`)
+    const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
     console.log(socketsInRoom);
+    const socketIds = Array.from(socketsInRoom);
 
-    socket.emit("receive_room_number", [room, false]);
-    socket.to(room).emit("mod_receive_user", socket.id);
+    socket.emit("receive_room_number", [room, false, socketIds]);
+    socket.to(room).emit("new_client_in_room", socketIds);
   });
 
   socket.on("player_update", (data) => {

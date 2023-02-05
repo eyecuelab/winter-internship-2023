@@ -92,7 +92,7 @@ const Lobby = (props: Props) => {
             });
 
             setGameId(newTeam.gameId);
-            socket.emit("start_game_room", newTeam.gameId);
+            socket.emit("join_game_room", newTeam.gameId);
             navigate(`/Game/${newTeam.gameId}`);
           });
         });
@@ -105,7 +105,6 @@ const Lobby = (props: Props) => {
       if (!lastPost) {
         handleStartAGame();
       } else {
-        console.log(lastPost);
         getData(`/game/${lastPost.id}/gameUser`)
         .then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
