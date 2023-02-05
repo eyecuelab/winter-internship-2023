@@ -63,11 +63,10 @@ function Canvas() {
   const [user3Input, setUser3Input] = useState("");
   const [user4Input, setUser4Input] = useState("");
 
-  let myTeam: Team | null = null;
-
-  let roomNumber = "";
-  let isModerator: boolean = false;
-  let userList: Array<string> = [];
+  const currentGameRef = useRef({
+    userList: [],
+    myTeam: {players: {x: "", y: ""}, playerInControl: "x" },
+  })
 
   //collision detection function:
   function circleCollidesWithRectangle({
@@ -237,10 +236,10 @@ function Canvas() {
     updateBoundaries();
     updatePlayer();
 
-    if (isModerator) {
-      const tempPlayer = playerRef.current;
-      socket.emit("player_update", { tempPlayer, roomNumber });
-    }
+    // if (isModerator) {
+    //   const tempPlayer = playerRef.current;
+    //   socket.emit("player_update", { tempPlayer });
+    // }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
@@ -312,11 +311,8 @@ function Canvas() {
     // };
 
     socket.on("room_and_users", (data: Array<any>) => {
-      roomNumber = data[0];
       const socketIds = data[1];
-      userList = socketIds;
-      console.log("room and users", data);
-      console.log("room and users", myTeam);
+      currentGameRef.current.userList = socketIds;
       if (socketIds.length % 2 === 0) {
         const tempMyTeam = new Team({
           players: {
@@ -324,14 +320,14 @@ function Canvas() {
             y: socketIds[socketIds.length - 1],
           },
         });
-        console.log(tempMyTeam);
 
-        myTeam = tempMyTeam;
+        currentGameRef.current.myTeam = tempMyTeam;
         socket.emit("send_team", {
           x: socketIds[socketIds.length - 2],
           y: socketIds[socketIds.length - 1],
         });
       }
+      console.log("room and users", data, currentGameRef.current.myTeam ? currentGameRef.current.myTeam : "no team created");
     });
 
     socket.on("receive_my_team", (data) => {
@@ -342,11 +338,12 @@ function Canvas() {
           y: data[1],
         },
       });
-      myTeam = tempMyTeam;
+      currentGameRef.current.myTeam = tempMyTeam;
     });
 
-    socket.on("client_joined", () => {
-      console.log("client joined", myTeam);
+    socket.on("client_joined", (data) => {
+      console.log("client_joined", data);
+      currentGameRef.current.userList = data;
     });
 
     socket.on("receive_player_update", (data) => {
@@ -365,6 +362,9 @@ function Canvas() {
             pressed: true,
           },
         };
+      } else if(e.key === "q"){
+        console.log("userList:", currentGameRef.current.userList);
+        console.log("myTeam:", currentGameRef.current.myTeam);
       }
     };
 

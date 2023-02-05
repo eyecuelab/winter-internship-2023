@@ -23,12 +23,13 @@ io.on("connection", (socket) => {
     const room = data.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
-    socket.to(room).emit("client_joined");
 
+    //fetches all socket ids in the room:
     const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
+    socket.to(`${room}`).emit("client_joined", socketIds);
     socket.emit("room_and_users", [room, socketIds]);
   });
 
@@ -43,7 +44,7 @@ io.on("connection", (socket) => {
   socket.on("send_message", (data) => {
     socket.broadcast.emit("receive_message", data);
   });
-  
+
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
   });
