@@ -48,7 +48,6 @@ function Canvas() {
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
   ]);
 
-  // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -64,10 +63,7 @@ function Canvas() {
   const [user3Input, setUser3Input] = useState("");
   const [user4Input, setUser4Input] = useState("");
 
-  const [myTeam, setMyTeam] = useState({ players: { x: "", y: "" } });
-  const [test, setTest] = useState({});
-
-  setTest;
+  let myTeam: Team | null = null;
 
   let roomNumber = "";
   let isModerator: boolean = false;
@@ -227,6 +223,7 @@ function Canvas() {
     });
   };
 
+  //canvas animation functions:
   const renderFrame = () => {
     //updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
@@ -305,47 +302,57 @@ function Canvas() {
     };
   }, []);
 
-  //socketHandling useEffect:
+  //socket handlers:
   useEffect(() => {
-    const startGame = (socketUser1: string, socketUser2: string) => {
-      const tempTeam = new Team({
-        players: { x: socketUser1, y: socketUser2 },
-      });
-      setTest(tempTeam);
-      console.log(test);
-    };
+    // const startGame = (socketUser1: string, socketUser2: string) => {
+    //   const tempTeam = new Team({
+    //     players: { x: socketUser1, y: socketUser2 },
+    //   });
+    //   setMyTeam(tempTeam);
+    // };
 
-    socket.on("receive_room_number", (data: Array<any>) => {
+    socket.on("room_and_users", (data: Array<any>) => {
       roomNumber = data[0];
-      isModerator = data[1];
-      const socketIds = data[2]
-      userList = socketIds
+      const socketIds = data[1];
+      userList = socketIds;
+      console.log("room and users", data);
+      console.log("room and users", myTeam);
       if (socketIds.length % 2 === 0) {
-        const tempTeam = new Team({ players: { x: socketIds[socketIds.length -2], y: socketIds[socketIds.length -1] } })
-        console.log(tempTeam);
+        const tempMyTeam = new Team({
+          players: {
+            x: socketIds[socketIds.length - 2],
+            y: socketIds[socketIds.length - 1],
+          },
+        });
+        console.log(tempMyTeam);
+
+        myTeam = tempMyTeam;
+        socket.emit("send_team", {
+          x: socketIds[socketIds.length - 2],
+          y: socketIds[socketIds.length - 1],
+        });
       }
     });
 
-    socket.on("new_client_in_room", (data) => {
-      userList = data;
-      console.log(userList)
+    socket.on("receive_my_team", (data) => {
+      console.log("receive_my_team", data);
+      const tempMyTeam = new Team({
+        players: {
+          x: data[0],
+          y: data[1],
+        },
+      });
+      myTeam = tempMyTeam;
+    });
+
+    socket.on("client_joined", () => {
+      console.log("client joined", myTeam);
     });
 
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
     });
-
   }, [socket]);
-
-  const sendUsers = (data: Array<string>) => {
-    setUser1(userList[0]);
-    setUser2(userList[1]);
-    setUser3(userList[2]);
-    setUser4(userList[3]);
-    socket.emit("mod_sends_user_list", { userList, roomNumber });
-
-    setTest(new Team({ players: { x: userList[0], y: userList[1] } }));
-  };
 
   //add keyboard event listeners when component mounts
   useEffect(() => {
