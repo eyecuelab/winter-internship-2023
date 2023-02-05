@@ -31,14 +31,14 @@ export class Team {
   playerInControl: string;
   constructor({ players }: { players: { x: string; y: string } }) {
     this.players = players;
-    this.playerInControl = "x";
+    this.playerInControl = this.players.x;
   }
 
   changePlayerInControl() {
-    if (this.playerInControl === "x") {
-      this.playerInControl = "y";
+    if (this.playerInControl === this.players.x) {
+      this.playerInControl = this.players.y;
     } else {
-      this.playerInControl = "x";
+      this.playerInControl = this.players.x;
     }
   }
 }

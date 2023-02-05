@@ -7,8 +7,12 @@ import { Time, TimeMath } from "./FPSEngine";
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
 // const socket = io.connect("http://localhost:3001");
+interface Props {
+  gameId: string;
+}
 
-function Canvas() {
+function Canvas(props: any) {
+  const { gameId } = props;
   const lastKeyRef = useRef("");
 
   const keysPressedRef = useRef({
@@ -53,20 +57,10 @@ function Canvas() {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  //socketHandling state:
-  const [user1, setUser1] = useState("");
-  const [user2, setUser2] = useState("");
-  const [user3, setUser3] = useState("");
-  const [user4, setUser4] = useState("");
-  const [user1Input, setUser1Input] = useState("");
-  const [user2Input, setUser2Input] = useState("");
-  const [user3Input, setUser3Input] = useState("");
-  const [user4Input, setUser4Input] = useState("");
-
   const currentGameRef = useRef({
     userList: [],
-    myTeam: {players: {x: "", y: ""}, playerInControl: "x" },
-  })
+    myTeam: { players: { x: "", y: "" }, playerInControl: "x" },
+  });
 
   //collision detection function:
   function circleCollidesWithRectangle({
@@ -233,13 +227,13 @@ function Canvas() {
     if (!context) {
       return;
     }
-    updateBoundaries();
-    updatePlayer();
 
-    // if (isModerator) {
-    //   const tempPlayer = playerRef.current;
-    //   socket.emit("player_update", { tempPlayer });
-    // }
+    if(currentGameRef.current.myTeam.playerInControl === socketID){
+      updateBoundaries();
+      updatePlayer();
+      const tempPlayer = playerRef.current;
+      socket.emit("player_update", { tempPlayer, gameId });
+    }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
@@ -327,15 +321,21 @@ function Canvas() {
           y: socketIds[socketIds.length - 1],
         });
       }
-      console.log("room and users", data, currentGameRef.current.myTeam ? currentGameRef.current.myTeam : "no team created");
+      console.log(
+        "room and users",
+        data,
+        currentGameRef.current.myTeam
+          ? currentGameRef.current.myTeam
+          : "no team created"
+      );
     });
 
     socket.on("receive_my_team", (data) => {
       console.log("receive_my_team", data);
       const tempMyTeam = new Team({
         players: {
-          x: data[0],
-          y: data[1],
+          x: data.x,
+          y: data.y,
         },
       });
       currentGameRef.current.myTeam = tempMyTeam;
@@ -362,7 +362,7 @@ function Canvas() {
             pressed: true,
           },
         };
-      } else if(e.key === "q"){
+      } else if (e.key === "q") {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
       }
@@ -397,18 +397,10 @@ function Canvas() {
         {/* <button onClick={joinPublic}>Join a public game!</button> */}
         <h1>inputs below:</h1>
         <ul>
-          <li>
-            {user1}: {user1Input}
-          </li>
-          <li>
-            {user2}: {user2Input}
-          </li>
-          <li>
-            {user3}: {user3Input}
-          </li>
-          <li>
-            {user4}: {user4Input}
-          </li>
+          <li>{currentGameRef.current.userList[0]}</li>
+          <li>{currentGameRef.current.userList[1]}</li>
+          <li>{currentGameRef.current.userList[2]}</li>
+          <li>{currentGameRef.current.userList[3]}</li>
         </ul>
       </div>
     </div>
