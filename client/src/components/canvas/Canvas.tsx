@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Player, Team } from "./gameClasses";
+import { Boundary, Kart, Team } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
@@ -30,7 +30,7 @@ function Canvas(props: any) {
     },
   });
 
-  const playerRef = useRef({
+  const kartRef = useRef({
     position: { x: 60, y: 60 },
     velocity: { x: 0, y: 0 },
     radius: 15,
@@ -76,7 +76,7 @@ function Canvas(props: any) {
     circle,
     rectangle,
   }: {
-    circle: Player;
+    circle: Kart;
     rectangle: Boundary;
   }) {
     return (
@@ -114,16 +114,16 @@ function Canvas(props: any) {
     boundariesRef.current = tempBoundaries;
   };
 
-  //updates player movement based on collision detection
-  const updatePlayer = () => {
-    const player = playerRef.current;
+  //updates kart movement based on collision detection
+  const updateKart = () => {
+    const kart = kartRef.current;
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
           circleCollidesWithRectangle({
             circle: {
-              ...player,
+              ...kart,
               velocity: {
                 x: 0,
                 y: -5,
@@ -132,10 +132,10 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          player.velocity.y = 0;
+          kart.velocity.y = 0;
           break;
         } else {
-          player.velocity.y = -5;
+          kart.velocity.y = -5;
         }
       }
     } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === "a") {
@@ -144,7 +144,7 @@ function Canvas(props: any) {
         if (
           circleCollidesWithRectangle({
             circle: {
-              ...player,
+              ...kart,
               velocity: {
                 x: -5,
                 y: 0,
@@ -153,10 +153,10 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          player.velocity.x = 0;
+          kart.velocity.x = 0;
           break;
         } else {
-          player.velocity.x = -5;
+          kart.velocity.x = -5;
         }
       }
     } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === "s") {
@@ -165,7 +165,7 @@ function Canvas(props: any) {
         if (
           circleCollidesWithRectangle({
             circle: {
-              ...player,
+              ...kart,
               velocity: {
                 x: 0,
                 y: 5,
@@ -174,10 +174,10 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          player.velocity.y = 0;
+          kart.velocity.y = 0;
           break;
         } else {
-          player.velocity.y = 5;
+          kart.velocity.y = 5;
         }
       }
     } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === "d") {
@@ -186,7 +186,7 @@ function Canvas(props: any) {
         if (
           circleCollidesWithRectangle({
             circle: {
-              ...player,
+              ...kart,
               velocity: {
                 x: 5,
                 y: 0,
@@ -195,26 +195,26 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          player.velocity.x = 0;
+          kart.velocity.x = 0;
           break;
         } else {
-          player.velocity.x = 5;
+          kart.velocity.x = 5;
         }
       }
     }
 
-    player.position.x += player.velocity.x;
-    player.position.y += player.velocity.y;
+    kart.position.x += kart.velocity.x;
+    kart.position.y += kart.velocity.y;
 
     boundariesRef.current.forEach((boundary) => {
       if (
         circleCollidesWithRectangle({
-          circle: player,
+          circle: kart,
           rectangle: boundary,
         })
       ) {
-        player.velocity.y = 0;
-        player.velocity.x = 0;
+        kart.velocity.y = 0;
+        kart.velocity.x = 0;
       }
     });
   };
@@ -233,12 +233,12 @@ function Canvas(props: any) {
 
     if (currentGameRef.current.myTeam.playerInControl === socketId) {
       updateBoundaries();
-      updatePlayer();
-      const tempPlayer = playerRef.current;
-      socket.emit("player_update", { tempPlayer, gameId });
+      updateKart();
+      const tempKart = kartRef.current;
+      socket.emit("kart_update", { tempKart, gameId });
     }
 
-    frameRenderer.call(context, size, playerRef.current, mapRef.current);
+    frameRenderer.call(context, size, kartRef.current, mapRef.current);
   };
 
   const tick = () => {
@@ -338,15 +338,15 @@ function Canvas(props: any) {
       currentGameRef.current.myTeamMate = data.y;
     });
 
-    socket.on("receive_player_update", (data) => {
-      playerRef.current = data;
+    socket.on("receive_kart_update", (data) => {
+      kartRef.current = data;
     });
 
     socket.on("receive_toggle_player_control", () => {
       const tempTeam = currentGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
       currentGameRef.current.myTeam = tempTeam;
-        });
+    });
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -364,13 +364,12 @@ function Canvas(props: any) {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
         console.log("myTeamMate:", currentGameRef.current.myTeamMate);
-        
       } else if (e.key === "p") {
         //practice toggle playerControl:
         const tempTeam = currentGameRef.current.myTeam;
         tempTeam.changePlayerInControl();
         currentGameRef.current.myTeam = tempTeam;
-        
+
         socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
       }
     };
