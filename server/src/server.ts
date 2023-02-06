@@ -29,8 +29,8 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    socket.to(`${room}`).emit("client_joined", socketIds);
-    socket.emit("room_and_users", [room, socketIds]);
+    io.in(`${room}`).emit("client_joined", socketIds);
+    // socket.emit("room_and_users", [room, socketIds]);
   });
 
   socket.on("send_team", (data) => {
