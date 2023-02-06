@@ -57,9 +57,9 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  const currentGameRef = useRef({
+  const currentGameRef = useRef<{userList:[], myTeam:Team}>({
     userList: [],
-    myTeam: { players: { x: "", y: "" }, playerInControl: "x" },
+    myTeam: { players: { x: "", y: "" }, playerInControl: "x", changePlayerInControl: ()=>null },
   });
 
   //collision detection function:
@@ -186,16 +186,10 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          playerRef.current = {
-            ...playerRef.current,
-            velocity: { x: 0, y: 0 },
-          };
+          player.velocity.x = 0;
           break;
         } else {
-          playerRef.current = {
-            ...playerRef.current,
-            velocity: { x: 5, y: 0 },
-          };
+          player.velocity.x = 5;
         }
       }
     }
@@ -385,6 +379,8 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
+        const tempTeam = currentGameRef.current.myTeam.changePlayerInControl();
+        console.log(tempTeam)
       } else if (e.key === "p") {
         //practice toggle playerControl:
         let tempTeam = currentGameRef.current.myTeam;
