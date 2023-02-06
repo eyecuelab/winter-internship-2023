@@ -308,11 +308,9 @@ function Canvas(props: any) {
     // };
 
     socket.on("client_joined", (data) => {
-      console.log("client_joined", data);
       currentGameRef.current.userList = data;
-
-      if (data.length % 2 === 0) {
-        if (socketId === data[data.length - 1]) {
+      if (socketId === data[data.length - 1]) {
+        if (data.length % 2 === 0) {
           const tempMyTeam = new Team({
             players: {
               x: data[data.length - 2],
@@ -330,7 +328,6 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_my_team", (data) => {
-      console.log("receive_my_team", data);
       const tempMyTeam = new Team({
         players: {
           x: data.x,
@@ -345,9 +342,11 @@ function Canvas(props: any) {
       playerRef.current = data;
     });
 
-    socket.on("receive_toggle_player_control", (data) => {
-      currentGameRef.current.myTeam = data;
-    });
+    socket.on("receive_toggle_player_control", () => {
+      const tempTeam = currentGameRef.current.myTeam;
+      tempTeam.changePlayerInControl();
+      currentGameRef.current.myTeam = tempTeam;
+        });
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -365,27 +364,14 @@ function Canvas(props: any) {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
         console.log("myTeamMate:", currentGameRef.current.myTeamMate);
-        const tempTeam = currentGameRef.current.myTeam.changePlayerInControl();
+        
       } else if (e.key === "p") {
         //practice toggle playerControl:
-        let tempTeam = currentGameRef.current.myTeam;
-        const myTeammate =
-          socketId === currentGameRef.current.myTeam.players.x
-            ? currentGameRef.current.myTeam.players.y
-            : currentGameRef.current.myTeam.players.x;
-        if (
-          currentGameRef.current.myTeam.playerInControl ===
-          currentGameRef.current.myTeam.players.x
-        ) {
-          currentGameRef.current.myTeam.playerInControl =
-            currentGameRef.current.myTeam.players.y;
-          tempTeam.playerInControl = currentGameRef.current.myTeam.players.y;
-        } else {
-          currentGameRef.current.myTeam.playerInControl =
-            currentGameRef.current.myTeam.players.x;
-          tempTeam.playerInControl = currentGameRef.current.myTeam.players.x;
-        }
-        socket.emit("toggle_player_control", { tempTeam, myTeammate });
+        const tempTeam = currentGameRef.current.myTeam;
+        tempTeam.changePlayerInControl();
+        currentGameRef.current.myTeam = tempTeam;
+        
+        socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
       }
     };
 

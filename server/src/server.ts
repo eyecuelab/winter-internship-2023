@@ -42,7 +42,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("toggle_player_control", (data) => {
-    socket.to(data.myTeammate).emit("receive_toggle_player_control", data.tempTeam);
+    socket.to(data).emit("receive_toggle_player_control");
   })
 
   socket.on("send_message", (data) => {
