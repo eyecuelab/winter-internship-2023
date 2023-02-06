@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Player, Team } from "./gameClasses";
-import { socketID, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
 // import SocketHandling from "../socketHandling/socketHandling";
@@ -228,7 +228,7 @@ function Canvas(props: any) {
       return;
     }
 
-    if (currentGameRef.current.myTeam.playerInControl === socketID) {
+    if (currentGameRef.current.myTeam.playerInControl === socketId) {
       updateBoundaries();
       updatePlayer();
       const tempPlayer = playerRef.current;
@@ -346,7 +346,7 @@ function Canvas(props: any) {
       currentGameRef.current.userList = data;
 
       if (data.length % 2 === 0) {
-        if (socketID === data[data.length - 1]) {
+        if (socketId === data[data.length - 1]) {
           const tempMyTeam = new Team({
             players: {
               x: data[data.length - 2],
@@ -389,7 +389,7 @@ function Canvas(props: any) {
         //practice toggle playerControl:
         let tempTeam = currentGameRef.current.myTeam;
         const myTeammate =
-          socketID === currentGameRef.current.myTeam.players.x
+          socketId === currentGameRef.current.myTeam.players.x
             ? currentGameRef.current.myTeam.players.y
             : currentGameRef.current.myTeam.players.x;
         if (
