@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Player, Team } from "./gameClasses";
-import { socketID, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
 // import SocketHandling from "../socketHandling/socketHandling";
@@ -57,9 +57,9 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  const currentGameRef = useRef({
+  const currentGameRef = useRef<{userList:[], myTeam:Team}>({
     userList: [],
-    myTeam: { players: { x: "", y: "" }, playerInControl: "x" },
+    myTeam: { players: { x: "", y: "" }, playerInControl: "x", changePlayerInControl: ()=>null },
   });
 
   //collision detection function:
@@ -186,16 +186,10 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          playerRef.current = {
-            ...playerRef.current,
-            velocity: { x: 0, y: 0 },
-          };
+          player.velocity.x = 0;
           break;
         } else {
-          playerRef.current = {
-            ...playerRef.current,
-            velocity: { x: 5, y: 0 },
-          };
+          player.velocity.x = 5;
         }
       }
     }
@@ -228,7 +222,7 @@ function Canvas(props: any) {
       return;
     }
 
-    if(currentGameRef.current.myTeam.playerInControl === socketID){
+    if (currentGameRef.current.myTeam.playerInControl === socketId) {
       updateBoundaries();
       updatePlayer();
       const tempPlayer = playerRef.current;
@@ -344,6 +338,22 @@ function Canvas(props: any) {
     socket.on("client_joined", (data) => {
       console.log("client_joined", data);
       currentGameRef.current.userList = data;
+
+      if (data.length % 2 === 0) {
+        if (socketId === data[data.length - 1]) {
+          const tempMyTeam = new Team({
+            players: {
+              x: data[data.length - 2],
+              y: data[data.length - 1],
+            },
+          });
+          currentGameRef.current.myTeam = tempMyTeam;
+          socket.emit("send_team", {
+            x: data[data.length - 2],
+            y: data[data.length - 1],
+          });
+        }
+      }
     });
 
     socket.on("receive_player_update", (data) => {
@@ -352,7 +362,7 @@ function Canvas(props: any) {
 
     socket.on("receive_toggle_player_control", (data) => {
       currentGameRef.current.myTeam = data;
-    })
+    });
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -369,19 +379,29 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
-      } else if (e.key === "p") {//practice toggle playerControl:
+        const tempTeam = currentGameRef.current.myTeam.changePlayerInControl();
+        console.log(tempTeam)
+      } else if (e.key === "p") {
+        //practice toggle playerControl:
         let tempTeam = currentGameRef.current.myTeam;
-        const myTeammate = socketID === currentGameRef.current.myTeam.players.x ? currentGameRef.current.myTeam.players.y : currentGameRef.current.myTeam.players.x
-        if (currentGameRef.current.myTeam.playerInControl === currentGameRef.current.myTeam.players.x) {
-          currentGameRef.current.myTeam.playerInControl = currentGameRef.current.myTeam.players.y;
+        const myTeammate =
+          socketId === currentGameRef.current.myTeam.players.x
+            ? currentGameRef.current.myTeam.players.y
+            : currentGameRef.current.myTeam.players.x;
+        if (
+          currentGameRef.current.myTeam.playerInControl ===
+          currentGameRef.current.myTeam.players.x
+        ) {
+          currentGameRef.current.myTeam.playerInControl =
+            currentGameRef.current.myTeam.players.y;
           tempTeam.playerInControl = currentGameRef.current.myTeam.players.y;
         } else {
-          currentGameRef.current.myTeam.playerInControl = currentGameRef.current.myTeam.players.x;
+          currentGameRef.current.myTeam.playerInControl =
+            currentGameRef.current.myTeam.players.x;
           tempTeam.playerInControl = currentGameRef.current.myTeam.players.x;
         }
-        socket.emit("toggle_player_control", {tempTeam, myTeammate})
+        socket.emit("toggle_player_control", { tempTeam, myTeammate });
       }
-
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {

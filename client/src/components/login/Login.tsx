@@ -4,7 +4,7 @@ import { getData, postData } from "../../apiHelper";
 import React, { Dispatch, SetStateAction } from "react";
 import { userType } from "../../types/Types";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
-import { socketID, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "./../../GlobalSocket";
 
 interface Props {
   userData: userType | undefined;
@@ -31,10 +31,10 @@ const Login = () => {
   });
 
   const loginAsGuest = () => {
-      localStorage.clear();
-      localStorage.setItem("loginWith", "Guest");
-      navigate("/lobby");
-  }
+    localStorage.clear();
+    localStorage.setItem("loginWith", "Guest");
+    navigate("/lobby");
+  };
 
   return (
     <>
@@ -70,7 +70,7 @@ const Login = () => {
           <Spacer y={1} />
           <Button color="gradient" auto ghost onClick={() => loginAsGuest()}>
             {/* <IconGoogle /> */}
-            <Spacer x={.5} />
+            <Spacer x={0.5} />
             Continue as Guest
           </Button>
         </Card>

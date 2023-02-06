@@ -13,7 +13,7 @@ import {
   User,
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
-import { socketID, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "./../../GlobalSocket";
 
 import { getUserDataGoogle } from "./services/lobby-services";
 
@@ -105,8 +105,7 @@ const Lobby = (props: Props) => {
       if (!lastPost) {
         handleStartAGame();
       } else {
-        getData(`/game/${lastPost.id}/gameUser`)
-        .then((gameUsers) => {
+        getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
             handleJoinAGame(gameUsers);
           } else if ((gameUsers.length = 0 || 4)) {
