@@ -57,9 +57,18 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  const currentGameRef = useRef<{userList:[], myTeam:Team}>({
+  const currentGameRef = useRef<{
+    userList: [];
+    myTeamMate: string;
+    myTeam: Team;
+  }>({
     userList: [],
-    myTeam: { players: { x: "", y: "" }, playerInControl: "x", changePlayerInControl: ()=>null },
+    myTeamMate: "",
+    myTeam: {
+      players: { x: "", y: "" },
+      playerInControl: "x",
+      changePlayerInControl: () => null,
+    },
   });
 
   //collision detection function:
@@ -298,43 +307,6 @@ function Canvas(props: any) {
     //   setMyTeam(tempTeam);
     // };
 
-    socket.on("room_and_users", (data: Array<any>) => {
-      const socketIds = data[1];
-      currentGameRef.current.userList = socketIds;
-      if (socketIds.length % 2 === 0) {
-        const tempMyTeam = new Team({
-          players: {
-            x: socketIds[socketIds.length - 2],
-            y: socketIds[socketIds.length - 1],
-          },
-        });
-
-        currentGameRef.current.myTeam = tempMyTeam;
-        socket.emit("send_team", {
-          x: socketIds[socketIds.length - 2],
-          y: socketIds[socketIds.length - 1],
-        });
-      }
-      console.log(
-        "room and users",
-        data,
-        currentGameRef.current.myTeam
-          ? currentGameRef.current.myTeam
-          : "no team created"
-      );
-    });
-
-    socket.on("receive_my_team", (data) => {
-      console.log("receive_my_team", data);
-      const tempMyTeam = new Team({
-        players: {
-          x: data.x,
-          y: data.y,
-        },
-      });
-      currentGameRef.current.myTeam = tempMyTeam;
-    });
-
     socket.on("client_joined", (data) => {
       console.log("client_joined", data);
       currentGameRef.current.userList = data;
@@ -347,6 +319,7 @@ function Canvas(props: any) {
               y: data[data.length - 1],
             },
           });
+          currentGameRef.current.myTeamMate = data[data.length - 2];
           currentGameRef.current.myTeam = tempMyTeam;
           socket.emit("send_team", {
             x: data[data.length - 2],
@@ -354,6 +327,18 @@ function Canvas(props: any) {
           });
         }
       }
+    });
+
+    socket.on("receive_my_team", (data) => {
+      console.log("receive_my_team", data);
+      const tempMyTeam = new Team({
+        players: {
+          x: data.x,
+          y: data.y,
+        },
+      });
+      currentGameRef.current.myTeam = tempMyTeam;
+      currentGameRef.current.myTeamMate = data.y;
     });
 
     socket.on("receive_player_update", (data) => {
@@ -379,8 +364,8 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         console.log("userList:", currentGameRef.current.userList);
         console.log("myTeam:", currentGameRef.current.myTeam);
+        console.log("myTeamMate:", currentGameRef.current.myTeamMate);
         const tempTeam = currentGameRef.current.myTeam.changePlayerInControl();
-        console.log(tempTeam)
       } else if (e.key === "p") {
         //practice toggle playerControl:
         let tempTeam = currentGameRef.current.myTeam;
