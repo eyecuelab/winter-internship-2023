@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Player } from "./gameClasses";
+import { Boundary, Player, Team } from "./gameClasses";
 import { socketID, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
 // const socket = io.connect("http://localhost:3001");
+interface Props {
+  gameId: string;
+}
 
-function Canvas() {
+function Canvas(props: any) {
+  const { gameId } = props;
   const lastKeyRef = useRef("");
+
   const keysPressedRef = useRef({
     w: {
       pressed: false,
@@ -30,6 +35,7 @@ function Canvas() {
     velocity: { x: 0, y: 0 },
     radius: 15,
   });
+
   const mapRef = useRef<any[][]>([
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
     ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
@@ -45,42 +51,16 @@ function Canvas() {
     ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
   ]);
-  // const [boundaries, setBoundaries] = useState<Boundary[]>([]);
+
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  //socketHandling state:
-  const [user1, setUser1] = useState("");
-  const [user2, setUser2] = useState("");
-  const [user3, setUser3] = useState("");
-  const [user4, setUser4] = useState("");
-  const [user1Input, setUser1Input] = useState("");
-  const [user2Input, setUser2Input] = useState("");
-  const [user3Input, setUser3Input] = useState("");
-  const [user4Input, setUser4Input] = useState("");
-
-  //useMemo() and create a useEffect just for these 3 vars:
-  let roomNumber = "";
-  let ifModerator: boolean = false; //isModerator
-  let userList: Array<string> = [];
-
-  //socketHandling logic:
-  // const joinPublic = () => {
-  //   socket.emit("join_public");
-  // };
-  const keypress = (key: string) => {
-    socket.emit("key_press", { key, roomNumber });
-  };
-
-  const sendUsers = (data: Array<string>) => {
-    setUser1(userList[0]);
-    setUser2(userList[1]);
-    setUser3(userList[2]);
-    setUser4(userList[3]);
-    socket.emit("mod_sends_user_list", { userList, roomNumber });
-  };
+  const currentGameRef = useRef({
+    userList: [],
+    myTeam: { players: { x: "", y: "" }, playerInControl: "x" },
+  });
 
   //collision detection function:
   function circleCollidesWithRectangle({
@@ -236,6 +216,7 @@ function Canvas() {
     });
   };
 
+  //canvas animation functions:
   const renderFrame = () => {
     //updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
@@ -246,19 +227,16 @@ function Canvas() {
     if (!context) {
       return;
     }
-    updateBoundaries();
-    updatePlayer();
 
-    if (ifModerator) {
+    if(currentGameRef.current.myTeam.playerInControl === socketID){
+      updateBoundaries();
+      updatePlayer();
       const tempPlayer = playerRef.current;
-      socket.emit("player_update", { tempPlayer, roomNumber });
-      console.log("emit")
+      socket.emit("player_update", { tempPlayer, gameId });
     }
 
     frameRenderer.call(context, size, playerRef.current, mapRef.current);
   };
-
-
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -270,44 +248,44 @@ function Canvas() {
         numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
       }
       if (numTicks > 4) {
-        console.log(`dropping ${numTicks} frames`);
         numTicks = 0;
         TimeMath._lastTick = t;
       }
-      
+
       if (t - TimeMath._lastFpsUpdate > 200) {
-        TimeMath._fps = 0.9 * TimeMath._framesSinceFPSUpdate * 1000 / (t - TimeMath._lastFpsUpdate) + 0.1 * TimeMath._fps;
+        TimeMath._fps =
+          (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
+            (t - TimeMath._lastFpsUpdate) +
+          0.1 * TimeMath._fps;
         Time.fps = TimeMath._fps;
         TimeMath._lastFpsUpdate = t;
         TimeMath._framesSinceFPSUpdate = 0;
       }
-      
+
       TimeMath._framesSinceFPSUpdate++;
-  
+
       // Update
       for (let i = 0; i < numTicks; i++) {
         TimeMath._lastTick += TimeMath._timestep;
         Time.t = TimeMath._lastTick - TimeMath._startTime;
         Time.dt = TimeMath._timestep;
-       
+
         //update(); //this does literally nothing
         renderFrame();
-        console.log("render a frame")
       }
-  
+
       // Draw
       Time.frame = TimeMath._currentFrame;
       Time.frameTime = t;
       //draw(); //this moves the square in a circle
-      
+
       TimeMath._currentFrame++;
     } catch (e) {
       //cancelAnimationFrame(requestIdRef.current);
-      throw(e);
+      throw e;
     }
     //renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
-    console.log("every time it checks")
   };
 
   useEffect(() => {
@@ -317,47 +295,64 @@ function Canvas() {
     };
   }, []);
 
-
-
-
-
+  //socket handlers:
   useEffect(() => {
+    // const startGame = (socketUser1: string, socketUser2: string) => {
+    //   const tempTeam = new Team({
+    //     players: { x: socketUser1, y: socketUser2 },
+    //   });
+    //   setMyTeam(tempTeam);
+    // };
+
+    socket.on("room_and_users", (data: Array<any>) => {
+      const socketIds = data[1];
+      currentGameRef.current.userList = socketIds;
+      if (socketIds.length % 2 === 0) {
+        const tempMyTeam = new Team({
+          players: {
+            x: socketIds[socketIds.length - 2],
+            y: socketIds[socketIds.length - 1],
+          },
+        });
+
+        currentGameRef.current.myTeam = tempMyTeam;
+        socket.emit("send_team", {
+          x: socketIds[socketIds.length - 2],
+          y: socketIds[socketIds.length - 1],
+        });
+      }
+      console.log(
+        "room and users",
+        data,
+        currentGameRef.current.myTeam
+          ? currentGameRef.current.myTeam
+          : "no team created"
+      );
+    });
+
+    socket.on("receive_my_team", (data) => {
+      console.log("receive_my_team", data);
+      const tempMyTeam = new Team({
+        players: {
+          x: data.x,
+          y: data.y,
+        },
+      });
+      currentGameRef.current.myTeam = tempMyTeam;
+    });
+
+    socket.on("client_joined", (data) => {
+      console.log("client_joined", data);
+      currentGameRef.current.userList = data;
+    });
+
     socket.on("receive_player_update", (data) => {
       playerRef.current = data;
     });
 
-    socket.on("receive_room_number", (data: Array<any>) => {
-      roomNumber = data[0];
-      ifModerator = data[1];
-    });
-
-    //socketHandling useEffect:
-    socket.on("receive_room_number", (data: Array<any>) => {
-      roomNumber = data[0];
-      ifModerator = data[1];
-      if (ifModerator) {
-        userList.push(data[2]);
-      }
-    });
-
-    socket.on("mod_receive_user", (data) => {
-      if (ifModerator) {
-        userList.push(data);
-      }
-    });
-    socket.on("room_full", () => {
-      if (ifModerator) {
-        sendUsers(userList);
-      }
-    });
-
-    socket.on("get_user_list", (data: Array<string>) => {
-      setUser1(data[0]);
-      setUser2(data[1]);
-      setUser3(data[2]);
-      setUser4(data[3]);
-      userList = data;
-    });
+    socket.on("receive_toggle_player_control", (data) => {
+      currentGameRef.current.myTeam = data;
+    })
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -371,7 +366,22 @@ function Canvas() {
             pressed: true,
           },
         };
+      } else if (e.key === "q") {
+        console.log("userList:", currentGameRef.current.userList);
+        console.log("myTeam:", currentGameRef.current.myTeam);
+      } else if (e.key === "p") {//practice toggle playerControl:
+        let tempTeam = currentGameRef.current.myTeam;
+        const myTeammate = socketID === currentGameRef.current.myTeam.players.x ? currentGameRef.current.myTeam.players.y : currentGameRef.current.myTeam.players.x
+        if (currentGameRef.current.myTeam.playerInControl === currentGameRef.current.myTeam.players.x) {
+          currentGameRef.current.myTeam.playerInControl = currentGameRef.current.myTeam.players.y;
+          tempTeam.playerInControl = currentGameRef.current.myTeam.players.y;
+        } else {
+          currentGameRef.current.myTeam.playerInControl = currentGameRef.current.myTeam.players.x;
+          tempTeam.playerInControl = currentGameRef.current.myTeam.players.x;
+        }
+        socket.emit("toggle_player_control", {tempTeam, myTeammate})
       }
+
     };
 
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -403,18 +413,10 @@ function Canvas() {
         {/* <button onClick={joinPublic}>Join a public game!</button> */}
         <h1>inputs below:</h1>
         <ul>
-          <li>
-            {user1}: {user1Input}
-          </li>
-          <li>
-            {user2}: {user2Input}
-          </li>
-          <li>
-            {user3}: {user3Input}
-          </li>
-          <li>
-            {user4}: {user4Input}
-          </li>
+          <li>{currentGameRef.current.userList[0]}</li>
+          <li>{currentGameRef.current.userList[1]}</li>
+          <li>{currentGameRef.current.userList[2]}</li>
+          <li>{currentGameRef.current.userList[3]}</li>
         </ul>
       </div>
     </div>
