@@ -181,7 +181,7 @@ function Canvas(props: any) {
       tempTeam.changePlayerInControl();
       currentGameRef.current.myTeam = tempTeam;
       socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
-      console.log();
+      lastKeyRef.current = "";
     }
   };
 
@@ -250,7 +250,7 @@ function Canvas(props: any) {
       tempTeam.changePlayerInControl();
       currentGameRef.current.myTeam = tempTeam;
       socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
-      console.log();
+      lastKeyRef.current = "";
     }
   };
 
