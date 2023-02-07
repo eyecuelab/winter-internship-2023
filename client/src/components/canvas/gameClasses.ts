@@ -30,9 +30,11 @@ export class Kart {
 export class Team {
   players: { x: string; y: string };
   playerInControl: string;
-  constructor({ players }: { players: { x: string; y: string } }) {
+  score: number;
+  constructor({ players }: { players: { x: string; y: string } }, { score }: {score: number}) {
     this.players = players;
     this.playerInControl = this.players.x;
+    this.score = score;
   }
 
   changePlayerInControl() {
