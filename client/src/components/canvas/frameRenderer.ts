@@ -4,7 +4,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
   this.clearRect(0, 0, size.width, size.height);
 
   const drawBoundary = (boundary: Boundary) => {
-    this.fillStyle = 'blue';
+    this.fillStyle = 'pink';
     this.fillRect(boundary.position.x, boundary.position.y, Boundary.width, Boundary.height)
   }
 
@@ -39,7 +39,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     this.closePath();
   }
 
-  drawKart(kart.position.x, kart.position.y, kart.radius, 'yellow')
+  drawKart(kart.position.x, kart.position.y, kart.radius, 'teal')
 }
 
 export default frameRenderer;

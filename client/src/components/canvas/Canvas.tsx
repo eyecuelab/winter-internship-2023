@@ -60,10 +60,12 @@ function Canvas(props: any) {
   const currentGameRef = useRef<{
     userList: [];
     myTeamMate: string;
+    myControl: string;
     myTeam: Team;
   }>({
     userList: [],
     myTeamMate: "",
+    myControl: "",
     myTeam: {
       players: { x: "", y: "" },
       playerInControl: "x",
@@ -114,9 +116,10 @@ function Canvas(props: any) {
     boundariesRef.current = tempBoundaries;
   };
 
-  //updates kart movement based on collision detection
-  const updateKart = () => {
+  //updates kart movement based on collision detection and player axis control:
+  const updateKartYMovements = () => {
     const kart = kartRef.current;
+
     if (keysPressedRef.current.w.pressed && lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -138,27 +141,6 @@ function Canvas(props: any) {
           kart.velocity.y = -5;
         }
       }
-    } else if (keysPressedRef.current.a.pressed && lastKeyRef.current === "a") {
-      for (let i = 0; i < boundariesRef.current.length; i++) {
-        const boundary = boundariesRef.current[i];
-        if (
-          circleCollidesWithRectangle({
-            circle: {
-              ...kart,
-              velocity: {
-                x: -5,
-                y: 0,
-              },
-            },
-            rectangle: boundary,
-          })
-        ) {
-          kart.velocity.x = 0;
-          break;
-        } else {
-          kart.velocity.x = -5;
-        }
-      }
     } else if (keysPressedRef.current.s.pressed && lastKeyRef.current === "s") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -178,6 +160,53 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.y = 5;
+        }
+      }
+    }
+    kart.position.x += kart.velocity.x;
+    kart.position.y += kart.velocity.y;
+    boundariesRef.current.forEach((boundary) => {
+      if (
+        circleCollidesWithRectangle({
+          circle: kart,
+          rectangle: boundary,
+        })
+      ) {
+        kart.velocity.y = 0;
+        kart.velocity.x = 0;
+      }
+    });
+      if (kart.velocity.y != 0) {
+      const tempTeam = currentGameRef.current.myTeam;
+      tempTeam.changePlayerInControl();
+      currentGameRef.current.myTeam = tempTeam;
+      socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
+      console.log()
+    }
+  };
+
+  const updateKartXMovements = () => {
+    const kart = kartRef.current;
+
+    if (keysPressedRef.current.a.pressed && lastKeyRef.current === "a") {
+      for (let i = 0; i < boundariesRef.current.length; i++) {
+        const boundary = boundariesRef.current[i];
+        if (
+          circleCollidesWithRectangle({
+            circle: {
+              ...kart,
+              velocity: {
+                x: -5,
+                y: 0,
+              },
+            },
+            rectangle: boundary,
+          })
+        ) {
+          kart.velocity.x = 0;
+          break;
+        } else {
+          kart.velocity.x = -5;
         }
       }
     } else if (keysPressedRef.current.d.pressed && lastKeyRef.current === "d") {
@@ -202,7 +231,6 @@ function Canvas(props: any) {
         }
       }
     }
-
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
 
@@ -213,10 +241,17 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-        kart.velocity.y = 0;
         kart.velocity.x = 0;
+        kart.velocity.y = 0;
       }
     });
+    if (kart.velocity.x != 0) {
+      const tempTeam = currentGameRef.current.myTeam;
+      tempTeam.changePlayerInControl();
+      currentGameRef.current.myTeam = tempTeam;
+      socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
+      console.log()
+    }
   };
 
   //canvas animation functions:
@@ -232,8 +267,13 @@ function Canvas(props: any) {
     }
 
     if (currentGameRef.current.myTeam.playerInControl === socketId) {
-      updateBoundaries();
-      updateKart();
+      if (currentGameRef.current.myControl === "x"){
+        updateBoundaries();
+        updateKartXMovements();
+      } else if (currentGameRef.current.myControl === "y") {
+        updateBoundaries();
+        updateKartYMovements();
+      }
       const tempKart = kartRef.current;
       socket.emit("kart_update", { tempKart, gameId });
     }
@@ -318,6 +358,7 @@ function Canvas(props: any) {
             },
           });
           currentGameRef.current.myTeamMate = data[data.length - 2];
+          currentGameRef.current.myControl = "y"
           currentGameRef.current.myTeam = tempMyTeam;
           socket.emit("send_team", {
             x: data[data.length - 2],
@@ -336,6 +377,7 @@ function Canvas(props: any) {
       });
       currentGameRef.current.myTeam = tempMyTeam;
       currentGameRef.current.myTeamMate = data.y;
+      currentGameRef.current.myControl = "x";
     });
 
     socket.on("receive_kart_update", (data) => {
@@ -343,6 +385,7 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_toggle_player_control", () => {
+      console.log("receive toggle")
       const tempTeam = currentGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
       currentGameRef.current.myTeam = tempTeam;
@@ -361,9 +404,7 @@ function Canvas(props: any) {
           },
         };
       } else if (e.key === "q") {
-        console.log("userList:", currentGameRef.current.userList);
-        console.log("myTeam:", currentGameRef.current.myTeam);
-        console.log("myTeamMate:", currentGameRef.current.myTeamMate);
+        console.log(kartRef.current);
       } else if (e.key === "p") {
         //practice toggle playerControl:
         const tempTeam = currentGameRef.current.myTeam;
@@ -371,6 +412,7 @@ function Canvas(props: any) {
         currentGameRef.current.myTeam = tempTeam;
 
         socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
+        console.log("toggle:", kartRef.current);
       }
     };
 
@@ -397,18 +439,6 @@ function Canvas(props: any) {
     <div style={{ color: "white", backgroundColor: "black" }}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
-
-      {/* socketHandling: */}
-      <div className="SocketHandling">
-        {/* <button onClick={joinPublic}>Join a public game!</button> */}
-        <h1>inputs below:</h1>
-        <ul>
-          <li>{currentGameRef.current.userList[0]}</li>
-          <li>{currentGameRef.current.userList[1]}</li>
-          <li>{currentGameRef.current.userList[2]}</li>
-          <li>{currentGameRef.current.userList[3]}</li>
-        </ul>
-      </div>
     </div>
   );
 }
