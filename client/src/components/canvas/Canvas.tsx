@@ -394,7 +394,9 @@ function Canvas(props: any) {
 
   const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
     pelletsRef.forEach((pellet, i) => {
-      if (Math.hypot(pellet.position.x - kartRef.position.x, kartRef.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
+      if (Math.hypot(
+        pellet.position.x - kartRef.position.x,
+        pellet.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
         console.log('touching');
         pelletsRef.splice(i, 1)
       }
