@@ -10,7 +10,7 @@ export class Boundary {
   }
 }
 
-export class Player {
+export class Kart {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
