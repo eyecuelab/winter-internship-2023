@@ -264,7 +264,11 @@ function Canvas(props: any) {
       socket.emit("kart_update", { tempKart, tempTeamId, gameId }); //this will need a team Id..
     }
 
-    frameRenderer.call(context, size, myGameRef.current.myKart, mapRef.current); //myKart will be replaced with an array or object filled with all the teams Karts called kartsRef
+    const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
+      return { teamId: kart[0], kart: kart[1] };
+    });
+
+    frameRenderer.call(context, size, kartsArr, mapRef.current); //myKart will be replaced with an array or object filled with all the teams Karts called kartsRef
   };
 
   const tick = () => {

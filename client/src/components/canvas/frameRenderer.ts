@@ -1,6 +1,6 @@
 import {Boundary} from './gameClasses';
 
-function frameRenderer(this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }, map: any[]) {
+function frameRenderer(this: any, size: { width: any; height: any; }, karts: any[], map: any[]) {
   this.clearRect(0, 0, size.width, size.height);
 
   const drawBoundary = (boundary: Boundary) => {
@@ -39,7 +39,9 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     this.closePath();
   }
 
-  drawKart(kart.position.x, kart.position.y, kart.radius, 'teal')
+  karts.forEach((kart)=>{
+    drawKart(kart.kart.position.x, kart.kart.position.y, kart.kart.radius, 'teal')
+  })
 }
 
 export default frameRenderer;
