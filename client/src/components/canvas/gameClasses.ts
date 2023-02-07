@@ -11,6 +11,7 @@ export class Boundary {
 }
 
 export class Kart {
+
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
