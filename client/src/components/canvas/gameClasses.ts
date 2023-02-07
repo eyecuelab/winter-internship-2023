@@ -43,3 +43,13 @@ export class Team {
     }
   }
 }
+
+export class Pellet {
+  position: { x: number; y: number };
+  radius: number;
+  constructor({ position }: { position: { x: number; y: number };
+}) {
+    this.position = position;
+    this.radius = 3;
+  }
+}

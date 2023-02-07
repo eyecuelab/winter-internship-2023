@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 
@@ -14,7 +14,6 @@ interface Props {
 function Canvas(props: any) {
   const { gameId } = props;
   const lastKeyRef = useRef("");
-
   const keysPressedRef = useRef({
     w: {
       pressed: false,
@@ -77,9 +76,11 @@ function Canvas(props: any) {
   ]);
 
   const boundariesRef = useRef<Boundary[]>([]);
+  const pelletsRef = useRef <Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
+
 
   const currentGameRef = useRef<{
     userList: [];
@@ -139,6 +140,27 @@ function Canvas(props: any) {
     // setBoundaries(tempBoundaries)
     boundariesRef.current = tempBoundaries;
   };
+
+  const updatePellets = () => {
+    const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
+    mapRef.current.forEach((row: any[], i: number) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case ".":
+            tempPellets.push(
+              new Pellet({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                },
+              })
+            );
+            break;
+        }
+      });
+    });
+    pelletsRef.current = tempPellets;
+  }
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -301,8 +323,8 @@ function Canvas(props: any) {
       const tempKart = kartRef.current;
       socket.emit("kart_update", { tempKart, gameId });
     }
-
-    frameRenderer.call(context, size, kartRef.current, mapRef.current);
+    removePellets(pelletsRef.current, kartRef.current);
+    frameRenderer.call(context, size, kartRef.current, boundariesRef.current, pelletsRef.current);
   };
 
   const tick = () => {
@@ -355,12 +377,59 @@ function Canvas(props: any) {
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
+
+
   useEffect(() => {
+    const tempBoundaries = boundariesRef.current;
+    const tempPellets = pelletsRef.current;
     requestIdRef.current = requestAnimationFrame(tick);
+    mapRef.current.forEach((row, i) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case '-':
+            tempBoundaries.push(
+              new Boundary({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                }
+              })
+            );
+            break;
+          case '.':
+            tempPellets.push(
+              new Pellet({
+                position: {
+                  x: j * Boundary.width + Boundary.width / 2,
+                  y: i * Boundary.height + Boundary.height / 2
+                }
+              })
+            )
+            break
+        }
+      });
+    });
+    boundariesRef.current = tempBoundaries;
+    pelletsRef.current = tempPellets;
     return () => {
       cancelAnimationFrame(requestIdRef.current);
     };
   }, []);
+
+  const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
+    pelletsRef.forEach((pellet, i) => {
+      if (Math.hypot(
+        pellet.position.x - kartRef.position.x,
+        pellet.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
+        console.log('touching');
+        pelletsRef.splice(i, 1)
+      }
+    })
+  }
+
+  // useEffect(() => {
+  //   removePellets(pelletsRef.current, kartRef.current);
+  // }, [kartRef])
 
   //socket handlers:
   useEffect(() => {
