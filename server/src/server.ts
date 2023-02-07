@@ -37,12 +37,12 @@ io.on("connection", (socket) => {
     socket.to(data.x).emit("receive_my_team", data);
   });
 
-  socket.on("player_update", (data) => {
-    socket.to(`${data.gameId}`).emit("receive_player_update", data.tempPlayer);
+  socket.on("kart_update", (data) => {
+    socket.to(`${data.gameId}`).emit("receive_kart_update", data.tempKart);
   });
 
   socket.on("toggle_player_control", (data) => {
-    socket.to(data.myTeammate).emit("receive_toggle_player_control", data.tempTeam);
+    socket.to(data).emit("receive_toggle_player_control");
   })
 
   socket.on("send_message", (data) => {

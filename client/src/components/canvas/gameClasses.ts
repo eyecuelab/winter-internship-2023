@@ -9,7 +9,9 @@ export class Boundary {
     // this.image = image;
   }
 }
-export class Player {
+
+export class Kart {
+
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
