@@ -3,6 +3,7 @@ import frameRenderer from "./frameRenderer";
 import { Boundary, Kart, Team } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
+import { myGameType, roomGameType } from "../../types/Types";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
@@ -10,31 +11,9 @@ import { Time, TimeMath } from "./FPSEngine";
 interface Props {
   gameId: string;
 }
-
 function Canvas(props: any) {
   const { gameId } = props;
   const lastKeyRef = useRef("");
-
-  const keysPressedRef = useRef({
-    w: {
-      pressed: false,
-    },
-    a: {
-      pressed: false,
-    },
-    s: {
-      pressed: false,
-    },
-    d: {
-      pressed: false,
-    },
-  });
-
-  const kartRef = useRef({
-    position: { x: 60, y: 60 },
-    velocity: { x: 0, y: 0 },
-    radius: 15,
-  });
 
   const mapRef = useRef<any[][]>([
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
@@ -52,24 +31,31 @@ function Canvas(props: any) {
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
   ]);
 
+  const kartsRef = useRef<Kart[]>([]);
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
-  const currentGameRef = useRef<{
-    userList: [];
-    myTeamMate: string;
-    myControl: string;
-    myTeam: Team;
-  }>({
+  const roomGameRef = useRef<roomGameType>({
+    karts : new Map(),
+    boundaries: [],
+  })
+
+  const myGameRef = useRef<myGameType>({
     userList: [],
     myTeamMate: "",
     myControl: "",
     myTeam: {
+      teamId: 0,
       players: { x: "", y: "" },
       playerInControl: "x",
       changePlayerInControl: () => null,
+    },
+    myKart: {
+      position: { x: 60, y: 60 },
+      velocity: { x: 0, y: 0 },
+      radius: 15,
     },
   });
 
@@ -116,10 +102,12 @@ function Canvas(props: any) {
     boundariesRef.current = tempBoundaries;
   };
 
-  //updates kart movement based on collision detection and player axis control:
-  const updateKartYMovements = () => {
-    const kart = kartRef.current;
+  const updateKarts = () => {
+    //fill the karts ref array with everyone's kart updates
+  };
 
+  //updates kart movement based on collision detection and player axis control:
+  const updateKartYMovements = (kart) => {
     if (lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -128,7 +116,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kartRef.current.velocity.x,
+                x: kart.velocity.x,
                 y: -5,
               },
             },
@@ -149,7 +137,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kartRef.current.velocity.x,
+                x: kart.velocity.x,
                 y: 5,
               },
             },
@@ -177,17 +165,15 @@ function Canvas(props: any) {
       }
     });
     if (kart.velocity.y != 0) {
-      const tempTeam = currentGameRef.current.myTeam;
+      const tempTeam = myGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
-      currentGameRef.current.myTeam = tempTeam;
-      socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
+      myGameRef.current.myTeam = tempTeam;
+      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       lastKeyRef.current = "";
     }
   };
 
-  const updateKartXMovements = () => {
-    const kart = kartRef.current;
-
+  const updateKartXMovements = (kart) => {
     if (lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -197,7 +183,7 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: -5,
-                y: kartRef.current.velocity.y,
+                y: kart.velocity.y,
               },
             },
             rectangle: boundary,
@@ -218,7 +204,7 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: 5,
-                y: kartRef.current.velocity.y,
+                y: kart.velocity.y,
               },
             },
             rectangle: boundary,
@@ -246,10 +232,10 @@ function Canvas(props: any) {
       }
     });
     if (kart.velocity.x != 0) {
-      const tempTeam = currentGameRef.current.myTeam;
+      const tempTeam = myGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
-      currentGameRef.current.myTeam = tempTeam;
-      socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
+      myGameRef.current.myTeam = tempTeam;
+      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       lastKeyRef.current = "";
     }
   };
@@ -266,19 +252,19 @@ function Canvas(props: any) {
       return;
     }
 
-    if (currentGameRef.current.myTeam.playerInControl === socketId) {
-      if (currentGameRef.current.myControl === "x") {
+    if (myGameRef.current.myTeam.playerInControl === socketId) {
+      if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updateKartXMovements();
-      } else if (currentGameRef.current.myControl === "y") {
+        updateKartXMovements(myGameRef.current.myKart);
+      } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updateKartYMovements();
+        updateKartYMovements(myGameRef.current.myKart);
       }
-      const tempKart = kartRef.current;
-      socket.emit("kart_update", { tempKart, gameId });
+      const tempKart = myGameRef.current.myKart; //is this sending updates 1 frame delayed?
+      socket.emit("kart_update", { tempKart, gameId }); //this will need a team Id..
     }
 
-    frameRenderer.call(context, size, kartRef.current, mapRef.current);
+    frameRenderer.call(context, size, myGameRef.current.myKart, mapRef.current); //myKart will be replaced with an array or object filled with all the teams Karts called kartsRef
   };
 
   const tick = () => {
@@ -332,6 +318,7 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
+    //map switch case will live here eventually.
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(requestIdRef.current);
@@ -348,22 +335,21 @@ function Canvas(props: any) {
     // };
 
     socket.on("client_joined", (data) => {
-      currentGameRef.current.userList = data;
+      myGameRef.current.userList = data;
       if (socketId === data[data.length - 1]) {
         if (data.length % 2 === 0) {
           const tempMyTeam = new Team({
+            teamId: data.length,
             players: {
               x: data[data.length - 2],
               y: data[data.length - 1],
             },
           });
-          currentGameRef.current.myTeamMate = data[data.length - 2];
-          currentGameRef.current.myControl = "y";
-          currentGameRef.current.myTeam = tempMyTeam;
-          socket.emit("send_team", {
-            x: data[data.length - 2],
-            y: data[data.length - 1],
-          });
+          myGameRef.current.myTeamMate = data[data.length - 2];
+          myGameRef.current.myControl = "y";
+          myGameRef.current.myTeam = tempMyTeam;
+          socket.emit("send_team", tempMyTeam);
+          //send Teams update to all clients in room pushing a list of teams and karts into state (like userList)
         }
       }
     });
@@ -375,20 +361,21 @@ function Canvas(props: any) {
           y: data.y,
         },
       });
-      currentGameRef.current.myTeam = tempMyTeam;
-      currentGameRef.current.myTeamMate = data.y;
-      currentGameRef.current.myControl = "x";
+      myGameRef.current.myTeam = tempMyTeam;
+      myGameRef.current.myTeamMate = data.y;
+      myGameRef.current.myControl = "x";
     });
 
     socket.on("receive_kart_update", (data) => {
-      kartRef.current = data;
+      //this will be a kart and a teamId
+      kartsRef.current = data;
     });
 
     socket.on("receive_toggle_player_control", () => {
       console.log("receive toggle");
-      const tempTeam = currentGameRef.current.myTeam;
+      const tempTeam = myGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
-      currentGameRef.current.myTeam = tempTeam;
+      myGameRef.current.myTeam = tempTeam;
     });
   }, [socket]);
 
@@ -397,41 +384,22 @@ function Canvas(props: any) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
-        keysPressedRef.current = {
-          ...keysPressedRef.current,
-          [e.key]: {
-            pressed: true,
-          },
-        };
       } else if (e.key === "q") {
-        console.log(kartRef.current);
+        //temp development keypress for state console.logs
       } else if (e.key === "p") {
-        //practice toggle playerControl:
-        const tempTeam = currentGameRef.current.myTeam;
+        //temp development toggle playerControl:
+        const tempTeam = myGameRef.current.myTeam;
         tempTeam.changePlayerInControl();
-        currentGameRef.current.myTeam = tempTeam;
+        myGameRef.current.myTeam = tempTeam;
 
-        socket.emit("toggle_player_control", currentGameRef.current.myTeamMate);
-        console.log("toggle:", kartRef.current);
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-        keysPressedRef.current = {
-          ...keysPressedRef.current,
-          [e.key]: {
-            pressed: false,
-          },
-        };
+        socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
+        console.log("toggle player control:", myGameRef.current.myTeam);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
