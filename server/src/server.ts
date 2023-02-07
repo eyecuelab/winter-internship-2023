@@ -29,16 +29,21 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    io.in(`${room}`).emit("client_joined", socketIds);
+    io.in(`${room}`).emit("receive_client_joined", socketIds);
     // socket.emit("room_and_users", [room, socketIds]);
   });
 
   socket.on("send_team", (data) => {
-    socket.to(data.x).emit("receive_my_team", data);
+    console.log(data)
+    socket.to(data.tempMyTeam.players.x).emit("receive_my_team", data.tempMyTeam);
+    io.in(data.gameId).emit("receive_team_added", data.tempMyTeam);
   });
 
   socket.on("kart_update", (data) => {
-    socket.to(`${data.gameId}`).emit("receive_kart_update", data.tempKart);
+    const gameId = data.gameId;
+    const teamId = data.tempTeamId;
+    const kart = data.tempKart;
+    socket.to(`${gameId}`).emit("receive_kart_update", {kart, teamId});
   });
 
   socket.on("toggle_player_control", (data) => {

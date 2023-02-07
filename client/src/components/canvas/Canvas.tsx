@@ -31,16 +31,15 @@ function Canvas(props: any) {
     ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
   ]);
 
-  const kartsRef = useRef<Kart[]>([]);
   const boundariesRef = useRef<Boundary[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
   const roomGameRef = useRef<roomGameType>({
-    karts : new Map(),
+    karts: new Map(),
     boundaries: [],
-  })
+  });
 
   const myGameRef = useRef<myGameType>({
     userList: [],
@@ -107,7 +106,7 @@ function Canvas(props: any) {
   };
 
   //updates kart movement based on collision detection and player axis control:
-  const updateKartYMovements = (kart) => {
+  const updateKartYMovements = (kart: Kart) => {
     if (lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -173,7 +172,7 @@ function Canvas(props: any) {
     }
   };
 
-  const updateKartXMovements = (kart) => {
+  const updateKartXMovements = (kart: Kart) => {
     if (lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -255,13 +254,14 @@ function Canvas(props: any) {
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updateKartXMovements(myGameRef.current.myKart);
+        updateKartXMovements(myGameRef.current.myTeam.kart);
       } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updateKartYMovements(myGameRef.current.myKart);
+        updateKartYMovements(myGameRef.current.myTeam.kart);
       }
       const tempKart = myGameRef.current.myKart; //is this sending updates 1 frame delayed?
-      socket.emit("kart_update", { tempKart, gameId }); //this will need a team Id..
+      const tempTeamId = myGameRef.current.myTeam.teamId;
+      socket.emit("kart_update", { tempKart, tempTeamId, gameId }); //this will need a team Id..
     }
 
     frameRenderer.call(context, size, myGameRef.current.myKart, mapRef.current); //myKart will be replaced with an array or object filled with all the teams Karts called kartsRef
@@ -327,48 +327,47 @@ function Canvas(props: any) {
 
   //socket handlers:
   useEffect(() => {
-    // const startGame = (socketUser1: string, socketUser2: string) => {
-    //   const tempTeam = new Team({
-    //     players: { x: socketUser1, y: socketUser2 },
-    //   });
-    //   setMyTeam(tempTeam);
-    // };
-
-    socket.on("client_joined", (data) => {
+    socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
-      if (socketId === data[data.length - 1]) {
-        if (data.length % 2 === 0) {
-          const tempMyTeam = new Team({
-            teamId: data.length,
-            players: {
-              x: data[data.length - 2],
-              y: data[data.length - 1],
-            },
+      const numberOfUsers = data.length;
+      console.log(numberOfUsers);
+      if (socketId === data[numberOfUsers - 1]) {
+        if (numberOfUsers % 2 === 0) {
+          const tempKart = new Kart({
+            position: { x: 60, y: 60 },
+            velocity: { x: 0, y: 0 },
           });
-          myGameRef.current.myTeamMate = data[data.length - 2];
+          const tempMyTeam = new Team({
+            teamId: numberOfUsers.toString(),
+            players: {
+              x: data[numberOfUsers - 2],
+              y: data[numberOfUsers - 1],
+            },
+            kart: tempKart,
+          });
+          myGameRef.current.myTeamMate = data[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
-          socket.emit("send_team", tempMyTeam);
+          socket.emit("send_team", { tempMyTeam, gameId });
           //send Teams update to all clients in room pushing a list of teams and karts into state (like userList)
         }
       }
     });
 
     socket.on("receive_my_team", (data) => {
-      const tempMyTeam = new Team({
-        players: {
-          x: data.x,
-          y: data.y,
-        },
-      });
+      const tempMyTeam = new Team(data);
       myGameRef.current.myTeam = tempMyTeam;
-      myGameRef.current.myTeamMate = data.y;
+      myGameRef.current.myTeamMate = data.players.y;
       myGameRef.current.myControl = "x";
+    });
+
+    socket.on("receive_team_added", (data) => {
+      roomGameRef.current.karts.set(data.teamId, data.kart);
     });
 
     socket.on("receive_kart_update", (data) => {
       //this will be a kart and a teamId
-      kartsRef.current = data;
+      roomGameRef.current.karts.set(data.teamId, data.kart);
     });
 
     socket.on("receive_toggle_player_control", () => {

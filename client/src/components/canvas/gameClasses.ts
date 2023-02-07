@@ -28,12 +28,14 @@ export class Kart {
 }
 export class Team {
   teamId: string;
-  players: { x: string; y: string };
   playerInControl: string;
-  constructor({ teamId, players }: { teamId: string, players: { x: string; y: string } }) {
+  players: { x: string; y: string };
+  kart: Kart;
+  constructor({ teamId, players, kart }: { teamId: string, players: { x: string; y: string }, kart: Kart }) {
     this.teamId = teamId;
     this.players = players;
     this.playerInControl = this.players.x;
+    this.kart = kart;
   }
 
   changePlayerInControl() {
