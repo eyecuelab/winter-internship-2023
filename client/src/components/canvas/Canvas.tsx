@@ -174,7 +174,6 @@ function Canvas(props: any) {
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
       const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-      console.log("inside update AFTER temp", jsonTeam);
       socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
     }
     return kart;
@@ -242,18 +241,11 @@ function Canvas(props: any) {
       }
     });
 
-    // console.log("update kart x setRoomGameRef")
-    // roomGameRef.current.karts.set(
-    //   myGameRef.current.myTeam.color,
-    //   kart
-    // );
-
     if (kart.velocity.x != 0) {
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
       const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-      console.log("inside update AFTER temp", jsonTeam);
       socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
     }
 
@@ -354,7 +346,6 @@ function Canvas(props: any) {
   useEffect(() => {
     console.count("socket handlers");
     socket.on("receive_client_joined", (data) => {
-      console.log({ data });
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
@@ -376,7 +367,7 @@ function Canvas(props: any) {
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           socket.emit("send_team", { tempMyTeam, gameId });
-          //send Teams update to all clients in room pushing a list of teams and karts into state (like userList)
+          //do we need to send Teams update to all clients in room pushing a list of teams and karts into state (like userList)?
         }
       }
     });
@@ -404,9 +395,7 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_toggle_player_control", (data) => {
-      console.log("before", myGameRef.current.myTeam.playerInControl);
       myGameRef.current.myTeam.updateTeamWithJson(data);
-      console.log("after", myGameRef.current.myTeam.playerInControl);
     });
 
     //add a clean up method
@@ -428,7 +417,6 @@ function Canvas(props: any) {
         myGameRef.current.myTeam.changePlayerInControl();
         const tempTeamMate = myGameRef.current.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-        console.log("inside update AFTER temp", jsonTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
       }
     };
