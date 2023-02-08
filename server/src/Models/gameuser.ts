@@ -17,3 +17,13 @@ export const createGameUser = async (
     },
   });
 };
+
+export const findManyGameUsers = async (
+  gameId: string
+) => {
+  return await prisma.gameUser.findMany({
+    where: {
+        gameId: parseInt(gameId),
+    },
+  });
+};

@@ -9,7 +9,7 @@ const GamePage = () => {
   return (
     <div>
       <p>game id: {gameId}</p>
-      <Canvas />
+      <Canvas gameId={gameId}/>
       </div>
   )
 }

@@ -14,7 +14,7 @@ const handleResponse = async (response: Response) => {
   }
 };
 
-export const getData = async (endpoint: string) => {
+export const getData = async (endpoint: string | null) => {
   const url = `${API_ENDPOINT}${endpoint}`;
   const response = await fetch(url, { ...BASE_HEADERS, method: "GET" });
   return handleResponse(response);

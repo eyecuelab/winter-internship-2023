@@ -1,11 +1,10 @@
-
-import { useGoogleLogin } from "@react-oauth/google"
-import { useNavigate } from "react-router-dom"
-import { getData, postData } from '../../ApiHelper';
-import React, { Dispatch, SetStateAction } from 'react';
-import { userType } from '../../types/Types';
-import { Card, Spacer, Button, Text, Container } from "@nextui-org/react"
-import { socketID, socket } from './../../GlobalSocket';
+import { useGoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
+import { getData, postData } from "../../apiHelper";
+import React, { Dispatch, SetStateAction } from "react";
+import { userType } from "../../types/Types";
+import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
+import { socketId, socket } from "./../../GlobalSocket";
 
 interface Props {
   userData: userType | undefined;
@@ -31,6 +30,12 @@ const Login = () => {
     },
   });
 
+  const loginAsGuest = () => {
+    localStorage.clear();
+    localStorage.setItem("loginWith", "Guest");
+    navigate("/lobby");
+  };
+
   return (
     <>
       <Container
@@ -52,16 +57,21 @@ const Login = () => {
           </Text>
           <Spacer y={1} />
           {/* <Button color='gradient' auto ghost onClick={() => loginToGithub()}>
-     <IconGitHub />
-     <Spacer x={0.5} />
-     GitHub
-    </Button> */}
-          <Spacer y={1} />
+            <IconGitHub />
+            <Spacer x={0.5} />
+            GitHub
+          </Button> */}
 
           <Button color="gradient" auto ghost onClick={() => loginToGoogle()}>
             {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Google
+          </Button>
+          <Spacer y={1} />
+          <Button color="gradient" auto ghost onClick={() => loginAsGuest()}>
+            {/* <IconGoogle /> */}
+            <Spacer x={0.5} />
+            Continue as Guest
           </Button>
         </Card>
       </Container>

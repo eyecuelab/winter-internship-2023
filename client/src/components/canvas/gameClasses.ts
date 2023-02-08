@@ -1,42 +1,59 @@
 export class Boundary {
   static width = 40;
   static height = 40;
-  position: { x: number; y: number; };
-  constructor({ position }: {position: {x: number, y: number}}) {
+  position: { x: number; y: number };
+  constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
     Boundary.width = 40;
     Boundary.height = 40;
     // this.image = image;
   }
-
-  // draw() {
-  //   c.fillStyle = 'blue';
-  //   c.fillRect(this.position.x, this.position.y, this.width, this.height);
-  //   // c.drawImage(this.image, this.position.x, this.position.y);
-  // }
 }
 
-export class Player {
-  position:  {x:number, y:number};
-  velocity:  {x:number, y:number};
+export class Kart {
+
+  position: { x: number; y: number };
+  velocity: { x: number; y: number };
   radius: number;
-  constructor({ position, velocity }: {position: {x:number, y:number}, velocity:  {x:number, y:number}}) {
+  constructor({
+    position,
+    velocity,
+  }: {
+    position: { x: number; y: number };
+    velocity: { x: number; y: number };
+  }) {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;
   }
+}
+export class Team {
+  players: { x: string; y: string };
+  playerInControl: string;
+  score: number;
+  constructor({ players }: { players: { x: string; y: string } }, { score }: {score: number}) {
+    this.players = players;
+    this.playerInControl = this.players.x;
+    this.score = score;
+  }
 
-  // draw() {
-  //   c.beginPath();
-  //   c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-  //   c.fillStyle = 'yellow';
-  //   c.fill();
-  //   c.closePath();
-  // }
+  changePlayerInControl() {
+    if (this.playerInControl === this.players.x) {
+      this.playerInControl = this.players.y;
+    } else {
+      this.playerInControl = this.players.x;
+    }
+  }
+}
 
-  // update() {
-  //   this.draw();
-  //   this.position.x += this.velocity.x; //updates left/right location by 1 increment of velocity unit
-  //   this.position.y += this.velocity.y; ////updates up/down location by 1 increment of velocity unit
-  // }
+export class Pellet {
+  static scoreValue = 10;
+  position: { x: number; y: number };
+  radius: number;
+  constructor({ position }: { position: { x: number; y: number };
+}) {
+    this.position = position;
+    this.radius = 3;
+    Pellet.scoreValue = 10;
+  }
 }
