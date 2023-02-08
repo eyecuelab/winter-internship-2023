@@ -3,7 +3,7 @@ import frameRenderer from "./frameRenderer";
 import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
-import { mapRef } from "./Maps";
+import { map } from "./Maps";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
@@ -29,7 +29,6 @@ function Canvas(props: any) {
       pressed: false,
     },
   });
-
 
   const kartRef = useRef({
     position: { x: 60, y: 60 },
@@ -84,7 +83,7 @@ function Canvas(props: any) {
   //updates Boundaries flat array based on map.
   const updateBoundaries = () => {
     const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
-    mapRef.current.forEach((row: any[], i: number) => {
+    map.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
           case "-":
@@ -106,7 +105,7 @@ function Canvas(props: any) {
 
   const updatePellets = () => {
     const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
-    mapRef.current.forEach((row: any[], i: number) => {
+    map.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
           case ".":
@@ -286,7 +285,7 @@ function Canvas(props: any) {
       const tempKart = kartRef.current;
       socket.emit("kart_update", { tempKart, gameId });
     }
-    removePellets(pelletsRef.current, kartRef.current);
+    removePellets(pelletsRef.current, kartRef.current)
     frameRenderer.call(context, size, kartRef.current, boundariesRef.current, pelletsRef.current);
   };
 
@@ -346,7 +345,7 @@ function Canvas(props: any) {
     const tempBoundaries = boundariesRef.current;
     const tempPellets = pelletsRef.current;
     requestIdRef.current = requestAnimationFrame(tick);
-    mapRef.current.forEach((row, i) => {
+    map.forEach((row, i) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
           case '-':
@@ -379,20 +378,33 @@ function Canvas(props: any) {
     };
   }, []);
 
+  const scoreConditionRef = useRef<string[]>([]);
+
   const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
+
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
       if (Math.hypot(
         pellet.position.x - kartRef.position.x,
         pellet.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
-        console.log('touching');
         pelletsRef.splice(i, 1)
+        tempScoreCondition.push("pellet");
+        scoreConditionRef.current = tempScoreCondition;
+        addScore(scoreConditionRef.current);
       }
     })
   }
 
-  // useEffect(() => {
-  //   removePellets(pelletsRef.current, kartRef.current);
-  // }, [kartRef])
+  const addScore = (scoreConditionArr: string[]) => {
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+    if (scoreConditionArr[0] === "pellet") {
+      const currentGame = currentGameRef.current;
+      currentGame.myTeam.score += Pellet.scoreValue;
+      const currentScoreCondition = scoreConditionRef.current;
+      scoreConditionRef.current = tempScoreCondition;
+      console.log(currentGame.myTeam.score);
+    }
+  }
 
   //socket handlers:
   useEffect(() => {

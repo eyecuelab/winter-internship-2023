@@ -47,11 +47,13 @@ export class Team {
 }
 
 export class Pellet {
+  static scoreValue = 10;
   position: { x: number; y: number };
   radius: number;
   constructor({ position }: { position: { x: number; y: number };
 }) {
     this.position = position;
     this.radius = 3;
+    Pellet.scoreValue = 10;
   }
 }
