@@ -30,7 +30,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_team", (data) => {
-    console.log(data.tempMyTeam.kart)
     socket.to(data.tempMyTeam.players.x).emit("receive_my_team", data.tempMyTeam);
     io.in(data.gameId).emit("receive_team_added", data.tempMyTeam);
   });
@@ -38,8 +37,8 @@ io.on("connection", (socket) => {
   socket.on("kart_update", (data) => {
     const gameId = data.gameId;
     const color = data.tempColor;
-    const kart = data.tempKart;
-    console.log(kart);
+    const kart = data.updatedKart;
+    console.log("41", data);
     socket.to(`${gameId}`).emit("receive_kart_update", {color, kart});
   });
 

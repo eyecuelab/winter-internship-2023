@@ -5,12 +5,10 @@ import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { myGameType, roomGameType } from "../../types/Types";
 
-// import SocketHandling from "../socketHandling/socketHandling";
-// import * as io from 'socket.io-client';
-// const socket = io.connect("http://localhost:3001");
 interface Props {
   gameId: string;
 }
+
 function Canvas(props: any) {
   const { gameId } = props;
   const lastKeyRef = useRef("");
@@ -55,13 +53,13 @@ function Canvas(props: any) {
       kart: {
         position: {
           x: 0,
-          y: 0
+          y: 0,
         },
         velocity: {
           x: 0,
-          y: 0
+          y: 0,
         },
-        radius: 15
+        radius: 15,
       },
       changePlayerInControl: () => null,
     },
@@ -110,14 +108,11 @@ function Canvas(props: any) {
     boundariesRef.current = tempBoundaries;
   };
 
-  const updateKarts = () => {
-    //fill the karts ref array with everyone's kart updates
-  };
-
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
     const kart = myGameRef.current.myTeam.kart;
     if (lastKeyRef.current === "w") {
+      console.log("last key w")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -139,6 +134,7 @@ function Canvas(props: any) {
         }
       }
     } else if (lastKeyRef.current === "s") {
+      console.log("last key s")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -174,23 +170,25 @@ function Canvas(props: any) {
       }
     });
 
+    console.log("update kart y setRoomGameRef")
     roomGameRef.current.karts.set(
       myGameRef.current.myTeam.color,
       myGameRef.current.myTeam.kart
     );
 
     if (kart.velocity.y != 0) {
-      const tempTeam = myGameRef.current.myTeam;
-      tempTeam.changePlayerInControl();
-      myGameRef.current.myTeam = tempTeam;
+      myGameRef.current.myTeam.changePlayerInControl();
       socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       lastKeyRef.current = "";
     }
+
+    return kart;
   };
 
   const updateKartXMovements = () => {
     const kart = myGameRef.current.myTeam.kart;
     if (lastKeyRef.current === "a") {
+      console.log("last key a")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -205,6 +203,7 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
+          console.log("a wont go")
           kart.velocity.x = 0;
           break;
         } else {
@@ -212,6 +211,7 @@ function Canvas(props: any) {
         }
       }
     } else if (lastKeyRef.current === "d") {
+      console.log("last key d")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -248,23 +248,22 @@ function Canvas(props: any) {
       }
     });
 
+    console.log("update kart x setRoomGameRef")
     roomGameRef.current.karts.set(
       myGameRef.current.myTeam.color,
       myGameRef.current.myTeam.kart
     );
 
     if (kart.velocity.x != 0) {
-      const tempTeam = myGameRef.current.myTeam;
-      tempTeam.changePlayerInControl();
-      myGameRef.current.myTeam = tempTeam;
-      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       lastKeyRef.current = "";
+      myGameRef.current.myTeam.changePlayerInControl();
+      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
     }
+    return kart;
   };
 
   //canvas animation functions:
   const renderFrame = () => {
-    //updates properties of drawn elements (ball in example) and then draws it on canvas
     const canvas = canvasRef.current;
     if (!canvas) {
       return;
@@ -274,17 +273,18 @@ function Canvas(props: any) {
       return;
     }
 
+    let updatedKart;
+
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updateKartXMovements();
+        updatedKart = updateKartXMovements();
       } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updateKartYMovements();
+        updatedKart = updateKartYMovements();
       }
-      const tempKart = myGameRef.current.myTeam.kart; //is this sending updates 1 frame delayed?
       const tempColor = myGameRef.current.myTeam.color;
-      socket.emit("kart_update", { tempKart, tempColor, gameId });
+      socket.emit("kart_update", { updatedKart, tempColor, gameId });
     }
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
@@ -361,7 +361,7 @@ function Canvas(props: any) {
         if (numberOfUsers % 2 === 0) {
           const tempKart = new Kart({
             position: { x: 60 * numberOfUsers, y: 60 },
-            velocity: { x: 0, y: 0 }
+            velocity: { x: 0, y: 0 },
           });
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
@@ -382,7 +382,7 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_my_team", (data) => {
-      console.log("socket receive my team", data)
+      console.log("socket receive my team", data);
       const tempMyTeam = new Team(data);
       myGameRef.current.myTeam = tempMyTeam;
       myGameRef.current.myTeamMate = tempMyTeam.players.y;
@@ -390,20 +390,19 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_team_added", (data) => {
-      console.log("receive team added", data)
+      console.log("receive team added, add to roomGameRef", data);
       roomGameRef.current.karts.set(data.color, data.kart);
     });
 
     socket.on("receive_kart_update", (data) => {
-      //this will be a kart and a teamId
       roomGameRef.current.karts.set(data.color, data.kart);
     });
 
     socket.on("receive_toggle_player_control", () => {
-      console.log("receive toggle");
-      const tempTeam = myGameRef.current.myTeam;
-      tempTeam.changePlayerInControl();
-      myGameRef.current.myTeam = tempTeam;
+      console.log("before", myGameRef.current.myTeam.playerInControl);
+
+      myGameRef.current.myTeam.changePlayerInControl();
+      console.log("after", myGameRef.current.myTeam.playerInControl)
     });
   }, [socket]);
 
@@ -415,12 +414,11 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         //temp development keypress for state console.logs
         console.log("myGameRef", myGameRef);
-        console.log("roomGameRef:", roomGameRef.current)
+        console.log("roomGameRef:", roomGameRef.current);
+        console.log(lastKeyRef.current);
       } else if (e.key === "p") {
         //temp development toggle playerControl:
-        const tempTeam = myGameRef.current.myTeam;
-        tempTeam.changePlayerInControl();
-        myGameRef.current.myTeam = tempTeam;
+        myGameRef.current.myTeam.changePlayerInControl();
         console.log("toggle player control:", myGameRef.current.myTeam);
         socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       }
