@@ -3,7 +3,7 @@ import frameRenderer from "./frameRenderer";
 import { Boundary, Kart, Team } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
-import { myGameType, roomGameType } from "../../types/Types";
+import { myGameType, roomGameType, teamType } from "../../types/Types";
 
 interface Props {
   gameId: string;
@@ -169,20 +169,14 @@ function Canvas(props: any) {
       }
     });
 
-    // console.log("update kart y setRoomGameRef",kart)
-    // roomGameRef.current.karts.set(
-    //   myGameRef.current.myTeam.color,
-    //   kart
-    // );
-
     if (kart.velocity.y != 0) {
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
-      const tempTeam = myGameRef.current.myTeam;
-      socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
+      const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+      console.log("inside update AFTER temp", jsonTeam);
+      socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
     }
-
     return kart;
   };
 
@@ -232,10 +226,9 @@ function Canvas(props: any) {
         }
       }
     }
-    console.log("before change", kart.position)
+
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
-    console.log("after change", kart.position);
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -256,14 +249,12 @@ function Canvas(props: any) {
     // );
 
     if (kart.velocity.x != 0) {
-      console.log("inside update BEFORE:", myGameRef.current.myTeam.playerInControl)
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
-      console.log("inside update AFTER ref", myGameRef.current.myTeam.playerInControl);
       const tempTeamMate = myGameRef.current.myTeamMate;
-      const tempTeam = myGameRef.current.myTeam;
-      console.log("inside update AFTER temp", tempTeam);
-      socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
+      const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+      console.log("inside update AFTER temp", jsonTeam);
+      socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
     }
 
     return kart;
@@ -285,10 +276,10 @@ function Canvas(props: any) {
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updatedKart = (updateKartXMovements());
+        updatedKart = updateKartXMovements();
       } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updatedKart = (updateKartYMovements());
+        updatedKart = updateKartYMovements();
       }
       const tempColor = myGameRef.current.myTeam.color;
       socket.emit("kart_update", { updatedKart, tempColor, gameId });
@@ -327,17 +318,17 @@ function Canvas(props: any) {
 
     //   TimeMath._framesSinceFPSUpdate++;
 
-      // Update
-      // for (let i = 0; i < numTicks; i++) {
-      //   TimeMath._lastTick += TimeMath._timestep;
-      //   Time.t = TimeMath._lastTick - TimeMath._startTime;
-      //   Time.dt = TimeMath._timestep;
+    // Update
+    // for (let i = 0; i < numTicks; i++) {
+    //   TimeMath._lastTick += TimeMath._timestep;
+    //   Time.t = TimeMath._lastTick - TimeMath._startTime;
+    //   Time.dt = TimeMath._timestep;
 
-        //update(); //this does literally nothing
-        renderFrame();
-      // }
+    //update(); //this does literally nothing
+    renderFrame();
+    // }
 
-      // Draw
+    // Draw
     //   Time.frame = TimeMath._currentFrame;
     //   Time.frameTime = t;
     //   //draw(); //this moves the square in a circle
@@ -361,7 +352,9 @@ function Canvas(props: any) {
 
   //socket handlers:
   useEffect(() => {
+    console.count("socket handlers");
     socket.on("receive_client_joined", (data) => {
+      console.log({ data });
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
@@ -390,7 +383,7 @@ function Canvas(props: any) {
 
     socket.on("receive_my_team", (data) => {
       myGameRef.current.myTeam = new Team(data);
-      myGameRef.current.myTeamMate =data.players.y;
+      myGameRef.current.myTeamMate = data.players.y;
       myGameRef.current.myControl = "x";
     });
 
@@ -410,13 +403,13 @@ function Canvas(props: any) {
       roomGameRef.current.karts.set(data.color, tempKart);
     });
 
-    socket.on("receive_toggle_player_control", (data) => {//BUG LIVES HERE: Team class constructor does not take a playerInControl, team class passed through scoket loses Team class status. 
+    socket.on("receive_toggle_player_control", (data) => {
       console.log("before", myGameRef.current.myTeam.playerInControl);
-      console.log("last key", lastKeyRef.current);
-
-      myGameRef.current.myTeam = data
-      console.log("after", myGameRef.current.myTeam.playerInControl)
+      myGameRef.current.myTeam.updateTeamWithJson(data);
+      console.log("after", myGameRef.current.myTeam.playerInControl);
     });
+
+    //add a clean up method
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -428,14 +421,15 @@ function Canvas(props: any) {
         //temp development keypress for state console.logs
         console.log("myGameRef", myGameRef);
         console.log("roomGameRef:", roomGameRef.current);
-        console.log(lastKeyRef.current);
+        console.log("last key", lastKeyRef.current);
       } else if (e.key === "p") {
         //temp development toggle playerControl:
+        lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
         const tempTeamMate = myGameRef.current.myTeamMate;
-        const tempTeam = myGameRef.current.myTeam;
-        console.log("toggle player control:", myGameRef.current.myTeam);
-        socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
+        const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+        console.log("inside update AFTER temp", jsonTeam);
+        socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
       }
     };
 
@@ -448,6 +442,7 @@ function Canvas(props: any) {
   return (
     <div style={{ color: "white", backgroundColor: "black" }}>
       <p>welcome to da game</p>
+      <p>{myGameRef.current.myTeam.playerInControl === socketId ? `YOU ARE IN CONTROL` : `your teammate is in control: ${myGameRef.current.myTeam.playerInControl}`}</p>
       <canvas {...size} ref={canvasRef} />
     </div>
   );
