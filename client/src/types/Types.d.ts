@@ -21,6 +21,6 @@ export type myGameType = {
 };
 
 export type roomGameType = {
-  karts: Map<key, string>;
+  karts: Map<key, Kart>;
   boundaries: Boundary[];
 };

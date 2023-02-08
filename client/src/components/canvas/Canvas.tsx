@@ -104,15 +104,14 @@ function Canvas(props: any) {
         }
       });
     });
-    // setBoundaries(tempBoundaries)
     boundariesRef.current = tempBoundaries;
   };
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
-    const kart = myGameRef.current.myTeam.kart;
+    const myColor = myGameRef.current.myTeam.color;
+    const kart = roomGameRef.current.karts.get(myColor);
     if (lastKeyRef.current === "w") {
-      console.log("last key w")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -134,7 +133,6 @@ function Canvas(props: any) {
         }
       }
     } else if (lastKeyRef.current === "s") {
-      console.log("last key s")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -158,6 +156,7 @@ function Canvas(props: any) {
     }
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+
     boundariesRef.current.forEach((boundary) => {
       if (
         circleCollidesWithRectangle({
@@ -170,25 +169,27 @@ function Canvas(props: any) {
       }
     });
 
-    console.log("update kart y setRoomGameRef")
-    roomGameRef.current.karts.set(
-      myGameRef.current.myTeam.color,
-      myGameRef.current.myTeam.kart
-    );
+    // console.log("update kart y setRoomGameRef",kart)
+    // roomGameRef.current.karts.set(
+    //   myGameRef.current.myTeam.color,
+    //   kart
+    // );
 
     if (kart.velocity.y != 0) {
-      myGameRef.current.myTeam.changePlayerInControl();
-      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       lastKeyRef.current = "";
+      myGameRef.current.myTeam.changePlayerInControl();
+      const tempTeamMate = myGameRef.current.myTeamMate;
+      const tempTeam = myGameRef.current.myTeam;
+      socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
     }
 
     return kart;
   };
 
   const updateKartXMovements = () => {
-    const kart = myGameRef.current.myTeam.kart;
+    const myColor = myGameRef.current.myTeam.color;
+    const kart = roomGameRef.current.karts.get(myColor);
     if (lastKeyRef.current === "a") {
-      console.log("last key a")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -203,7 +204,6 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
-          console.log("a wont go")
           kart.velocity.x = 0;
           break;
         } else {
@@ -211,7 +211,6 @@ function Canvas(props: any) {
         }
       }
     } else if (lastKeyRef.current === "d") {
-      console.log("last key d")
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -233,8 +232,10 @@ function Canvas(props: any) {
         }
       }
     }
+    console.log("before change", kart.position)
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+    console.log("after change", kart.position);
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -248,17 +249,23 @@ function Canvas(props: any) {
       }
     });
 
-    console.log("update kart x setRoomGameRef")
-    roomGameRef.current.karts.set(
-      myGameRef.current.myTeam.color,
-      myGameRef.current.myTeam.kart
-    );
+    // console.log("update kart x setRoomGameRef")
+    // roomGameRef.current.karts.set(
+    //   myGameRef.current.myTeam.color,
+    //   kart
+    // );
 
     if (kart.velocity.x != 0) {
+      console.log("inside update BEFORE:", myGameRef.current.myTeam.playerInControl)
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
-      socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
+      console.log("inside update AFTER ref", myGameRef.current.myTeam.playerInControl);
+      const tempTeamMate = myGameRef.current.myTeamMate;
+      const tempTeam = myGameRef.current.myTeam;
+      console.log("inside update AFTER temp", tempTeam);
+      socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
     }
+
     return kart;
   };
 
@@ -278,10 +285,10 @@ function Canvas(props: any) {
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updatedKart = updateKartXMovements();
+        updatedKart = (updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updatedKart = updateKartYMovements();
+        updatedKart = (updateKartYMovements());
       }
       const tempColor = myGameRef.current.myTeam.color;
       socket.emit("kart_update", { updatedKart, tempColor, gameId });
@@ -296,50 +303,50 @@ function Canvas(props: any) {
 
   const tick = () => {
     if (!canvasRef.current) return;
-    try {
-      const t = performance.now();
-      const nextTick = TimeMath._lastTick + TimeMath._timestep;
-      let numTicks = 0;
-      if (t > nextTick) {
-        numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
-      }
-      if (numTicks > 4) {
-        numTicks = 0;
-        TimeMath._lastTick = t;
-      }
+    // try {
+    //   const t = performance.now();
+    //   const nextTick = TimeMath._lastTick + TimeMath._timestep;
+    //   let numTicks = 0;
+    //   if (t > nextTick) {
+    //     numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
+    //   }
+    //   if (numTicks > 4) {
+    //     numTicks = 0;
+    //     TimeMath._lastTick = t;
+    //   }
 
-      if (t - TimeMath._lastFpsUpdate > 200) {
-        TimeMath._fps =
-          (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
-            (t - TimeMath._lastFpsUpdate) +
-          0.1 * TimeMath._fps;
-        Time.fps = TimeMath._fps;
-        TimeMath._lastFpsUpdate = t;
-        TimeMath._framesSinceFPSUpdate = 0;
-      }
+    //   if (t - TimeMath._lastFpsUpdate > 200) {
+    //     TimeMath._fps =
+    //       (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
+    //         (t - TimeMath._lastFpsUpdate) +
+    //       0.1 * TimeMath._fps;
+    //     Time.fps = TimeMath._fps;
+    //     TimeMath._lastFpsUpdate = t;
+    //     TimeMath._framesSinceFPSUpdate = 0;
+    //   }
 
-      TimeMath._framesSinceFPSUpdate++;
+    //   TimeMath._framesSinceFPSUpdate++;
 
       // Update
-      for (let i = 0; i < numTicks; i++) {
-        TimeMath._lastTick += TimeMath._timestep;
-        Time.t = TimeMath._lastTick - TimeMath._startTime;
-        Time.dt = TimeMath._timestep;
+      // for (let i = 0; i < numTicks; i++) {
+      //   TimeMath._lastTick += TimeMath._timestep;
+      //   Time.t = TimeMath._lastTick - TimeMath._startTime;
+      //   Time.dt = TimeMath._timestep;
 
         //update(); //this does literally nothing
         renderFrame();
-      }
+      // }
 
       // Draw
-      Time.frame = TimeMath._currentFrame;
-      Time.frameTime = t;
-      //draw(); //this moves the square in a circle
+    //   Time.frame = TimeMath._currentFrame;
+    //   Time.frameTime = t;
+    //   //draw(); //this moves the square in a circle
 
-      TimeMath._currentFrame++;
-    } catch (e) {
-      //cancelAnimationFrame(requestIdRef.current);
-      throw e;
-    }
+    //   TimeMath._currentFrame++;
+    // } catch (e) {
+    //   //cancelAnimationFrame(requestIdRef.current);
+    //   throw e;
+    // }
     //renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
   };
@@ -382,26 +389,32 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_my_team", (data) => {
-      console.log("socket receive my team", data);
-      const tempMyTeam = new Team(data);
-      myGameRef.current.myTeam = tempMyTeam;
-      myGameRef.current.myTeamMate = tempMyTeam.players.y;
+      myGameRef.current.myTeam = new Team(data);
+      myGameRef.current.myTeamMate =data.players.y;
       myGameRef.current.myControl = "x";
     });
 
     socket.on("receive_team_added", (data) => {
-      console.log("receive team added, add to roomGameRef", data);
-      roomGameRef.current.karts.set(data.color, data.kart);
+      const tempKart = new Kart({
+        position: data.kart.position,
+        velocity: data.kart.velocity,
+      });
+      roomGameRef.current.karts.set(data.color, tempKart);
     });
 
     socket.on("receive_kart_update", (data) => {
-      roomGameRef.current.karts.set(data.color, data.kart);
+      const tempKart = new Kart({
+        position: data.kart.position,
+        velocity: data.kart.velocity,
+      });
+      roomGameRef.current.karts.set(data.color, tempKart);
     });
 
-    socket.on("receive_toggle_player_control", () => {
+    socket.on("receive_toggle_player_control", (data) => {//BUG LIVES HERE: Team class constructor does not take a playerInControl, team class passed through scoket loses Team class status. 
       console.log("before", myGameRef.current.myTeam.playerInControl);
+      console.log("last key", lastKeyRef.current);
 
-      myGameRef.current.myTeam.changePlayerInControl();
+      myGameRef.current.myTeam = data
       console.log("after", myGameRef.current.myTeam.playerInControl)
     });
   }, [socket]);
@@ -419,8 +432,10 @@ function Canvas(props: any) {
       } else if (e.key === "p") {
         //temp development toggle playerControl:
         myGameRef.current.myTeam.changePlayerInControl();
+        const tempTeamMate = myGameRef.current.myTeamMate;
+        const tempTeam = myGameRef.current.myTeam;
         console.log("toggle player control:", myGameRef.current.myTeam);
-        socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
+        socket.emit("toggle_player_control", {tempTeamMate, tempTeam});
       }
     };
 

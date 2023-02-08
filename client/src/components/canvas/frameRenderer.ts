@@ -50,8 +50,8 @@ function frameRenderer(
   };
 
     //needs to check for undefined array..
-    karts.forEach((kart) => {
-      drawKart(kart.kart.position.x, kart.kart.position.y, kart.kart.radius, kart.color);
+    karts.forEach((entry) => {
+      drawKart(entry.kart.position.x, entry.kart.position.y, entry.kart.radius, entry.color);
     });
 }
 
