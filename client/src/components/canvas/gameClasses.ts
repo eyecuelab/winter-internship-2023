@@ -13,6 +13,7 @@ export class Boundary {
 }
 
 export class Kart {
+
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
@@ -41,22 +42,26 @@ export class Team {
   playerInControl: string;
   players: { x: string; y: string };
   kart: Kart;
+  score: number;
   constructor({
     teamId,
     color,
     players,
     kart,
+    score
   }: {
     teamId: string;
     color: string;
     players: { x: string; y: string };
     kart: Kart;
+    score: {score: number}
   }) {
     this.teamId = teamId;
     this.color = color;
     this.players = players;
     this.playerInControl = this.players.x;
     this.kart = kart;
+    this.score = score;
   }
 
   changePlayerInControl() {
@@ -79,4 +84,16 @@ export class Team {
   // toJSON() {
   //   return {};
   // }
+}
+
+export class Pellet {
+  static scoreValue = 10;
+  position: { x: number; y: number };
+  radius: number;
+  constructor({ position }: { position: { x: number; y: number };
+}) {
+    this.position = position;
+    this.radius = 3;
+    Pellet.scoreValue = 10;
+  }
 }

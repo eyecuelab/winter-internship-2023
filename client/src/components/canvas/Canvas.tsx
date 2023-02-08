@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
+import { map } from "./Maps";
 import { myGameType, roomGameType, teamType } from "../../types/Types";
 
 interface Props {
@@ -13,26 +14,12 @@ function Canvas(props: any) {
   const { gameId } = props;
   const lastKeyRef = useRef("");
 
-  const mapRef = useRef<any[][]>([
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-    ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
-    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
-    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
-    ["-", ".", "-", "-", ".", ".", ".", "-", "-", ".", "-"],
-    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
-    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
-    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
-    ["-", ".", "-", "-", ".", ".", ".", "-", "-", ".", "-"],
-    ["-", ".", ".", ".", ".", "-", ".", ".", ".", ".", "-"],
-    ["-", ".", "-", ".", "-", "-", "-", ".", "-", ".", "-"],
-    ["-", ".", ".", ".", ".", ".", ".", ".", ".", ".", "-"],
-    ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"],
-  ]);
-
   const boundariesRef = useRef<Boundary[]>([]);
+  const pelletsRef = useRef <Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
-  const size = { width: 700, height: 700 };
+  const size = { width: 1120, height: 1240 };
+
 
   const colors = ["yellow", "white", "teal", "blue", "white"];
 
@@ -62,6 +49,7 @@ function Canvas(props: any) {
         radius: 15,
       },
       changePlayerInControl: () => null,
+      score: 0
     },
   });
 
@@ -88,7 +76,7 @@ function Canvas(props: any) {
   //updates Boundaries flat array based on map.
   const updateBoundaries = () => {
     const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
-    mapRef.current.forEach((row: any[], i: number) => {
+    map.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
           case "-":
@@ -106,6 +94,27 @@ function Canvas(props: any) {
     });
     boundariesRef.current = tempBoundaries;
   };
+
+  const updatePellets = () => {
+    const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
+    map.forEach((row: any[], i: number) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case ".":
+            tempPellets.push(
+              new Pellet({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                },
+              })
+            );
+            break;
+        }
+      });
+    });
+    pelletsRef.current = tempPellets;
+  }
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -276,12 +285,14 @@ function Canvas(props: any) {
       const tempColor = myGameRef.current.myTeam.color;
       socket.emit("kart_update", { updatedKart, tempColor, gameId });
     }
+    
+    removePellets(pelletsRef.current, kartRef.current)
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(context, size, kartsArr, mapRef.current);
+    frameRenderer.call(context, size, kartsArr, boundariesRef.current, pelletsRef.current);
   };
 
   const tick = () => {
@@ -334,13 +345,73 @@ function Canvas(props: any) {
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
+
+
   useEffect(() => {
+    const tempBoundaries = boundariesRef.current;
+    const tempPellets = pelletsRef.current;
     //map switch case will live here eventually.
     requestIdRef.current = requestAnimationFrame(tick);
+    map.forEach((row, i) => {
+      row.forEach((symbol: any, j: number) => {
+        switch (symbol) {
+          case '-':
+            tempBoundaries.push(
+              new Boundary({
+                position: {
+                  x: Boundary.width * j,
+                  y: Boundary.height * i,
+                }
+              })
+            );
+            break;
+          case '.':
+            tempPellets.push(
+              new Pellet({
+                position: {
+                  x: j * Boundary.width + Boundary.width / 2,
+                  y: i * Boundary.height + Boundary.height / 2
+                }
+              })
+            )
+            break
+        }
+      });
+    });
+    boundariesRef.current = tempBoundaries;
+    pelletsRef.current = tempPellets;
     return () => {
       cancelAnimationFrame(requestIdRef.current);
     };
   }, []);
+
+  const scoreConditionRef = useRef<string[]>([]);
+
+  const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
+
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+    pelletsRef.forEach((pellet, i) => {
+      if (Math.hypot(
+        pellet.position.x - kartRef.position.x,
+        pellet.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
+        pelletsRef.splice(i, 1)
+        tempScoreCondition.push("pellet");
+        scoreConditionRef.current = tempScoreCondition;
+        addScore(scoreConditionRef.current);
+      }
+    })
+  }
+
+  const addScore = (scoreConditionArr: string[]) => {
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+    if (scoreConditionArr[0] === "pellet") {
+      const currentGame = currentGameRef.current;
+      currentGame.myTeam.score += Pellet.scoreValue;
+      const currentScoreCondition = scoreConditionRef.current;
+      scoreConditionRef.current = tempScoreCondition;
+      console.log(currentGame.myTeam.score);
+    }
+  }
 
   //socket handlers:
   useEffect(() => {
@@ -358,11 +429,14 @@ function Canvas(props: any) {
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data[numberOfUsers - 2],
-              y: data[numberOfUsers - 1],
-            },
+              x: data[data.length - 2],
+              y: data[data.length - 1],
+              }, 
             kart: tempKart,
-          });
+            score: {
+             score: 0
+            });
+             
           myGameRef.current.myTeamMate = data[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
