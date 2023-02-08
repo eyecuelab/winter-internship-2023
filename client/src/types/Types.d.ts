@@ -18,7 +18,6 @@ export type myGameType = {
   myTeamMate: string;
   myControl: string;
   myTeam: Team;
-  myKart: Kart;
 };
 
 export type roomGameType = {

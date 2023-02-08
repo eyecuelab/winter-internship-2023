@@ -12,10 +12,6 @@ const io = new Server(server, {
   },
 });
 
-let roomfull: boolean = true;
-let publicRoomSpace: number = 0;
-let roomNumber: number = 0;
-
 io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
@@ -34,19 +30,21 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_team", (data) => {
-    console.log(data)
+    console.log(data.tempMyTeam.kart)
     socket.to(data.tempMyTeam.players.x).emit("receive_my_team", data.tempMyTeam);
     io.in(data.gameId).emit("receive_team_added", data.tempMyTeam);
   });
 
   socket.on("kart_update", (data) => {
     const gameId = data.gameId;
-    const teamId = data.tempTeamId;
+    const color = data.tempColor;
     const kart = data.tempKart;
-    socket.to(`${gameId}`).emit("receive_kart_update", {kart, teamId});
+    console.log(kart);
+    socket.to(`${gameId}`).emit("receive_kart_update", {color, kart});
   });
 
   socket.on("toggle_player_control", (data) => {
+    console.log(data);
     socket.to(data).emit("receive_toggle_player_control");
   })
 

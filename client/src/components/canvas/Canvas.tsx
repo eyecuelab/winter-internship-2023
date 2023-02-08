@@ -36,6 +36,8 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 700, height: 700 };
 
+  const colors = ["yellow", "white", "teal", "blue", "white"];
+
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     boundaries: [],
@@ -47,14 +49,21 @@ function Canvas(props: any) {
     myControl: "",
     myTeam: {
       teamId: 0,
+      color: "",
+      playerInControl: "",
       players: { x: "", y: "" },
-      playerInControl: "x",
+      kart: {
+        position: {
+          x: 0,
+          y: 0
+        },
+        velocity: {
+          x: 0,
+          y: 0
+        },
+        radius: 15
+      },
       changePlayerInControl: () => null,
-    },
-    myKart: {
-      position: { x: 60, y: 60 },
-      velocity: { x: 0, y: 0 },
-      radius: 15,
     },
   });
 
@@ -106,7 +115,8 @@ function Canvas(props: any) {
   };
 
   //updates kart movement based on collision detection and player axis control:
-  const updateKartYMovements = (kart: Kart) => {
+  const updateKartYMovements = () => {
+    const kart = myGameRef.current.myTeam.kart;
     if (lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -163,6 +173,12 @@ function Canvas(props: any) {
         kart.velocity.x = 0;
       }
     });
+
+    roomGameRef.current.karts.set(
+      myGameRef.current.myTeam.color,
+      myGameRef.current.myTeam.kart
+    );
+
     if (kart.velocity.y != 0) {
       const tempTeam = myGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
@@ -172,7 +188,8 @@ function Canvas(props: any) {
     }
   };
 
-  const updateKartXMovements = (kart: Kart) => {
+  const updateKartXMovements = () => {
+    const kart = myGameRef.current.myTeam.kart;
     if (lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -230,6 +247,12 @@ function Canvas(props: any) {
         kart.velocity.y = 0;
       }
     });
+
+    roomGameRef.current.karts.set(
+      myGameRef.current.myTeam.color,
+      myGameRef.current.myTeam.kart
+    );
+
     if (kart.velocity.x != 0) {
       const tempTeam = myGameRef.current.myTeam;
       tempTeam.changePlayerInControl();
@@ -254,21 +277,21 @@ function Canvas(props: any) {
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updateBoundaries();
-        updateKartXMovements(myGameRef.current.myTeam.kart);
+        updateKartXMovements();
       } else if (myGameRef.current.myControl === "y") {
         updateBoundaries();
-        updateKartYMovements(myGameRef.current.myTeam.kart);
+        updateKartYMovements();
       }
-      const tempKart = myGameRef.current.myKart; //is this sending updates 1 frame delayed?
-      const tempTeamId = myGameRef.current.myTeam.teamId;
-      socket.emit("kart_update", { tempKart, tempTeamId, gameId }); //this will need a team Id..
+      const tempKart = myGameRef.current.myTeam.kart; //is this sending updates 1 frame delayed?
+      const tempColor = myGameRef.current.myTeam.color;
+      socket.emit("kart_update", { tempKart, tempColor, gameId });
     }
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
-      return { teamId: kart[0], kart: kart[1] };
+      return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(context, size, kartsArr, mapRef.current); //myKart will be replaced with an array or object filled with all the teams Karts called kartsRef
+    frameRenderer.call(context, size, kartsArr, mapRef.current);
   };
 
   const tick = () => {
@@ -334,15 +357,15 @@ function Canvas(props: any) {
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
-      console.log(numberOfUsers);
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
           const tempKart = new Kart({
-            position: { x: 60, y: 60 },
-            velocity: { x: 0, y: 0 },
+            position: { x: 60 * numberOfUsers, y: 60 },
+            velocity: { x: 0, y: 0 }
           });
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
+            color: colors[numberOfUsers],
             players: {
               x: data[numberOfUsers - 2],
               y: data[numberOfUsers - 1],
@@ -359,19 +382,21 @@ function Canvas(props: any) {
     });
 
     socket.on("receive_my_team", (data) => {
+      console.log("socket receive my team", data)
       const tempMyTeam = new Team(data);
       myGameRef.current.myTeam = tempMyTeam;
-      myGameRef.current.myTeamMate = data.players.y;
+      myGameRef.current.myTeamMate = tempMyTeam.players.y;
       myGameRef.current.myControl = "x";
     });
 
     socket.on("receive_team_added", (data) => {
-      roomGameRef.current.karts.set(data.teamId, data.kart);
+      console.log("receive team added", data)
+      roomGameRef.current.karts.set(data.color, data.kart);
     });
 
     socket.on("receive_kart_update", (data) => {
       //this will be a kart and a teamId
-      roomGameRef.current.karts.set(data.teamId, data.kart);
+      roomGameRef.current.karts.set(data.color, data.kart);
     });
 
     socket.on("receive_toggle_player_control", () => {
@@ -389,14 +414,15 @@ function Canvas(props: any) {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
         //temp development keypress for state console.logs
+        console.log("myGameRef", myGameRef);
+        console.log("roomGameRef:", roomGameRef.current)
       } else if (e.key === "p") {
         //temp development toggle playerControl:
         const tempTeam = myGameRef.current.myTeam;
         tempTeam.changePlayerInControl();
         myGameRef.current.myTeam = tempTeam;
-
-        socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
         console.log("toggle player control:", myGameRef.current.myTeam);
+        socket.emit("toggle_player_control", myGameRef.current.myTeamMate);
       }
     };
 
