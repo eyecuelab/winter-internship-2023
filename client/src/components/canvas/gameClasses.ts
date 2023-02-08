@@ -11,22 +11,26 @@ export class Boundary {
 }
 
 export class Kart {
-
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
+  // image: string;
   constructor({
     position,
     velocity,
   }: {
     position: { x: number; y: number };
     velocity: { x: number; y: number };
-  }) {
+  }, 
+  // { image }: {image: string}
+  ) {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;
+    // this.image = image;
   }
 }
+
 export class Team {
   players: { x: string; y: string };
   playerInControl: string;

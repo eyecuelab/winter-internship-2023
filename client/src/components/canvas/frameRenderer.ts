@@ -14,24 +14,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     this.fill();
     this.closePath();
   }
-  // const boundaries: Boundary[] = [];
 
-  // map.forEach((row, i) => {
-  //   row.forEach((symbol: any, j: number) => {
-  //     switch (symbol) {
-  //       case '-':
-  //         boundaries.push(
-  //           new Boundary({
-  //             position: {
-  //               x: Boundary.width * j,
-  //               y: Boundary.height * i,
-  //             }
-  //           })
-  //         );
-  //         break;
-  //     }
-  //   });
-  // });
   boundaries.forEach((boundary) => {
     drawBoundary(boundary);
   });
@@ -40,15 +23,24 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     drawPellet(pellet);
   })
 
-  const drawKart = (x: number, y: number, radius: number, color: string) => {
+  function createImage(src: string) {
+    const image = new Image()
+    image.src = src
+    return image 
+  }
+
+  const kartImg = createImage('./../../assets/kartTest.png');
+
+  const drawKart = (x: number, y: number, radius: number, color: string, image: HTMLImageElement) => {
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
     this.fillStyle = color;
     this.fill();
-    this.closePath();
+    this.drawImage(image, x, y);
   }
 
-  drawKart(kart.position.x, kart.position.y, kart.radius, 'teal')
+
+  drawKart(kart.position.x, kart.position.y, kart.radius, 'teal', kartImg)
 }
 
 export default frameRenderer;

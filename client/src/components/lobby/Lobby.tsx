@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
+import kartTest from "./../../constants/images";
 
 import { getUserDataGoogle } from "./services/lobby-services";
 
@@ -29,6 +30,7 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
+  // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
@@ -224,6 +226,7 @@ const Lobby = (props: Props) => {
       </Container>
       <div className="theButton">
         <button onClick={handleStartGameClick}>Start a Public Game!</button>
+        <img src={kartTest.kartTest} />
       </div>
     </>
   );
