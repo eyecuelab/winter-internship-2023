@@ -36,7 +36,6 @@ export class Team {
   color: string;
   playerInControl: string;
   players: { x: string; y: string };
-  kart: Kart;
   score: number;
   constructor();
   constructor(teamData: teamConstructorType);
@@ -45,7 +44,6 @@ export class Team {
     this.color = teamData?.color ?? "";
     this.players = teamData?.players ?? { x: "", y: "string" };
     this.playerInControl = teamData?.players ? teamData.players.x :  "";
-    this.kart = teamData?.kart ?? new Kart();
     this.score = teamData?.score ?? 0;
   }
 
@@ -63,7 +61,6 @@ export class Team {
     this.color = teamUpdate.color;
     this.players = teamUpdate.players;
     this.playerInControl = teamUpdate.playerInControl;
-    this.kart = teamUpdate.kart;
     this.score = teamUpdate.score;
   }
 
@@ -76,6 +73,7 @@ export class Pellet {
   static scoreValue = 10;
   position: { x: number; y: number };
   radius: number;
+  // isShowing: boolean;
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
     this.radius = 3;

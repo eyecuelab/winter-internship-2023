@@ -6,9 +6,8 @@ import { Time, TimeMath } from "./FPSEngine";
 import { map } from "./Maps";
 import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
-import { myGameType, roomGameType, teamType } from "../../types/Types";
+import { kartType, myGameType, roomGameType, teamType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
-
 
 interface Props {
   gameId: string;
@@ -17,7 +16,7 @@ interface Props {
 function Canvas(props: any) {
   const { gameId } = props;
 
-
+  const scoreConditionRef = useRef<string[]>([]);
   const { isOpen, toggle } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
@@ -30,7 +29,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     boundaries: [],
-    pellets: []
+    pellets: [],
   });
 
   const myGameRef = useRef<myGameType>({
@@ -38,6 +37,7 @@ function Canvas(props: any) {
     myTeamMate: "",
     myControl: "",
     myTeam: new Team(),
+    myKart: new Kart()
   });
 
   //updates Boundaries flat array based on map.
@@ -65,7 +65,11 @@ function Canvas(props: any) {
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor) ||  {position: {x:0, y:0}, velocity: {x:0,y:0}, radius: 0}
+    const kart = roomGameRef.current.karts.get(myColor) || {
+      position: { x: 0, y: 0 },
+      velocity: { x: 0, y: 0 },
+      radius: 0,
+    };
 
     if (lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
@@ -75,7 +79,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kart ? kart.velocity.x : 0,
+                x: kart.velocity.x,
                 y: -5,
               },
             },
@@ -137,8 +141,12 @@ function Canvas(props: any) {
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor) ||  {position: {x:0, y:0}, velocity: {x:0,y:0}, radius: 0}
-    
+    const kart = roomGameRef.current.karts.get(myColor) || {
+      position: { x: 0, y: 0 },
+      velocity: { x: 0, y: 0 },
+      radius: 0,
+    };
+
     if (lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -220,19 +228,20 @@ function Canvas(props: any) {
       return;
     }
 
-    let updatedKart;//should this be referencing local state?
+    let updatedKart; //should this be referencing local state?
 
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
-        updateBoundaries();
         updatedKart = updateKartXMovements();
       } else if (myGameRef.current.myControl === "y") {
-        updateBoundaries();
         updatedKart = updateKartYMovements();
       }
+      updateBoundaries();
       removePellets(pelletsRef.current, updatedKart);
+
       const tempColor = myGameRef.current.myTeam.color;
-      socket.emit("kart_update", { updatedKart, tempColor, gameId });
+      const jsonMyKart = JSON.stringify(myGameRef.current.myKart);
+      socket.emit("kart_update", { jsonMyKart, tempColor, gameId });
     }
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
@@ -298,13 +307,10 @@ function Canvas(props: any) {
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
-
   useEffect(() => {
+    //can this switch case live in it's own file?:
     const tempBoundaries = boundariesRef.current;
     const tempPellets = pelletsRef.current;
-    //map switch case will live here eventually.
-
-    requestIdRef.current = requestAnimationFrame(tick);
     map.forEach((row, i) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
@@ -333,24 +339,20 @@ function Canvas(props: any) {
     });
     boundariesRef.current = tempBoundaries;
     pelletsRef.current = tempPellets;
+
+    requestIdRef.current = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(requestIdRef.current);
     };
   }, []);
 
-  const scoreConditionRef = useRef<string[]>([]);
-
   const removePellets = (
     pelletsRef: Pellet[],
-    kartRef: {
-      position: { x: number; y: number };
-      velocity: { x: number; y: number };
-      radius: number;
-    }
+    kartRef: kartType
   ) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
-      if (kartRef){
+      if (kartRef) {
         if (
           Math.hypot(
             pellet.position.x - kartRef.position.x,
@@ -363,15 +365,14 @@ function Canvas(props: any) {
           scoreConditionRef.current = tempScoreCondition;
           addScore(scoreConditionRef.current);
           if (pelletsRef.length === 0) {
-            console.log("game over")
+            console.log("game over");
             toggle(); //this toggles the game over screen, we can rename it lol
             // navigate to game over or put game over on top of the canvas
-         }
+          }
         }
       }
     });
   };
-
 
   const addScore = (scoreConditionArr: string[]) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
@@ -387,12 +388,13 @@ function Canvas(props: any) {
   //socket handlers:
   useEffect(() => {
     console.count("socket handlers");
+
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
-          const tempKart = new Kart({
+          const tempMyKart = new Kart({
             position: { x: 60 * numberOfUsers, y: 60 },
             velocity: { x: 0, y: 0 },
           });
@@ -400,43 +402,45 @@ function Canvas(props: any) {
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data[data.length - 2],
-              y: data[data.length - 1],
+              x: data[numberOfUsers - 2],
+              y: data[numberOfUsers - 1],
             },
-            kart: tempKart,
-            score: 0
+            score: 0,
           });
 
           myGameRef.current.myTeamMate = data[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
-          socket.emit("send_team", { tempMyTeam, gameId });
+          myGameRef.current.myKart = tempMyKart;
+          
+          const tempTeamMate = myGameRef.current.myTeamMate;
+          const jsonTeam = JSON.stringify(tempMyTeam);
+          const jsonKart = JSON.stringify(tempMyKart);
+          socket.emit("send_team", { jsonTeam, jsonKart, gameId, tempTeamMate });
           //do we need to send Teams update to all clients in room pushing a list of teams and karts into state (like userList)?
         }
       }
     });
 
-    //receive team added will replace receive my team
-    socket.on("receive_my_team", (data) => {
-      myGameRef.current.myTeam = new Team(data);
-      myGameRef.current.myTeamMate = data.players.y;
-      myGameRef.current.myControl = "x";
-    });
-
     socket.on("receive_team_added", (data) => {
-      const tempKart = new Kart({
-        position: data.kart.position,
-        velocity: data.kart.velocity,
-      });
-      roomGameRef.current.karts.set(data.color, tempKart);
+      const { jsonTeam, jsonKart } = data;
+      const tempTeam = new Team(JSON.parse(jsonTeam));
+      const tempKart = new Kart(JSON.parse(jsonKart));
+
+      if (tempTeam.players.x === socketId){
+        myGameRef.current.myTeam.updateTeamWithJson(jsonTeam);
+        myGameRef.current.myKart.updateKartWithJson(jsonKart);
+        myGameRef.current.myControl = "x";
+        myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
+      }
+
+      roomGameRef.current.karts.set(tempTeam.color, tempKart);
     });
 
     //a new socket called receive game update (kart, team score, pellets) will replace kart update:
     socket.on("receive_kart_update", (data) => {
-      const tempKart = new Kart({
-        position: data.kart.position,
-        velocity: data.kart.velocity,
-      });
+      const tempKart = new Kart();
+      tempKart.updateKartWithJson(data.kart);
       roomGameRef.current.karts.set(data.color, tempKart);
     });
 
@@ -474,7 +478,9 @@ function Canvas(props: any) {
   }, []);
 
   return (
-    <div style={{ color: "white", backgroundColor: "black", alignItems: "center" }}>
+    <div
+      style={{ color: "white", backgroundColor: "black", alignItems: "center" }}
+    >
       <p>welcome to da game</p>
       <p>
         {myGameRef.current.myTeam.playerInControl === socketId
@@ -487,7 +493,6 @@ function Canvas(props: any) {
         <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
       </div>
     </div>
-    
   );
 }
 

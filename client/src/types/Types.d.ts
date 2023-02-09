@@ -20,7 +20,6 @@ export type teamType = {
   color: string;
   playerInControl: string;
   players: { x: string; y: string };
-  kart: Kart;
   score: number;
 };
 
@@ -28,7 +27,6 @@ export type teamConstructorType = {
   teamId: string;
   color: string;
   players: { x: string; y: string };
-  kart: Kart;
   score: number;
 };
 
@@ -48,6 +46,7 @@ export type myGameType = {
   myTeamMate: string;
   myControl: string;
   myTeam: Team;
+  myKart: Kart;
 };
 
 export type roomGameType = {
