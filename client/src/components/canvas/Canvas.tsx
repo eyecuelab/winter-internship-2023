@@ -8,6 +8,7 @@ import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
 import { kartType, myGameType, roomGameType, teamType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
+import React from "react";
 
 interface Props {
   gameId: string;
@@ -130,6 +131,7 @@ function Canvas(props: any) {
     });
 
     if (kart.velocity.y != 0) {
+      console.log("y")
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -207,6 +209,7 @@ function Canvas(props: any) {
     });
 
     if (kart.velocity.x != 0) {
+      console.log("x");
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -232,17 +235,17 @@ function Canvas(props: any) {
 
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
-        updatedKart = updateKartXMovements();
+        updatedKart = new Kart(updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
-        updatedKart = updateKartYMovements();
+        updatedKart = new Kart(updateKartYMovements());
       }
       updateBoundaries();
       removePellets(pelletsRef.current, updatedKart);
 
       const tempColor = myGameRef.current.myTeam.color;
-      const jsonMyKart = JSON.stringify(myGameRef.current.myKart);
+      const jsonKart = JSON.stringify(updatedKart);
 
-      socket.emit("game_update", { jsonMyKart, tempColor, gameId });
+      socket.emit("game_update", { jsonKart, tempColor, gameId });
     }
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
@@ -439,15 +442,20 @@ function Canvas(props: any) {
 
     //pellet, scores, and powerup updates can live here eventually:
     socket.on("receive_game_update", (data) => {
-      const tempKart = new Kart(JSON.parse(data.jsonKart));
-      roomGameRef.current.karts.set(data.tempColor, tempKart);
+      const { tempColor, jsonKart} = data;
+      const tempKart = new Kart(JSON.parse(jsonKart));
+      roomGameRef.current.karts.set(tempColor, tempKart);
     });
 
     socket.on("receive_toggle_player_control", (data) => {
+      console.log("toggle control", myGameRef.current.myKart);
+      console.log(myGameRef.current.myTeam.playerInControl);
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
-    //add a clean up method
+    return () => {
+      socket.removeAllListeners();
+    }
   }, [socket]);
 
   //add keyboard event listeners when component mounts
@@ -477,21 +485,23 @@ function Canvas(props: any) {
   }, []);
 
   return (
-    <div
-      style={{ color: "white", backgroundColor: "black", alignItems: "center" }}
-    >
-      <p>welcome to da game</p>
-      <p>
-        {myGameRef.current.myTeam.playerInControl === socketId
-          ? `YOU ARE IN CONTROL`
-          : `your are NOT in control`}
-      </p>
-      <canvas {...size} ref={canvasRef} />
-      <div>
-        {/* <button onClick={toggle}>Open GameOver </button> */}
-        <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
+    <>
+      <div
+        style={{ color: "white", backgroundColor: "black", alignItems: "center" }}
+      >
+        <p>welcome to da game</p>
+        <p>
+          {myGameRef.current.myTeam.playerInControl === socketId
+            ? `YOU ARE IN CONTROL`
+            : `your are NOT in control`}
+        </p>
+        <canvas {...size} ref={canvasRef} />
+        <div>
+          {/* <button onClick={toggle}>Open GameOver </button> */}
+          <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
