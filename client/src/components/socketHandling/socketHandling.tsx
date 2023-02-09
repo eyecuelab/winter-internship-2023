@@ -70,18 +70,18 @@ function SocketHandling() {
       } else {
       }
     }
-    socket.on("receive_key", (data: Array<any>) => {
-      myGameRef(data[1]);
-      if (data[1] === userList[0]) {
-        setUser1Input(data[0].key);
-      } else if (data[1] === userList[1]) {
-        setUser2Input(data[0].key);
-      } else if (data[1] === userList[2]) {
-        setUser3Input(data[0].key);
-      } else {
-        setUser4Input(data[0].key);
-      }
-    });
+    // socket.on("receive_key", (data: Array<any>) => {
+    //   myGameRef(data[1]);
+    //   if (data[1] === userList[0]) {
+    //     setUser1Input(data[0].key);
+    //   } else if (data[1] === userList[1]) {
+    //     setUser2Input(data[0].key);
+    //   } else if (data[1] === userList[2]) {
+    //     setUser3Input(data[0].key);
+    //   } else {
+    //     setUser4Input(data[0].key);
+    //   }
+    // });
   }, [socket]);
 
   return (
