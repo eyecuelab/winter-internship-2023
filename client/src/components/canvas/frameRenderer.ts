@@ -34,9 +34,9 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
   const drawKart = (x: number, y: number, radius: number, color: string, image: HTMLImageElement) => {
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
-    this.fillStyle = color;
+    this.fillStyle = 'transparent';
     this.fill();
-    this.drawImage(image, x, y);
+    this.drawImage(image, x - 20, y - 20, 40, 40);
   }
 
 

@@ -5,7 +5,7 @@ import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { map } from "./Maps";
 import kartTest from "./../../constants/images";
-import { kartType } from "./../types/Types";
+import { kartType } from "./../../types/Types";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
@@ -32,11 +32,11 @@ function Canvas(props: any) {
     },
   });
 
-  const kartRef = useRef({
+  const kartRef = useRef<kartType>({
     position: { x: 60, y: 60 },
     velocity: { x: 0, y: 0 },
     radius: 15,
-    imageSrc:  kartTest.kartTest
+    imgSrc:  kartTest.kartTest
   });
 
   const boundariesRef = useRef<Boundary[]>([]);
@@ -104,27 +104,6 @@ function Canvas(props: any) {
     // setBoundaries(tempBoundaries)
     boundariesRef.current = tempBoundaries;
   };
-
-  // const updatePellets = () => {
-  //   const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
-  //   map.forEach((row: any[], i: number) => {
-  //     row.forEach((symbol: any, j: number) => {
-  //       switch (symbol) {
-  //         case ".":
-  //           tempPellets.push(
-  //             new Pellet({
-  //               position: {
-  //                 x: Boundary.width * j,
-  //                 y: Boundary.height * i,
-  //               },
-  //             })
-  //           );
-  //           break;
-  //       }
-  //     });
-  //   });
-  //   pelletsRef.current = tempPellets;
-  // }
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
