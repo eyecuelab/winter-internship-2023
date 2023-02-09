@@ -36,6 +36,7 @@ function Canvas(props: any) {
     position: { x: 60, y: 60 },
     velocity: { x: 0, y: 0 },
     radius: 15,
+    angle: 0,
     imgSrc:  kartTest.kartTest
   });
 
@@ -128,6 +129,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.y = -5;
+          kart.angle = -45;
         }
       }
     } else if (lastKeyRef.current === "s") {
@@ -149,6 +151,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.y = 5;
+          kart.angle = 45;
         }
       }
     }
@@ -196,6 +199,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.x = -5;
+          kart.angle = -90;
         }
       }
     } else if (lastKeyRef.current === "d") {
@@ -217,6 +221,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.x = 5;
+          kart.angle = 90;
         }
       }
     }

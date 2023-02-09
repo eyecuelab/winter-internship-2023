@@ -17,6 +17,7 @@ export type kartType = {
 	position: { x: number; y: number }
   velocity: { x: number; y: number }
   radius: number
+  angle: number 
   imgSrc: string
 }
 

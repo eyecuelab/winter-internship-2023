@@ -1,6 +1,6 @@
 import {Boundary, Pellet} from './gameClasses';
 
-function frameRenderer(this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; imgSrc: string}, boundaries: Boundary[], pellets: Pellet[]) {
+function frameRenderer(this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; angle: number,imgSrc: string}, boundaries: Boundary[], pellets: Pellet[]) {
   this.clearRect(0, 0, size.width, size.height);
 
   const drawBoundary = (boundary: Boundary) => {
@@ -31,16 +31,27 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
 
   const kartImg = createImage(kart.imgSrc);
 
-  const drawKart = (x: number, y: number, radius: number, color: string, image: HTMLImageElement) => {
+  const drawKart = (x: number, y: number, radius: number, angle: number, image: HTMLImageElement) => {
+    this.save()
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
-    this.fillStyle = 'transparent';
+    this.fillStyle = 'blue';
     this.fill();
+
+    if (angle !== 0) {
+    this.translate(67.5, 67.5)
+    this.rotate(angle * Math.PI / 180);  
+    this.translate(-67.5, -67.5)
+    }
+
     this.drawImage(image, x - 20, y - 20, 40, 40);
+    this.restore();
+
+
   }
 
 
-  drawKart(kart.position.x, kart.position.y, kart.radius, 'teal', kartImg)
+  drawKart(kart.position.x, kart.position.y, kart.radius, kart.angle, kartImg);
 }
 
 export default frameRenderer;
