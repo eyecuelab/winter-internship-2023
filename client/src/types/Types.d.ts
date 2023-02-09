@@ -19,6 +19,7 @@ export type teamType = {
   playerInControl: string;
   players: { x: string; y: string };
   kart: Kart;
+  score: number;
 }
 
 export type kartType = {

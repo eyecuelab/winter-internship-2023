@@ -5,6 +5,7 @@ import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { map } from "./Maps";
 import { myGameType, roomGameType, teamType } from "../../types/Types";
+import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 
 interface Props {
   gameId: string;
@@ -50,26 +51,6 @@ function Canvas(props: any) {
       score: 0,
     },
   });
-
-  //collision detection function:
-  function circleCollidesWithRectangle({
-    circle,
-    rectangle,
-  }: {
-    circle: Kart;
-    rectangle: Boundary;
-  }) {
-    return (
-      circle.position.y - circle.radius + circle.velocity.y <=
-        rectangle.position.y + Boundary.height &&
-      circle.position.x + circle.radius + circle.velocity.x >=
-        rectangle.position.x &&
-      circle.position.y + circle.radius + circle.velocity.y >=
-        rectangle.position.y &&
-      circle.position.x - circle.radius + circle.velocity.x <=
-        rectangle.position.x + Boundary.width
-    );
-  }
 
   //updates Boundaries flat array based on map.
   const updateBoundaries = () => {
@@ -280,11 +261,10 @@ function Canvas(props: any) {
         updateBoundaries();
         updatedKart = updateKartYMovements();
       }
+      removePellets(pelletsRef.current, updatedKart);
       const tempColor = myGameRef.current.myTeam.color;
       socket.emit("kart_update", { updatedKart, tempColor, gameId });
     }
-
-    removePellets(pelletsRef.current, updatedKart);
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
@@ -423,7 +403,7 @@ function Canvas(props: any) {
       currentGame.myTeam.score += Pellet.scoreValue;
       const currentScoreCondition = scoreConditionRef.current;
       scoreConditionRef.current = tempScoreCondition;
-      console.log(currentGame.myTeam.score);
+      console.log(scoreConditionArr);
     }
   };
 
@@ -459,6 +439,7 @@ function Canvas(props: any) {
       }
     });
 
+    //receive team added will replace receive my team
     socket.on("receive_my_team", (data) => {
       myGameRef.current.myTeam = new Team(data);
       myGameRef.current.myTeamMate = data.players.y;
@@ -473,6 +454,7 @@ function Canvas(props: any) {
       roomGameRef.current.karts.set(data.color, tempKart);
     });
 
+    //a new socket called receive game update (kart, team score, pellets) will replace kart update:
     socket.on("receive_kart_update", (data) => {
       const tempKart = new Kart({
         position: data.kart.position,
@@ -515,12 +497,12 @@ function Canvas(props: any) {
   }, []);
 
   return (
-    <div style={{ color: "white", backgroundColor: "black" }}>
+    <div style={{ color: "white", backgroundColor: "black", alignItems: "center" }}>
       <p>welcome to da game</p>
       <p>
         {myGameRef.current.myTeam.playerInControl === socketId
           ? `YOU ARE IN CONTROL`
-          : `your teammate is in control: ${myGameRef.current.myTeam.playerInControl}`}
+          : `your are NOT in control`}
       </p>
       <canvas {...size} ref={canvasRef} />
     </div>

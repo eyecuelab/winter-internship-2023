@@ -79,6 +79,7 @@ export class Team {
     this.players = teamUpdate.players;
     this.playerInControl = teamUpdate.playerInControl;
     this.kart = teamUpdate.kart;
+    this.score = teamUpdate.score;
   }
 
   // toJSON() {
