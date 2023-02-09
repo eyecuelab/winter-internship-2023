@@ -4,6 +4,8 @@ import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { map } from "./Maps";
+import { GameOver, useGameOver } from "./gameOver";
+import "./CanvasStyles.css";
 
 // import SocketHandling from "../socketHandling/socketHandling";
 // import * as io from 'socket.io-client';
@@ -36,6 +38,7 @@ function Canvas(props: any) {
     radius: 15,
   });
 
+  const { isOpen, toggle } = useGameOver();
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef <Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -102,8 +105,10 @@ function Canvas(props: any) {
     // setBoundaries(tempBoundaries)
     boundariesRef.current = tempBoundaries;
   };
-
+/*
+  //THIS CODE IS NEVER CALLED AND NOT NEEDED
   const updatePellets = () => {
+    
     const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
     map.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
@@ -122,7 +127,7 @@ function Canvas(props: any) {
       });
     });
     pelletsRef.current = tempPellets;
-  }
+  }*/
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -340,10 +345,10 @@ function Canvas(props: any) {
   };
 
 
-
   useEffect(() => {
     const tempBoundaries = boundariesRef.current;
     const tempPellets = pelletsRef.current;
+    
     requestIdRef.current = requestAnimationFrame(tick);
     map.forEach((row, i) => {
       row.forEach((symbol: any, j: number) => {
@@ -381,7 +386,6 @@ function Canvas(props: any) {
   const scoreConditionRef = useRef<string[]>([]);
 
   const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
-
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
       if (Math.hypot(
@@ -391,8 +395,15 @@ function Canvas(props: any) {
         tempScoreCondition.push("pellet");
         scoreConditionRef.current = tempScoreCondition;
         addScore(scoreConditionRef.current);
+        // we remove a pellet from the pellet count
+        if (pelletsRef.length === 0) {
+          console.log("game over")
+          toggle(); //this toggles the game over screen, we can rename it lol
+          // navigate to game over or put game over on top of the canvas
+        }
       }
     })
+     
   }
 
   const addScore = (scoreConditionArr: string[]) => {
@@ -510,7 +521,12 @@ function Canvas(props: any) {
     <div style={{ color: "white", backgroundColor: "black" }}>
       <p>welcome to da game</p>
       <canvas {...size} ref={canvasRef} />
+      <div>
+        {/* <button onClick={toggle}>Open GameOver </button> */}
+        <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
+      </div>
     </div>
+    
   );
 }
 
