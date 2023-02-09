@@ -34,11 +34,9 @@ io.on("connection", (socket) => {
     io.in(data.gameId).emit("receive_team_added", {jsonTeam, jsonKart});
   });
 
-  socket.on("kart_update", (data) => {
-    const gameId = data.gameId;
-    const color = data.tempColor;
-    const kart = data.jsonKart;
-    socket.to(`${gameId}`).emit("receive_kart_update", {color, kart});
+  socket.on("game_update", (data) => {
+    const { gameId, tempColor, jsonKart } = data;
+    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart});
   });
 
   socket.on("toggle_player_control", (data) => {

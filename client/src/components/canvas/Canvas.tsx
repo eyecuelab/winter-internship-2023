@@ -241,7 +241,8 @@ function Canvas(props: any) {
 
       const tempColor = myGameRef.current.myTeam.color;
       const jsonMyKart = JSON.stringify(myGameRef.current.myKart);
-      socket.emit("kart_update", { jsonMyKart, tempColor, gameId });
+
+      socket.emit("game_update", { jsonMyKart, tempColor, gameId });
     }
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
@@ -417,7 +418,6 @@ function Canvas(props: any) {
           const jsonTeam = JSON.stringify(tempMyTeam);
           const jsonKart = JSON.stringify(tempMyKart);
           socket.emit("send_team", { jsonTeam, jsonKart, gameId, tempTeamMate });
-          //do we need to send Teams update to all clients in room pushing a list of teams and karts into state (like userList)?
         }
       }
     });
@@ -437,11 +437,10 @@ function Canvas(props: any) {
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
     });
 
-    //a new socket called receive game update (kart, team score, pellets) will replace kart update:
-    socket.on("receive_kart_update", (data) => {
-      const tempKart = new Kart();
-      tempKart.updateKartWithJson(data.kart);
-      roomGameRef.current.karts.set(data.color, tempKart);
+    //pellet, scores, and powerup updates can live here eventually:
+    socket.on("receive_game_update", (data) => {
+      const tempKart = new Kart(JSON.parse(data.jsonKart));
+      roomGameRef.current.karts.set(data.tempColor, tempKart);
     });
 
     socket.on("receive_toggle_player_control", (data) => {
