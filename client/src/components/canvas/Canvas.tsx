@@ -4,7 +4,10 @@ import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { map } from "./Maps";
+import { GameOver, useGameOver } from "./gameOver";
+import "./CanvasStyles.css";
 import { myGameType, roomGameType, teamType } from "../../types/Types";
+
 
 interface Props {
   gameId: string;
@@ -13,6 +16,8 @@ interface Props {
 function Canvas(props: any) {
   const { gameId } = props;
 
+
+  const { isOpen, toggle } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
   const boundariesRef = useRef<Boundary[]>([]);
@@ -92,8 +97,10 @@ function Canvas(props: any) {
     });
     boundariesRef.current = tempBoundaries;
   };
-
+/*
+  //THIS CODE IS NEVER CALLED AND NOT NEEDED
   const updatePellets = () => {
+    
     const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
     map.forEach((row: any[], i: number) => {
       row.forEach((symbol: any, j: number) => {
@@ -112,7 +119,9 @@ function Canvas(props: any) {
       });
     });
     pelletsRef.current = tempPellets;
-  };
+
+  };*/
+
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -349,10 +358,12 @@ function Canvas(props: any) {
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
+
   useEffect(() => {
     const tempBoundaries = boundariesRef.current;
     const tempPellets = pelletsRef.current;
     //map switch case will live here eventually.
+
     requestIdRef.current = requestAnimationFrame(tick);
     map.forEach((row, i) => {
       row.forEach((symbol: any, j: number) => {
@@ -411,10 +422,16 @@ function Canvas(props: any) {
           tempScoreCondition.push("pellet");
           scoreConditionRef.current = tempScoreCondition;
           addScore(scoreConditionRef.current);
+          if (pelletsRef.length === 0) {
+            console.log("game over")
+            toggle(); //this toggles the game over screen, we can rename it lol
+            // navigate to game over or put game over on top of the canvas
+         }
         }
       }
     });
   };
+
 
   const addScore = (scoreConditionArr: string[]) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
@@ -523,7 +540,12 @@ function Canvas(props: any) {
           : `your teammate is in control: ${myGameRef.current.myTeam.playerInControl}`}
       </p>
       <canvas {...size} ref={canvasRef} />
+      <div>
+        {/* <button onClick={toggle}>Open GameOver </button> */}
+        <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
+      </div>
     </div>
+    
   );
 }
 
