@@ -10,7 +10,7 @@ const userControllers = {
   async getUserByEmail(req: any, res: any) {
     
 		const { email } = req.params;
-    console.log(email);
+
     const user = await findUserByEmail(email);
     if (!user) {
       res.status(204).send();

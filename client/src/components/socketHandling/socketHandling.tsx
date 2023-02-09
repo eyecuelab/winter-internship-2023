@@ -71,7 +71,7 @@ function SocketHandling() {
       }
     }
     socket.on("receive_key", (data: Array<any>) => {
-      console.log(data[1]);
+      myGameRef(data[1]);
       if (data[1] === userList[0]) {
         setUser1Input(data[0].key);
       } else if (data[1] === userList[1]) {
