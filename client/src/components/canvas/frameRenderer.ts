@@ -38,7 +38,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     this.save()
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
-    this.fillStyle = 'blue';
+    this.fillStyle = 'transparent';
     this.fill();
     //const tweenAnimation 
     //package research for making the turn smoother
@@ -54,7 +54,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
     }
     
 
-    this.drawImage(image, x - 20, y - 30, 60, 60);
+    this.drawImage(image, x - 20, y - 30, 40, 40);
     this.restore();
 
 
