@@ -54,7 +54,7 @@ export class Team {
     color: string;
     players: { x: string; y: string };
     kart: Kart;
-    score: {score: number}
+    score:  number;
   }) {
     this.teamId = teamId;
     this.color = color;

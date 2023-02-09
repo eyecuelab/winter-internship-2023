@@ -12,16 +12,14 @@ interface Props {
 
 function Canvas(props: any) {
   const { gameId } = props;
-  const lastKeyRef = useRef("");
 
+  const colors = ["yellow", "white", "teal", "blue", "white"];
+  const lastKeyRef = useRef("");
   const boundariesRef = useRef<Boundary[]>([]);
-  const pelletsRef = useRef <Pellet[]>([]);
+  const pelletsRef = useRef<Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
-
-
-  const colors = ["yellow", "white", "teal", "blue", "white"];
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -49,7 +47,7 @@ function Canvas(props: any) {
         radius: 15,
       },
       changePlayerInControl: () => null,
-      score: 0
+      score: 0,
     },
   });
 
@@ -114,7 +112,7 @@ function Canvas(props: any) {
       });
     });
     pelletsRef.current = tempPellets;
-  }
+  };
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -272,7 +270,7 @@ function Canvas(props: any) {
       return;
     }
 
-    let updatedKart;
+    let updatedKart;//should this be referencing local state?
 
     if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
@@ -285,14 +283,20 @@ function Canvas(props: any) {
       const tempColor = myGameRef.current.myTeam.color;
       socket.emit("kart_update", { updatedKart, tempColor, gameId });
     }
-    
-    removePellets(pelletsRef.current, kartRef.current)
+
+    removePellets(pelletsRef.current, updatedKart);
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(context, size, kartsArr, boundariesRef.current, pelletsRef.current);
+    frameRenderer.call(
+      context,
+      size,
+      kartsArr,
+      boundariesRef.current,
+      pelletsRef.current
+    );
   };
 
   const tick = () => {
@@ -345,8 +349,6 @@ function Canvas(props: any) {
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
-
-
   useEffect(() => {
     const tempBoundaries = boundariesRef.current;
     const tempPellets = pelletsRef.current;
@@ -355,26 +357,26 @@ function Canvas(props: any) {
     map.forEach((row, i) => {
       row.forEach((symbol: any, j: number) => {
         switch (symbol) {
-          case '-':
+          case "-":
             tempBoundaries.push(
               new Boundary({
                 position: {
                   x: Boundary.width * j,
                   y: Boundary.height * i,
-                }
+                },
               })
             );
             break;
-          case '.':
+          case ".":
             tempPellets.push(
               new Pellet({
                 position: {
                   x: j * Boundary.width + Boundary.width / 2,
-                  y: i * Boundary.height + Boundary.height / 2
-                }
+                  y: i * Boundary.height + Boundary.height / 2,
+                },
               })
-            )
-            break
+            );
+            break;
         }
       });
     });
@@ -387,31 +389,43 @@ function Canvas(props: any) {
 
   const scoreConditionRef = useRef<string[]>([]);
 
-  const removePellets = (pelletsRef : Pellet[], kartRef : { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; }) => {
-
+  const removePellets = (
+    pelletsRef: Pellet[],
+    kartRef: {
+      position: { x: number; y: number };
+      velocity: { x: number; y: number };
+      radius: number;
+    }
+  ) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
-      if (Math.hypot(
-        pellet.position.x - kartRef.position.x,
-        pellet.position.y - kartRef.position.y) < pellet.radius + kartRef.radius) {
-        pelletsRef.splice(i, 1)
-        tempScoreCondition.push("pellet");
-        scoreConditionRef.current = tempScoreCondition;
-        addScore(scoreConditionRef.current);
+      if (kartRef){
+        if (
+          Math.hypot(
+            pellet.position.x - kartRef.position.x,
+            pellet.position.y - kartRef.position.y
+          ) <
+          pellet.radius + kartRef.radius
+        ) {
+          pelletsRef.splice(i, 1);
+          tempScoreCondition.push("pellet");
+          scoreConditionRef.current = tempScoreCondition;
+          addScore(scoreConditionRef.current);
+        }
       }
-    })
-  }
+    });
+  };
 
   const addScore = (scoreConditionArr: string[]) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     if (scoreConditionArr[0] === "pellet") {
-      const currentGame = currentGameRef.current;
+      const currentGame = myGameRef.current;
       currentGame.myTeam.score += Pellet.scoreValue;
       const currentScoreCondition = scoreConditionRef.current;
       scoreConditionRef.current = tempScoreCondition;
       console.log(currentGame.myTeam.score);
     }
-  }
+  };
 
   //socket handlers:
   useEffect(() => {
@@ -431,12 +445,11 @@ function Canvas(props: any) {
             players: {
               x: data[data.length - 2],
               y: data[data.length - 1],
-              }, 
+            },
             kart: tempKart,
-            score: {
-             score: 0
-            });
-             
+            score: 0
+          });
+
           myGameRef.current.myTeamMate = data[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
@@ -504,7 +517,11 @@ function Canvas(props: any) {
   return (
     <div style={{ color: "white", backgroundColor: "black" }}>
       <p>welcome to da game</p>
-      <p>{myGameRef.current.myTeam.playerInControl === socketId ? `YOU ARE IN CONTROL` : `your teammate is in control: ${myGameRef.current.myTeam.playerInControl}`}</p>
+      <p>
+        {myGameRef.current.myTeam.playerInControl === socketId
+          ? `YOU ARE IN CONTROL`
+          : `your teammate is in control: ${myGameRef.current.myTeam.playerInControl}`}
+      </p>
       <canvas {...size} ref={canvasRef} />
     </div>
   );
