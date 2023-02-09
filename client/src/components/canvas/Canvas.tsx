@@ -37,27 +37,7 @@ function Canvas(props: any) {
     userList: [],
     myTeamMate: "",
     myControl: "",
-    myTeam: {
-      teamId: "",
-      color: "",
-      playerInControl: "",
-      players: { x: "", y: "" },
-      kart: {
-        position: {
-          x: 0,
-          y: 0,
-        },
-        velocity: {
-          x: 0,
-          y: 0,
-        },
-        radius: 15,
-        updateKartWithJson: () => null,
-      },
-      changePlayerInControl: () => null,
-      score: 0,
-      updateTeamWithJson: () => null
-    },
+    myTeam: new Team(),
   });
 
   //updates Boundaries flat array based on map.
@@ -81,36 +61,12 @@ function Canvas(props: any) {
     });
     boundariesRef.current = tempBoundaries;
   };
-/*
-  //THIS CODE IS NEVER CALLED AND NOT NEEDED
-  const updatePellets = () => {
-    
-    const tempPellets: ((prevState: never[]) => never[]) | Pellet[] = [];
-    map.forEach((row: any[], i: number) => {
-      row.forEach((symbol: any, j: number) => {
-        switch (symbol) {
-          case ".":
-            tempPellets.push(
-              new Pellet({
-                position: {
-                  x: Boundary.width * j,
-                  y: Boundary.height * i,
-                },
-              })
-            );
-            break;
-        }
-      });
-    });
-    pelletsRef.current = tempPellets;
-
-  };*/
-
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor);
+    const kart = roomGameRef.current.karts.get(myColor) ||  {position: {x:0, y:0}, velocity: {x:0,y:0}, radius: 0}
+
     if (lastKeyRef.current === "w") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -119,7 +75,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kart.velocity.x,
+                x: kart ? kart.velocity.x : 0,
                 y: -5,
               },
             },
@@ -181,7 +137,8 @@ function Canvas(props: any) {
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor);
+    const kart = roomGameRef.current.karts.get(myColor) ||  {position: {x:0, y:0}, velocity: {x:0,y:0}, radius: 0}
+    
     if (lastKeyRef.current === "a") {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];

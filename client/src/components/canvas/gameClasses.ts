@@ -17,10 +17,10 @@ export class Kart {
   velocity: { x: number; y: number };
   radius: number;
   constructor();
-  constructor(kartData: kartConstructorType);
-  constructor(kartData?: kartConstructorType) {
-    this.position = kartData?.position ?? {x:0, y:0};
-    this.velocity = kartData?.velocity ?? {x:0, y:0};;
+  constructor(kartConstructorData: kartConstructorType);
+  constructor(kartConstructorData?: kartConstructorType) {
+    this.position = kartConstructorData?.position ?? {x:0, y:0};
+    this.velocity = kartConstructorData?.velocity ?? {x:0, y:0};;
     this.radius = 15;
   }
 
