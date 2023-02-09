@@ -30,6 +30,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     boundaries: [],
+    pellets: []
   });
 
   const myGameRef = useRef<myGameType>({
@@ -37,7 +38,7 @@ function Canvas(props: any) {
     myTeamMate: "",
     myControl: "",
     myTeam: {
-      teamId: 0,
+      teamId: "",
       color: "",
       playerInControl: "",
       players: { x: "", y: "" },
@@ -51,9 +52,11 @@ function Canvas(props: any) {
           y: 0,
         },
         radius: 15,
+        updateKartWithJson: () => null,
       },
       changePlayerInControl: () => null,
       score: 0,
+      updateTeamWithJson: () => null
     },
   });
 

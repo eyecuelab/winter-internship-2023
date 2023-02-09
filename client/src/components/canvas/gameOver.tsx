@@ -13,13 +13,11 @@ export function useGameOver() {
 
   return {
     isOpen,
-    toggle
+    toggle,
   };
 }
 
 //gameover
-
-
 
 interface GameOverType {
   children?: ReactNode;
@@ -28,12 +26,11 @@ interface GameOverType {
 }
 
 export function GameOver(props: GameOverType) {
-  
   const navigate = useNavigate();
   const goToLobby = () => {
     navigate("/lobby");
-  }
-  
+  };
+
   return (
     <>
       {props.isOpen && (

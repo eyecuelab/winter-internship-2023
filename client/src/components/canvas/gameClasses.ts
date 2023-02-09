@@ -1,4 +1,4 @@
-import { kartType, teamType } from "../../types/Types";
+import { kartConstructorType, kartType, teamConstructorType, teamType } from "../../types/Types";
 
 export class Boundary {
   static width = 40;
@@ -13,24 +13,19 @@ export class Boundary {
 }
 
 export class Kart {
-
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
-  public constructor({
-    position,
-    velocity,
-  }: {
-    position: { x: number; y: number };
-    velocity: { x: number; y: number };
-  }) {
-    this.position = position;
-    this.velocity = velocity;
+  constructor();
+  constructor(kartData: kartConstructorType);
+  constructor(kartData?: kartConstructorType) {
+    this.position = kartData?.position ?? {x:0, y:0};
+    this.velocity = kartData?.velocity ?? {x:0, y:0};;
     this.radius = 15;
   }
 
-  updateTeamWithJson(jsonString: string){
-    const kartUpdate:kartType = JSON.parse(jsonString);
+  updateKartWithJson(jsonString: string) {
+    const kartUpdate: kartType = JSON.parse(jsonString);
     this.position = kartUpdate.position;
     this.velocity = kartUpdate.velocity;
     this.radius = kartUpdate.radius;
@@ -43,25 +38,15 @@ export class Team {
   players: { x: string; y: string };
   kart: Kart;
   score: number;
-  constructor({
-    teamId,
-    color,
-    players,
-    kart,
-    score
-  }: {
-    teamId: string;
-    color: string;
-    players: { x: string; y: string };
-    kart: Kart;
-    score:  number;
-  }) {
-    this.teamId = teamId;
-    this.color = color;
-    this.players = players;
-    this.playerInControl = this.players.x;
-    this.kart = kart;
-    this.score = score;
+  constructor();
+  constructor(teamData: teamConstructorType);
+  constructor(teamData?: teamConstructorType) {
+    this.teamId = teamData?.teamId ?? "";
+    this.color = teamData?.color ?? "";
+    this.players = teamData?.players ?? { x: "", y: "string" };
+    this.playerInControl = teamData?.players ? teamData.players.x :  "";
+    this.kart = teamData?.kart ?? new Kart();
+    this.score = teamData?.score ?? 0;
   }
 
   changePlayerInControl() {
@@ -72,8 +57,8 @@ export class Team {
     }
   }
 
-  updateTeamWithJson(jsonString: string){
-    const teamUpdate:teamType = JSON.parse(jsonString);
+  updateTeamWithJson(jsonString: string) {
+    const teamUpdate: teamType = JSON.parse(jsonString);
     this.teamId = teamUpdate.teamId;
     this.color = teamUpdate.color;
     this.players = teamUpdate.players;
@@ -91,8 +76,7 @@ export class Pellet {
   static scoreValue = 10;
   position: { x: number; y: number };
   radius: number;
-  constructor({ position }: { position: { x: number; y: number };
-}) {
+  constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
     this.radius = 3;
     Pellet.scoreValue = 10;
