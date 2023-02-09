@@ -32,16 +32,17 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
   const kartImg = createImage(kart.imgSrc);
 
   const drawKart = (x: number, y: number, radius: number, angle: number, image: HTMLImageElement) => {
+    console.log(angle);
     this.save()
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
-    this.fillStyle = 'blue';
+    this.fillStyle = 'transparent';
     this.fill();
 
     if (angle !== 0) {
-    this.translate(67.5, 67.5)
+    this.translate(x + 7.5, y + 7.5)
     this.rotate(angle * Math.PI / 180);  
-    this.translate(-67.5, -67.5)
+    this.translate(-x - 7.5, -y - 7.5)
     }
 
     this.drawImage(image, x - 20, y - 20, 40, 40);

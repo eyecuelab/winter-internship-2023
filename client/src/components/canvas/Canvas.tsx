@@ -120,7 +120,7 @@ function Canvas(props: any) {
               velocity: {
                 x: kartRef.current.velocity.x,
                 y: -5,
-              },
+              }
             },
             rectangle: boundary,
           })
@@ -129,7 +129,6 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.y = -5;
-          kart.angle = -45;
         }
       }
     } else if (lastKeyRef.current === "s") {
@@ -142,7 +141,7 @@ function Canvas(props: any) {
               velocity: {
                 x: kartRef.current.velocity.x,
                 y: 5,
-              },
+              }
             },
             rectangle: boundary,
           })
@@ -151,7 +150,6 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.y = 5;
-          kart.angle = 45;
         }
       }
     }
@@ -166,6 +164,7 @@ function Canvas(props: any) {
       ) {
         kart.velocity.y = 0;
         kart.velocity.x = 0;
+        kart.angle += 90;
       }
     });
     if (kart.velocity.y != 0) {
@@ -190,7 +189,7 @@ function Canvas(props: any) {
               velocity: {
                 x: -5,
                 y: kartRef.current.velocity.y,
-              },
+              }
             },
             rectangle: boundary,
           })
@@ -199,7 +198,6 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.x = -5;
-          kart.angle = -90;
         }
       }
     } else if (lastKeyRef.current === "d") {
@@ -212,7 +210,7 @@ function Canvas(props: any) {
               velocity: {
                 x: 5,
                 y: kartRef.current.velocity.y,
-              },
+              }
             },
             rectangle: boundary,
           })
@@ -221,7 +219,6 @@ function Canvas(props: any) {
           break;
         } else {
           kart.velocity.x = 5;
-          kart.angle = 90;
         }
       }
     }
@@ -237,6 +234,7 @@ function Canvas(props: any) {
       ) {
         kart.velocity.x = 0;
         kart.velocity.y = 0;
+        kart.angle += 90;
       }
     });
     if (kart.velocity.x != 0) {

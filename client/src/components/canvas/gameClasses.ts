@@ -14,6 +14,7 @@ export class Kart {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
+  angle: number;
   imgSrc: string;
   // image: string;
   constructor({
@@ -23,12 +24,14 @@ export class Kart {
     position: { x: number; y: number };
     velocity: { x: number; y: number };
   }, 
-  imgSrc: string
+  imgSrc: string,
+  angle: number,
   ) {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;
     this.imgSrc = imgSrc;
+    this.angle = angle;
   }
 }
 
