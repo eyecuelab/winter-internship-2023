@@ -128,7 +128,10 @@ function Canvas(props: any) {
           kart.velocity.y = 0;
           break;
         } else {
+          kart.angle = -90;
+          //make this based off of velocity instead of lastKey
           kart.velocity.y = -5;
+
         }
       }
     } else if (lastKeyRef.current === "s") {
@@ -147,8 +150,10 @@ function Canvas(props: any) {
           })
         ) {
           kart.velocity.y = 0;
+         
           break;
         } else {
+          kart.angle = 90;
           kart.velocity.y = 5;
         }
       }
@@ -162,9 +167,31 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
+        console.log("Y movement: kart velocity x: " + kart.velocity.x )
+        console.log("Y movement: kart velocity y: " + kart.velocity.y )
+        // if (kart.velocity.x === 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
+        //     kart.angle = 45;
+        //   } 
+        //   if (kart.velocity.x === 5) {
+        //    kart.angle = 270;
+        //   } 
+        
+        //   if (kart.velocity.x > 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
+        //     kart.angle = -45;
+        //   } 
+        //   if (kart.velocity.x === -5) {
+        //     kart.angle = 90;
+        //    } 
+
         kart.velocity.y = 0;
         kart.velocity.x = 0;
-        kart.angle += 90;
+        
+
+        // kart.angle += 90;
+
+        // setTimeout(()=> {
+        //   kart.angle = 0;
+        // }, 500);
       }
     });
     if (kart.velocity.y != 0) {
@@ -197,6 +224,7 @@ function Canvas(props: any) {
           kart.velocity.x = 0;
           break;
         } else {
+          kart.angle = 180;
           kart.velocity.x = -5;
         }
       }
@@ -218,6 +246,7 @@ function Canvas(props: any) {
           kart.velocity.x = 0;
           break;
         } else {
+          kart.angle = 0;
           kart.velocity.x = 5;
         }
       }
@@ -232,9 +261,21 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
+        console.log("X movement: kart velocity x: " + kart.velocity.x )
+        console.log("X movement: kart velocity y: " + kart.velocity.y )
+        // if (kart.velocity.y === -5) {
+        //   kart.angle = 90;
+        // } 
+        // if (kart.velocity.y === 5) {
+        //   kart.angle = -90;
+        // } 
+
         kart.velocity.x = 0;
         kart.velocity.y = 0;
-        kart.angle += 90;
+       
+        // setTimeout(()=> {
+        //   kart.angle = 0;
+        // }, 500);
       }
     });
     if (kart.velocity.x != 0) {
@@ -386,7 +427,6 @@ function Canvas(props: any) {
       currentGame.myTeam.score += Pellet.scoreValue;
       const currentScoreCondition = scoreConditionRef.current;
       scoreConditionRef.current = tempScoreCondition;
-      console.log(currentGame.myTeam.score);
     }
   }
 

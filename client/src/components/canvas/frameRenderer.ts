@@ -32,20 +32,29 @@ function frameRenderer(this: any, size: { width: any; height: any; }, kart: { po
   const kartImg = createImage(kart.imgSrc);
 
   const drawKart = (x: number, y: number, radius: number, angle: number, image: HTMLImageElement) => {
-    console.log(angle);
+    //top & bottom of Kart?
+    //reflect over y axis?
+    // console.log(angle);
     this.save()
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
-    this.fillStyle = 'transparent';
+    this.fillStyle = 'blue';
     this.fill();
+    //const tweenAnimation 
+    //package research for making the turn smoother
+    //framer motion
+    //
 
     if (angle !== 0) {
+      //add this.transition 
+      //('all', time (.2-.4))
     this.translate(x + 7.5, y + 7.5)
     this.rotate(angle * Math.PI / 180);  
     this.translate(-x - 7.5, -y - 7.5)
     }
+    
 
-    this.drawImage(image, x - 20, y - 20, 40, 40);
+    this.drawImage(image, x - 20, y - 30, 60, 60);
     this.restore();
 
 
