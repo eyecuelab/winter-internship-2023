@@ -1,3 +1,4 @@
+import { kartType } from "../../types/Types";
 import { Boundary, Kart } from "./gameClasses";
 
 //collision detection function:
@@ -5,7 +6,7 @@ export function circleCollidesWithRectangle({
   circle,
   rectangle,
 }: {
-  circle: Kart;
+  circle: kartType;
   rectangle: Boundary;
 }) {
   return (
