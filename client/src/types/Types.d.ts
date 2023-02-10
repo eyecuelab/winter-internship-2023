@@ -55,8 +55,7 @@ export type myGameType = {
 
 export type roomGameType = {
   karts: Map<string, Kart>;
-  boundaries: Boundary[];
-  pellets: Pellet[];
+  scores: Map<string, number>;
 };
 
 //teamFromJSONtype

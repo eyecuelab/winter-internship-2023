@@ -35,12 +35,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("game_update", (data) => {
-    const { gameId, tempColor, jsonKart } = data;
-    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart});
+    const { gameId, tempColor, tempScore, jsonKart } = data;
+    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart, tempScore});
   });
 
   socket.on("toggle_player_control", (data) => {
     socket.to(data.tempTeamMate).emit("receive_toggle_player_control", data.jsonTeam);
+  })
+
+  socket.on("remove_pellet", (data) => {
+    const {gameId, i, isGameOver} = data;
+    socket.to (gameId).emit("pellet_gone", {i, isGameOver})
   })
 
   socket.on("send_message", (data) => {

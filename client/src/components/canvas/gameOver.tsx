@@ -7,13 +7,13 @@ import { useNavigate } from "react-router-dom";
 export function useGameOver() {
   const [isOpen, setisOpen] = useState(false);
 
-  const toggle = () => {
+  const toggleGameOver = () => {
     setisOpen(!isOpen);
   };
 
   return {
     isOpen,
-    toggle,
+    toggleGameOver,
   };
 }
 
@@ -22,7 +22,7 @@ export function useGameOver() {
 interface GameOverType {
   children?: ReactNode;
   isOpen: boolean;
-  toggle: () => void;
+  toggleGameOver: () => void;
 }
 
 export function GameOver(props: GameOverType) {
