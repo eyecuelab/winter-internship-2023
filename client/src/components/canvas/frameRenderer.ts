@@ -59,7 +59,6 @@ function frameRenderer(
 
 const kartImg = createImage(karts[0].kart.imgSrc);
 
-
   const drawKart = (x: number, y: number, radius: number, angle: number, image: HTMLImageElement) => {
     //top & bottom of Kart?
     //reflect over y axis?

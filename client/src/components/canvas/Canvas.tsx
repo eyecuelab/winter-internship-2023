@@ -256,7 +256,7 @@ function Canvas(props: any) {
   //pellets and score:
   const removePellets = (
     pelletsRef: Pellet[],
-    kartRef: kartType
+    kartRef: Kart | undefined
   ) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
@@ -336,51 +336,51 @@ console.log(kartsArr);
 
   const tick = () => {
     if (!canvasRef.current) return;
-    // try {
-    //   const t = performance.now();
-    //   const nextTick = TimeMath._lastTick + TimeMath._timestep;
-    //   let numTicks = 0;
-    //   if (t > nextTick) {
-    //     numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
-    //   }
-    //   if (numTicks > 4) {
-    //     numTicks = 0;
-    //     TimeMath._lastTick = t;
-    //   }
+    try {
+      const t = performance.now();
+      const nextTick = TimeMath._lastTick + TimeMath._timestep;
+      let numTicks = 0;
+      if (t > nextTick) {
+        numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
+      }
+      if (numTicks > 4) {
+        numTicks = 0;
+        TimeMath._lastTick = t;
+      }
 
-    //   if (t - TimeMath._lastFpsUpdate > 200) {
-    //     TimeMath._fps =
-    //       (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
-    //         (t - TimeMath._lastFpsUpdate) +
-    //       0.1 * TimeMath._fps;
-    //     Time.fps = TimeMath._fps;
-    //     TimeMath._lastFpsUpdate = t;
-    //     TimeMath._framesSinceFPSUpdate = 0;
-    //   }
+      if (t - TimeMath._lastFpsUpdate > 200) {
+        TimeMath._fps =
+          (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
+            (t - TimeMath._lastFpsUpdate) +
+          0.1 * TimeMath._fps;
+        Time.fps = TimeMath._fps;
+        TimeMath._lastFpsUpdate = t;
+        TimeMath._framesSinceFPSUpdate = 0;
+      }
 
-    //   TimeMath._framesSinceFPSUpdate++;
+      TimeMath._framesSinceFPSUpdate++;
 
     // Update
-    // for (let i = 0; i < numTicks; i++) {
-    //   TimeMath._lastTick += TimeMath._timestep;
-    //   Time.t = TimeMath._lastTick - TimeMath._startTime;
-    //   Time.dt = TimeMath._timestep;
+    for (let i = 0; i < numTicks; i++) {
+      TimeMath._lastTick += TimeMath._timestep;
+      Time.t = TimeMath._lastTick - TimeMath._startTime;
+      Time.dt = TimeMath._timestep;
 
     //update(); //this does literally nothing
     renderFrame();
-    // }
+    }
 
     // Draw
-    //   Time.frame = TimeMath._currentFrame;
-    //   Time.frameTime = t;
-    //   //draw(); //this moves the square in a circle
+      Time.frame = TimeMath._currentFrame;
+      Time.frameTime = t;
+      //draw(); //this moves the square in a circle
 
-    //   TimeMath._currentFrame++;
-    // } catch (e) {
-    //   //cancelAnimationFrame(requestIdRef.current);
-    //   throw e;
-    // }
-    //renderFrame();
+      TimeMath._currentFrame++;
+    } catch (e) {
+      //cancelAnimationFrame(requestIdRef.current);
+      throw e;
+    }
+    renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
