@@ -24,7 +24,7 @@ function Canvas(props: any) {
   const { gameId } = props;
 
   const scoreConditionRef = useRef<string[]>([]);
-  const { isOpen, toggle } = useGameOver();
+  const { isOpen, toggleGameOver } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
   // const kartRef = useRef<kartType>({
@@ -276,11 +276,19 @@ function Canvas(props: any) {
           // scoreConditionRef.current = tempScoreCondition;
           // addScore(scoreConditionRef.current);
           updateScore(10);
-          if (pelletsRef.length === 0) {
-            console.log("game over");
-            toggle(); //this toggles the game over screen, we can rename it lol
-            // navigate to game over or put game over on top of the canvas
+
+          for(let i = 0; i < pelletsRef.length; i++){
+            if (pelletsRef[i].isVisible === true){
+              break;
+            } else {
+              toggleGameOver();
+            }
           }
+          // if (pelletsRef.length === 0) {
+          //   console.log("game over");
+          //   toggle(); //this toggles the game over screen, we can rename it lol
+          //   // navigate to game over or put game over on top of the canvas
+          // }
         }
       }
     });
@@ -316,7 +324,7 @@ function Canvas(props: any) {
 
     let updatedKart; //should this be referencing local state?
 
-    if (myGameRef.current.myTeam.playerInControl === socketId) {
+    if (myGameRef.current.myTeam.playerInControl === socketId) { 
       if (myGameRef.current.myControl === "x") {
         updatedKart = new Kart(updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
@@ -335,7 +343,6 @@ function Canvas(props: any) {
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
-    console.log(kartsArr);
     frameRenderer.call(
       context,
       size,
@@ -533,7 +540,7 @@ function Canvas(props: any) {
         <canvas {...size} ref={canvasRef} />
         <div>
           {/* <button onClick={toggle}>Open GameOver </button> */}
-          <GameOver isOpen={isOpen} toggle={toggle}></GameOver>
+          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver}></GameOver>
         </div>
       </div>
     </>
