@@ -43,6 +43,10 @@ io.on("connection", (socket) => {
     socket.to(data.tempTeamMate).emit("receive_toggle_player_control", data.jsonTeam);
   })
 
+  socket.on("remove_pellet", (data) => {
+    socket.to (data.gameId).emit("pellet_gone", data.i)
+  })
+
   socket.on("send_message", (data) => {
     socket.broadcast.emit("receive_message", data);
   });

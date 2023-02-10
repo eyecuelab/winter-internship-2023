@@ -22,17 +22,19 @@ function frameRenderer(
     );
   };
   const drawPellet = (pellet: Pellet) => {
-    this.beginPath();
-    this.arc(
-      pellet.position.x,
-      pellet.position.y,
-      pellet.radius,
-      0,
-      Math.PI * 2
-    );
-    this.fillStyle = "white";
-    this.fill();
-    this.closePath();
+    if (pellet.isVisible === true) {
+      this.beginPath();
+      this.arc(
+        pellet.position.x,
+        pellet.position.y,
+        pellet.radius,
+        0,
+        Math.PI * 2
+      );
+      this.fillStyle = "white";
+      this.fill();
+      this.closePath();
+    }
   };
 
   boundaries.forEach((boundary) => {

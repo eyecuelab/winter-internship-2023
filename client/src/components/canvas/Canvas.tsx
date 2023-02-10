@@ -256,7 +256,7 @@ function Canvas(props: any) {
   //pellets and score:
   const removePellets = (
     pelletsRef: Pellet[],
-    kartRef: kartType
+    kartRef: Kart | undefined
   ) => {
     const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
@@ -267,8 +267,13 @@ function Canvas(props: any) {
             pellet.position.y - kartRef.position.y
           ) <
           pellet.radius + kartRef.radius
-        ) {
-          pelletsRef.splice(i, 1);
+          && pellet.isVisible === true
+          ) {
+          pellet.isVisible = false;
+          //socket emit that the pellet is gone
+          socket.emit("remove_pellet", {gameId, i})// make this also send if the game is over
+          //assuming the socket server holds the entire array, it would only need to receive something to tell which pellet in the array is gone
+          //pelletsRef.splice(i, 1);
           tempScoreCondition.push("pellet");
           scoreConditionRef.current = tempScoreCondition;
           addScore(scoreConditionRef.current);
@@ -336,51 +341,51 @@ console.log(kartsArr);
 
   const tick = () => {
     if (!canvasRef.current) return;
-    // try {
-    //   const t = performance.now();
-    //   const nextTick = TimeMath._lastTick + TimeMath._timestep;
-    //   let numTicks = 0;
-    //   if (t > nextTick) {
-    //     numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
-    //   }
-    //   if (numTicks > 4) {
-    //     numTicks = 0;
-    //     TimeMath._lastTick = t;
-    //   }
+    try {
+      const t = performance.now();
+      const nextTick = TimeMath._lastTick + TimeMath._timestep;
+      let numTicks = 0;
+      if (t > nextTick) {
+        numTicks = Math.floor((t - TimeMath._lastTick) / TimeMath._timestep);
+      }
+      if (numTicks > 4) {
+        numTicks = 0;
+        TimeMath._lastTick = t;
+      }
 
-    //   if (t - TimeMath._lastFpsUpdate > 200) {
-    //     TimeMath._fps =
-    //       (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
-    //         (t - TimeMath._lastFpsUpdate) +
-    //       0.1 * TimeMath._fps;
-    //     Time.fps = TimeMath._fps;
-    //     TimeMath._lastFpsUpdate = t;
-    //     TimeMath._framesSinceFPSUpdate = 0;
-    //   }
+      if (t - TimeMath._lastFpsUpdate > 200) {
+        TimeMath._fps =
+          (0.9 * TimeMath._framesSinceFPSUpdate * 1000) /
+            (t - TimeMath._lastFpsUpdate) +
+          0.1 * TimeMath._fps;
+        Time.fps = TimeMath._fps;
+        TimeMath._lastFpsUpdate = t;
+        TimeMath._framesSinceFPSUpdate = 0;
+      }
 
-    //   TimeMath._framesSinceFPSUpdate++;
+      TimeMath._framesSinceFPSUpdate++;
 
     // Update
-    // for (let i = 0; i < numTicks; i++) {
-    //   TimeMath._lastTick += TimeMath._timestep;
-    //   Time.t = TimeMath._lastTick - TimeMath._startTime;
-    //   Time.dt = TimeMath._timestep;
+    for (let i = 0; i < numTicks; i++) {
+      TimeMath._lastTick += TimeMath._timestep;
+      Time.t = TimeMath._lastTick - TimeMath._startTime;
+      Time.dt = TimeMath._timestep;
 
     //update(); //this does literally nothing
-    renderFrame();
-    // }
+    // renderFrame();
+    }
 
     // Draw
-    //   Time.frame = TimeMath._currentFrame;
-    //   Time.frameTime = t;
-    //   //draw(); //this moves the square in a circle
+      Time.frame = TimeMath._currentFrame;
+      Time.frameTime = t;
+      //draw(); //this moves the square in a circle
 
-    //   TimeMath._currentFrame++;
-    // } catch (e) {
-    //   //cancelAnimationFrame(requestIdRef.current);
-    //   throw e;
-    // }
-    //renderFrame();
+      TimeMath._currentFrame++;
+    } catch (e) {
+      //cancelAnimationFrame(requestIdRef.current);
+      throw e;
+    }
+    renderFrame();
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
@@ -454,6 +459,13 @@ console.log(kartsArr);
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current.karts.set(tempColor, tempKart);
     });
+
+    socket.on("pellet_gone", (pelletIndex: number) => {
+      //update the pellet array
+      pelletsRef.current[pelletIndex].isVisible = false;
+      //pellet at pellet.position = false;
+    
+    })
 
     socket.on("receive_toggle_player_control", (data) => {
       console.log("toggle control", myGameRef.current.myKart);
