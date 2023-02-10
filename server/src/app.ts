@@ -25,7 +25,6 @@ app.use(
   teamUserRouter
 );
 
-// app.use('/api/github', githubRoutes);
 app.use('/api/google', googleRoutes);
 
 export default app;

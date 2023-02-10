@@ -34,11 +34,15 @@ export type kartType = {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
+  angle: number;
+  imgSrc: string;
 };
 
 export type kartConstructorType = {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
+  imgSrc: string;
+  angle: number;
 }
 
 export type myGameType = {

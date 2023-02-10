@@ -16,12 +16,33 @@ export class Kart {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
+  imgSrc: string;
+  angle: number;
+
+  
+  // public constructor({
+  //   position,
+  //   velocity,
+  // }: {
+  //   position: 
+  //   velocity: { x: number; y: number };
+  // }, 
+  // imgSrc: string,
+  // angle: number,
+  // ) {
+  //   this.position = position;
+  //   this.velocity = velocity;
+  //   this.imgSrc = imgSrc;
+  //   this.angle = angle;
+
   constructor();
   constructor(kartConstructorData: kartConstructorType);
   constructor(kartConstructorData?: kartConstructorType) {
     this.position = kartConstructorData?.position ?? {x:0, y:0};
     this.velocity = kartConstructorData?.velocity ?? {x:0, y:0};;
     this.radius = 15;
+    this.imgSrc = kartConstructorData?.imgSrc ?? '';
+    this.angle = kartConstructorData?.angle ?? 0;
   }
 
   updateKartWithJson(jsonString: string) {
@@ -29,8 +50,11 @@ export class Kart {
     this.position = kartUpdate.position;
     this.velocity = kartUpdate.velocity;
     this.radius = kartUpdate.radius;
+    this.imgSrc = kartUpdate.imgSrc;
+    this.angle = kartUpdate.angle;
   }
 }
+
 export class Team {
   teamId: string;
   color: string;

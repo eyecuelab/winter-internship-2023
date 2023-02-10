@@ -1,10 +1,10 @@
 import { Boundary, Pellet } from "./gameClasses";
 
-export default function mapSwitchCase(gameMap) {
+export default function mapSwitchCase(gameMap: any) {
   const boundaries: Boundary[] = [];
   const pellets: Pellet[] = [];
 
-  gameMap.forEach((row, i) => {
+  gameMap.forEach((row: any, i: any) => {
     row.forEach((symbol: any, j: number) => {
       switch (symbol) {
         case "-":

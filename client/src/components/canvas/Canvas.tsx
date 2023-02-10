@@ -4,6 +4,7 @@ import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
+import kartTest from "./../../constants/images";
 import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
 import { kartType, myGameType, roomGameType, teamType } from "../../types/Types";
@@ -21,6 +22,13 @@ function Canvas(props: any) {
   const { isOpen, toggle } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
+// const kartRef = useRef<kartType>({
+//   position: { x: 60, y: 60 },
+//   velocity: { x: 0, y: 0 },
+//   radius: 15,
+//   angle: 0,
+//   imgSrc:  kartTest.kartTest
+// })
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -48,6 +56,8 @@ function Canvas(props: any) {
       position: { x: 0, y: 0 },
       velocity: { x: 0, y: 0 },
       radius: 0,
+      imgSrc: '',
+      angle: 0
     };
 
     if (lastKeyRef.current === "w") {
@@ -60,7 +70,7 @@ function Canvas(props: any) {
               velocity: {
                 x: kart.velocity.x,
                 y: -5,
-              },
+              }
             },
             rectangle: boundary,
           })
@@ -68,7 +78,10 @@ function Canvas(props: any) {
           kart.velocity.y = 0;
           break;
         } else {
+          kart.angle = -90;
+          //make this based off of velocity instead of lastKey
           kart.velocity.y = -5;
+
         }
       }
     } else if (lastKeyRef.current === "s") {
@@ -81,14 +94,16 @@ function Canvas(props: any) {
               velocity: {
                 x: kart.velocity.x,
                 y: 5,
-              },
+              }
             },
             rectangle: boundary,
           })
         ) {
           kart.velocity.y = 0;
+         
           break;
         } else {
+          kart.angle = 90;
           kart.velocity.y = 5;
         }
       }
@@ -103,8 +118,31 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
+        console.log("Y movement: kart velocity x: " + kart.velocity.x )
+        console.log("Y movement: kart velocity y: " + kart.velocity.y )
+        // if (kart.velocity.x === 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
+        //     kart.angle = 45;
+        //   } 
+        //   if (kart.velocity.x === 5) {
+        //    kart.angle = 270;
+        //   } 
+        
+        //   if (kart.velocity.x > 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
+        //     kart.angle = -45;
+        //   } 
+        //   if (kart.velocity.x === -5) {
+        //     kart.angle = 90;
+        //    } 
+
         kart.velocity.y = 0;
         kart.velocity.x = 0;
+        
+
+        // kart.angle += 90;
+
+        // setTimeout(()=> {
+        //   kart.angle = 0;
+        // }, 500);
       }
     });
 
@@ -125,6 +163,8 @@ function Canvas(props: any) {
       position: { x: 0, y: 0 },
       velocity: { x: 0, y: 0 },
       radius: 0,
+      imgSrc: '',
+      angle: 0
     };
 
     if (lastKeyRef.current === "a") {
@@ -145,6 +185,7 @@ function Canvas(props: any) {
           kart.velocity.x = 0;
           break;
         } else {
+          kart.angle = 180;
           kart.velocity.x = -5;
         }
       }
@@ -166,6 +207,7 @@ function Canvas(props: any) {
           kart.velocity.x = 0;
           break;
         } else {
+          kart.angle = 0;
           kart.velocity.x = 5;
         }
       }
@@ -181,8 +223,21 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
+        console.log("X movement: kart velocity x: " + kart.velocity.x )
+        console.log("X movement: kart velocity y: " + kart.velocity.y )
+        // if (kart.velocity.y === -5) {
+        //   kart.angle = 90;
+        // } 
+        // if (kart.velocity.y === 5) {
+        //   kart.angle = -90;
+        // } 
+
         kart.velocity.x = 0;
         kart.velocity.y = 0;
+       
+        // setTimeout(()=> {
+        //   kart.angle = 0;
+        // }, 500);
       }
     });
 
@@ -269,7 +324,7 @@ function Canvas(props: any) {
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
-
+console.log(kartsArr);
     frameRenderer.call(
       context,
       size,
@@ -351,7 +406,9 @@ function Canvas(props: any) {
         if (numberOfUsers % 2 === 0) {
           const tempMyKart = new Kart({
             position: { x: 60 * numberOfUsers, y: 60 },
-            velocity: { x: 0, y: 0 },
+            velocity: { x: 0, y: 0 }, 
+            imgSrc: kartTest.kartTest,
+            angle: 0
           });
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),

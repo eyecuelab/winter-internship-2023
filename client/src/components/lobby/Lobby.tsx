@@ -14,7 +14,6 @@ import {
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
-
 import { getUserDataGoogle } from "./services/lobby-services";
 
 interface UserDataGoogle {
@@ -29,6 +28,7 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
+  // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
