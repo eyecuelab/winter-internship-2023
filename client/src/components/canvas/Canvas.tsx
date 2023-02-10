@@ -324,7 +324,7 @@ function Canvas(props: any) {
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
-
+console.log(kartsArr);
     frameRenderer.call(
       context,
       size,
@@ -406,8 +406,10 @@ function Canvas(props: any) {
         if (numberOfUsers % 2 === 0) {
           const tempMyKart = new Kart({
             position: { x: 60 * numberOfUsers, y: 60 },
-            velocity: { x: 0, y: 0 }
-          }, 15, kartTest.kartTest, 0);
+            velocity: { x: 0, y: 0 }, 
+            imgSrc: kartTest.kartTest,
+            angle: 0
+          });
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
