@@ -35,8 +35,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("game_update", (data) => {
-    const { gameId, tempColor, jsonKart } = data;
-    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart});
+    const { gameId, tempColor, tempScore, jsonKart } = data;
+    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart, tempScore});
   });
 
   socket.on("toggle_player_control", (data) => {
