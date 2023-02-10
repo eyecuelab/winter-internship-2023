@@ -56,6 +56,12 @@ export type myGameType = {
 export type roomGameType = {
   karts: Map<string, Kart>;
   scores: Map<string, number>;
+  isGameOver: boolean;
+};
+
+export type pelletType = {
+  position: { x: number; y: number };
+  isVisible: boolean;
 };
 
 //teamFromJSONtype

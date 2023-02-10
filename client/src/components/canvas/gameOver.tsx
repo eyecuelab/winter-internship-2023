@@ -34,7 +34,7 @@ export function GameOver(props: GameOverType) {
   return (
     <>
       {props.isOpen && (
-        <div className="gameover-overlay" onClick={props.toggle}>
+        <div className="gameover-overlay" onClick={props.toggleGameOver}>
           <div>
             <h1>Game Over</h1>
             <h2>Team 1: $score</h2>

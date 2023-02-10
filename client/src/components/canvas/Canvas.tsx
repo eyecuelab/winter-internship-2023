@@ -12,6 +12,7 @@ import {
   myGameType,
   roomGameType,
   teamType,
+  pelletType
 } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
@@ -43,6 +44,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
+    isGameOver: false
   });
 
   const myGameRef = useRef<myGameType>({
@@ -276,27 +278,27 @@ function Canvas(props: any) {
           // scoreConditionRef.current = tempScoreCondition;
           // addScore(scoreConditionRef.current);
           updateScore(10);
-
-          for(let i = 0; i < pelletsRef.length; i++){
-            if (pelletsRef[i].isVisible === true){
-              const isGameOver = false;
-              socket.emit("remove_pellet", { gameId, i, isGameOver });
-              break;
-            } else {
-              const isGameOver = true;
-              socket.emit("remove_pellet", { gameId, i, isGameOver });
-              toggleGameOver();
-            }
+          //we need to go through each ref in the array, and if there is a single true in it, we return that gameOver is false
+          const boolOfGameStatus = isGameOver(pelletsRef);
+          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus })
+          //eliminate the whole function
+          if (boolOfGameStatus) {
+            toggleGameOver();
           }
-          // if (pelletsRef.length === 0) {
-          //   console.log("game over");
-          //   toggle(); //this toggles the game over screen, we can rename it lol
-          //   // navigate to game over or put game over on top of the canvas
-          // }
+           
         }
       }
     });
   };
+
+const isGameOver = (pelletsRef: Pellet[]) => {
+  for(let i = 0; i < pelletsRef.length; i++){
+    if (pelletsRef[i].isVisible === true){
+      return false;
+    }
+  }
+  return true;
+}
 
   const updateScore = (pointValue: number) => {
     let updatedScore:number = roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
