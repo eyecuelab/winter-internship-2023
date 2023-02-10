@@ -1,3 +1,5 @@
+import { Boundary, Kart, Pellet, Team } from "../components/canvas/gameClasses";
+
 export type userType = {
   id: number;
   name: string;
@@ -18,9 +20,15 @@ export type teamType = {
   color: string;
   playerInControl: string;
   players: { x: string; y: string };
-  kart: Kart;
   score: number;
-}
+};
+
+export type teamConstructorType = {
+  teamId: string;
+  color: string;
+  players: { x: string; y: string };
+  score: number;
+};
 
 export type kartType = {
   position: { x: number; y: number };
@@ -28,6 +36,13 @@ export type kartType = {
   radius: number;
   angle: number;
   imgSrc: string;
+};
+
+export type kartConstructorType = {
+  position: { x: number; y: number };
+  velocity: { x: number; y: number };
+  imgSrc: string;
+  angle: number;
 }
 
 export type myGameType = {
@@ -35,11 +50,13 @@ export type myGameType = {
   myTeamMate: string;
   myControl: string;
   myTeam: Team;
+  myKart: Kart;
 };
 
 export type roomGameType = {
-  karts: Map<key, Kart>;
+  karts: Map<string, Kart>;
   boundaries: Boundary[];
+  pellets: Pellet[];
 };
 
 //teamFromJSONtype

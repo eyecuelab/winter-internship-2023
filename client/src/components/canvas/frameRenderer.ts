@@ -1,22 +1,38 @@
+import { Boundary, Pellet } from "./gameClasses";
 
-import {Boundary, Pellet} from './gameClasses';
-
-function frameRenderer(this: any, size: { width: any; height: any; }, karts: any[], boundaries: Boundary[], pellets: Pellet[]) {
+function frameRenderer(
+  this: any,
+  size: { width: any; height: any },
+  karts: any[],
+  boundaries: Boundary[],
+  pellets: Pellet[]
+) {
   this.clearRect(0, 0, size.width, size.height);
 
   // (this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; angle: number,imgSrc: string}, boundaries: Boundary[], pellets: Pellet[]) 
 
   const drawBoundary = (boundary: Boundary) => {
-    this.fillStyle = 'pink';
-    this.fillRect(boundary.position.x, boundary.position.y, Boundary.width, Boundary.height)
-  }
+    this.fillStyle = "pink";
+    this.fillRect(
+      boundary.position.x,
+      boundary.position.y,
+      Boundary.width,
+      Boundary.height
+    );
+  };
   const drawPellet = (pellet: Pellet) => {
     this.beginPath();
-    this.arc(pellet.position.x, pellet.position.y, pellet.radius, 0, Math.PI * 2);
-    this.fillStyle = 'white';
+    this.arc(
+      pellet.position.x,
+      pellet.position.y,
+      pellet.radius,
+      0,
+      Math.PI * 2
+    );
+    this.fillStyle = "white";
     this.fill();
     this.closePath();
-  }
+  };
 
   boundaries.forEach((boundary) => {
     drawBoundary(boundary);
@@ -24,7 +40,7 @@ function frameRenderer(this: any, size: { width: any; height: any; }, karts: any
 
   pellets.forEach((pellet) => {
     drawPellet(pellet);
-  })
+  });
 
   function createImage(src: string) {
     const image = new Image()
@@ -50,28 +66,37 @@ function frameRenderer(this: any, size: { width: any; height: any; }, karts: any
     this.arc(x, y, radius, 0, Math.PI * 2);
     this.fillStyle = 'transparent';
     this.fill();
-    //const tweenAnimation 
-    //package research for making the turn smoother
-    //framer motion
-    //
 
-    if (angle !== 0) {
-      //add this.transition 
-      //('all', time (.2-.4))
-    this.translate(x + 7.5, y + 7.5)
-    this.rotate(angle * Math.PI / 180);  
-    this.translate(-x - 7.5, -y - 7.5)
-    }
-    
-
-    this.drawImage(image, x - 20, y - 30, 40, 40);
-    this.restore();
+if (angle !== 0) {
+  //add this.transition 
+  //('all', time (.2-.4))
+this.translate(x + 7.5, y + 7.5)
+this.rotate(angle * Math.PI / 180);  
+this.translate(-x - 7.5, -y - 7.5)
+}
 
 
-  }
+this.drawImage(image, x - 20, y - 30, 40, 40);
+this.restore();
 
 
-  drawKart(karts[0].kart.position.x, karts[0].kart.position.y, karts[0].kart.radius, karts[0].kart.angle, kartImg);
+}
+    // this.closePath();
+
+  //notes for rotating kart:
+  //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
+  //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
+
+  //needs to check for undefined array..
+  karts.forEach((entry) => {
+    drawKart(
+      entry.kart.position.x,
+      entry.kart.position.y,
+      entry.kart.radius,
+      entry.angle,
+      entry.imgSrc
+    );
+  });
 }
 
 export default frameRenderer;
