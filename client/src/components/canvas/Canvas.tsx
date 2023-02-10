@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
 import { Boundary, Kart, Team, Pellet } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
-import { map } from "./Maps";
+import { gameMap } from "./Maps";
 import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
 import { kartType, myGameType, roomGameType, teamType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
-import React from "react";
+import mapSwitchCase from "./mapSwitchCase";
 
 interface Props {
   gameId: string;
@@ -40,28 +40,6 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart()
   });
-
-  //updates Boundaries flat array based on map.
-  const updateBoundaries = () => {
-    const tempBoundaries: ((prevState: never[]) => never[]) | Boundary[] = [];
-    map.forEach((row: any[], i: number) => {
-      row.forEach((symbol: any, j: number) => {
-        switch (symbol) {
-          case "-":
-            tempBoundaries.push(
-              new Boundary({
-                position: {
-                  x: Boundary.width * j,
-                  y: Boundary.height * i,
-                },
-              })
-            );
-            break;
-        }
-      });
-    });
-    boundariesRef.current = tempBoundaries;
-  };
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -220,6 +198,46 @@ function Canvas(props: any) {
     return kart;
   };
 
+  //pellets and score:
+  const removePellets = (
+    pelletsRef: Pellet[],
+    kartRef: kartType
+  ) => {
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+    pelletsRef.forEach((pellet, i) => {
+      if (kartRef) {
+        if (
+          Math.hypot(
+            pellet.position.x - kartRef.position.x,
+            pellet.position.y - kartRef.position.y
+          ) <
+          pellet.radius + kartRef.radius
+        ) {
+          pelletsRef.splice(i, 1);
+          tempScoreCondition.push("pellet");
+          scoreConditionRef.current = tempScoreCondition;
+          addScore(scoreConditionRef.current);
+          if (pelletsRef.length === 0) {
+            console.log("game over");
+            toggle(); //this toggles the game over screen, we can rename it lol
+            // navigate to game over or put game over on top of the canvas
+          }
+        }
+      }
+    });
+  };
+
+  const addScore = (scoreConditionArr: string[]) => {
+    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+    if (scoreConditionArr[0] === "pellet") {
+      const currentGame = myGameRef.current;
+      currentGame.myTeam.score += Pellet.scoreValue;
+      const currentScoreCondition = scoreConditionRef.current;
+      scoreConditionRef.current = tempScoreCondition;
+      console.log(scoreConditionArr);
+    }
+  };
+
   //canvas animation functions:
   const renderFrame = () => {
     const canvas = canvasRef.current;
@@ -239,7 +257,7 @@ function Canvas(props: any) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-      updateBoundaries();
+
       removePellets(pelletsRef.current, updatedKart);
 
       const tempColor = myGameRef.current.myTeam.color;
@@ -312,82 +330,15 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
-    //can this switch case live in it's own file?:
-    const tempBoundaries = boundariesRef.current;
-    const tempPellets = pelletsRef.current;
-    map.forEach((row, i) => {
-      row.forEach((symbol: any, j: number) => {
-        switch (symbol) {
-          case "-":
-            tempBoundaries.push(
-              new Boundary({
-                position: {
-                  x: Boundary.width * j,
-                  y: Boundary.height * i,
-                },
-              })
-            );
-            break;
-          case ".":
-            tempPellets.push(
-              new Pellet({
-                position: {
-                  x: j * Boundary.width + Boundary.width / 2,
-                  y: i * Boundary.height + Boundary.height / 2,
-                },
-              })
-            );
-            break;
-        }
-      });
-    });
-    boundariesRef.current = tempBoundaries;
-    pelletsRef.current = tempPellets;
+    const { boundaries, pellets } = mapSwitchCase(gameMap);
+    boundariesRef.current = boundaries;
+    pelletsRef.current = pellets;
 
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(requestIdRef.current);
     };
   }, []);
-
-  const removePellets = (
-    pelletsRef: Pellet[],
-    kartRef: kartType
-  ) => {
-    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
-    pelletsRef.forEach((pellet, i) => {
-      if (kartRef) {
-        if (
-          Math.hypot(
-            pellet.position.x - kartRef.position.x,
-            pellet.position.y - kartRef.position.y
-          ) <
-          pellet.radius + kartRef.radius
-        ) {
-          pelletsRef.splice(i, 1);
-          tempScoreCondition.push("pellet");
-          scoreConditionRef.current = tempScoreCondition;
-          addScore(scoreConditionRef.current);
-          if (pelletsRef.length === 0) {
-            console.log("game over");
-            toggle(); //this toggles the game over screen, we can rename it lol
-            // navigate to game over or put game over on top of the canvas
-          }
-        }
-      }
-    });
-  };
-
-  const addScore = (scoreConditionArr: string[]) => {
-    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
-    if (scoreConditionArr[0] === "pellet") {
-      const currentGame = myGameRef.current;
-      currentGame.myTeam.score += Pellet.scoreValue;
-      const currentScoreCondition = scoreConditionRef.current;
-      scoreConditionRef.current = tempScoreCondition;
-      console.log(scoreConditionArr);
-    }
-  };
 
   //socket handlers:
   useEffect(() => {
@@ -440,7 +391,7 @@ function Canvas(props: any) {
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
     });
 
-    //pellet, scores, and powerup updates can live here eventually:
+    //pellet, scores, and power-up updates can live here eventually:
     socket.on("receive_game_update", (data) => {
       const { tempColor, jsonKart} = data;
       const tempKart = new Kart(JSON.parse(jsonKart));
