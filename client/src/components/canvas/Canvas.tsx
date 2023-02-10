@@ -44,7 +44,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    isGameOver: false
+    boolOfGameStatus: false
   });
 
   const myGameRef = useRef<myGameType>({
@@ -122,8 +122,8 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-        console.log("Y movement: kart velocity x: " + kart.velocity.x);
-        console.log("Y movement: kart velocity y: " + kart.velocity.y);
+        //console.log("Y movement: kart velocity x: " + kart.velocity.x);
+        //console.log("Y movement: kart velocity y: " + kart.velocity.y);
         // if (kart.velocity.x === 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
         //     kart.angle = 45;
         //   }
@@ -150,7 +150,7 @@ function Canvas(props: any) {
     });
 
     if (kart.velocity.y != 0) {
-      console.log("y");
+      //console.log("y");
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -226,8 +226,8 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-        console.log("X movement: kart velocity x: " + kart.velocity.x);
-        console.log("X movement: kart velocity y: " + kart.velocity.y);
+        //console.log("X movement: kart velocity x: " + kart.velocity.x);
+        //console.log("X movement: kart velocity y: " + kart.velocity.y);
         // if (kart.velocity.y === -5) {
         //   kart.angle = 90;
         // }
@@ -245,7 +245,7 @@ function Canvas(props: any) {
     });
 
     if (kart.velocity.x != 0) {
-      console.log("x");
+      //console.log("x");
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -483,22 +483,21 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current.karts.set(tempColor, tempKart);
       roomGameRef.current.scores.set(tempColor, tempScore);
-      // displayScores();
+      displayScores();
+      //console.log(roomGameRef.current.scores);
     });
 
     socket.on("pellet_gone", (data) => {
-      const {i, isGameOver} = data;
+      const {i, boolOfGameStatus} = data;
       //update the pellet array
       pelletsRef.current[i].isVisible = false;
       //pellet at pellet.position = false;
-      if(isGameOver) {
+      if(boolOfGameStatus) {
         toggleGameOver();
       }
     });
 
     socket.on("receive_toggle_player_control", (data) => {
-      console.log("toggle control", myGameRef.current.myKart);
-      console.log(myGameRef.current.myTeam.playerInControl);
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
@@ -510,15 +509,29 @@ const isGameOver = (pelletsRef: Pellet[]) => {
   const displayScores = () => {
     const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
       return { color: score[0], score: score[1] };
+      
     });
-    let scoresList = document.getElementById("scoresList");
-    if(scoresList){
-      for(let i = 0; i <scoresArr.length; i++) {
-        let li = document.createElement("li");
-        li.innerText = scoresArr[i]["color"], scoresArr[i]["score"];
-        scoresList.appendChild(li);
-      }
+    console.log(scoresArr); // in the array, you reference the object's score
+    // for each item in the array, display ojbject.score
+    // let scoresList = document.getElementById("scoresList");
+    let teamOne = document.getElementById("team1");
+    let teamTwo = document.getElementById("team2");
+
+    if (teamOne && scoresArr[0]) {
+      teamOne.innerText = scoresArr[0]["score"].toString();
     }
+    if (teamTwo && scoresArr[1]) {
+      teamTwo.innerText = scoresArr[1]["score"].toString();
+    }
+   
+    // if(scoresList){
+    //   for(let i = 0; i <scoresArr.length; i++) {
+    //     let li = document.createElement("li");
+    //     li.innerText = scoresArr[i]["score"].toString();
+    //     scoresList.appendChild(li);
+    //   }
+    // }
+    
   }
 
   //add keyboard event listeners when component mounts
@@ -527,10 +540,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
-        //temp development keypress for state console.logs
-        console.log("myGameRef", myGameRef);
-        console.log("roomGameRef:", roomGameRef.current);
-        console.log("last key", lastKeyRef.current);
+        //temp development keypress for state //console.logs
       } else if (e.key === "p") {
         //temp development toggle playerControl:
         lastKeyRef.current = "";
@@ -564,7 +574,10 @@ const isGameOver = (pelletsRef: Pellet[]) => {
             : `your are NOT in control`}
         </p>
         <p>scores:</p>
-        <ul id="scoresList"></ul>
+        <ul>
+          <li id="team1"></li>
+          <li id="team2"></li>
+        </ul>
         <canvas {...size} ref={canvasRef} />
         <div>
           {/* <button onClick={toggle}>Open GameOver </button> */}
