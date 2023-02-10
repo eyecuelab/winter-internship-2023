@@ -267,7 +267,6 @@ function Canvas(props: any) {
             pellet.radius + kartRef.radius &&
           pellet.isVisible === true
         ) {
-          let isGameOver = false;
           pellet.isVisible = false;
           //socket emit that the pellet is gone
            // make this also send if the game is over
@@ -280,13 +279,15 @@ function Canvas(props: any) {
 
           for(let i = 0; i < pelletsRef.length; i++){
             if (pelletsRef[i].isVisible === true){
+              const isGameOver = false;
+              socket.emit("remove_pellet", { gameId, i, isGameOver });
               break;
             } else {
-              isGameOver = true;
+              const isGameOver = true;
+              socket.emit("remove_pellet", { gameId, i, isGameOver });
               toggleGameOver();
             }
           }
-          socket.emit("remove_pellet", { gameId, i, isGameOver });
           // if (pelletsRef.length === 0) {
           //   console.log("game over");
           //   toggle(); //this toggles the game over screen, we can rename it lol
@@ -334,7 +335,7 @@ function Canvas(props: any) {
         updatedKart = new Kart(updateKartYMovements());
       }
 
-      removePellets(pelletsRef.current, updatedKart);
+      removePellets(pelletsRef.current, updatedKart);//consolidate this emit with game_update
 
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
@@ -480,6 +481,7 @@ function Canvas(props: any) {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current.karts.set(tempColor, tempKart);
       roomGameRef.current.scores.set(tempColor, tempScore);
+      // displayScores();
     });
 
     socket.on("pellet_gone", (data) => {
@@ -502,6 +504,20 @@ function Canvas(props: any) {
       socket.removeAllListeners();
     };
   }, [socket]);
+
+  const displayScores = () => {
+    const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
+      return { color: score[0], score: score[1] };
+    });
+    let scoresList = document.getElementById("scoresList");
+    if(scoresList){
+      for(let i = 0; i <scoresArr.length; i++) {
+        let li = document.createElement("li");
+        li.innerText = scoresArr[i]["color"], scoresArr[i]["score"];
+        scoresList.appendChild(li);
+      }
+    }
+  }
 
   //add keyboard event listeners when component mounts
   useEffect(() => {
@@ -539,15 +555,18 @@ function Canvas(props: any) {
         }}
       >
         <p>welcome to da game</p>
+        <p>my team: {myGameRef.current.myTeam.color}</p>
         <p>
           {myGameRef.current.myTeam.playerInControl === socketId
             ? `YOU ARE IN CONTROL`
             : `your are NOT in control`}
         </p>
+        <p>scores:</p>
+        <ul id="scoresList"></ul>
         <canvas {...size} ref={canvasRef} />
         <div>
           {/* <button onClick={toggle}>Open GameOver </button> */}
-          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver}></GameOver>
+          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} ></GameOver>
         </div>
       </div>
     </>

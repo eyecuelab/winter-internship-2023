@@ -11,7 +11,6 @@ function frameRenderer(
   pellets: Pellet[]
 ) {
   this.clearRect(0, 0, size.width, size.height);
-  console.log(karts[0]);
 
   // (this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; angle: number,imgSrc: string}, boundaries: Boundary[], pellets: Pellet[])
 
