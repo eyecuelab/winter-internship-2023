@@ -267,9 +267,10 @@ function Canvas(props: any) {
             pellet.radius + kartRef.radius &&
           pellet.isVisible === true
         ) {
+          let isGameOver = false;
           pellet.isVisible = false;
           //socket emit that the pellet is gone
-          socket.emit("remove_pellet", { gameId, i }); // make this also send if the game is over
+           // make this also send if the game is over
           //assuming the socket server holds the entire array, it would only need to receive something to tell which pellet in the array is gone
           //pelletsRef.splice(i, 1);
           // tempScoreCondition.push("pellet");
@@ -281,9 +282,11 @@ function Canvas(props: any) {
             if (pelletsRef[i].isVisible === true){
               break;
             } else {
+              isGameOver = true;
               toggleGameOver();
             }
           }
+          socket.emit("remove_pellet", { gameId, i, isGameOver });
           // if (pelletsRef.length === 0) {
           //   console.log("game over");
           //   toggle(); //this toggles the game over screen, we can rename it lol
@@ -300,16 +303,16 @@ function Canvas(props: any) {
     roomGameRef.current.scores.set(myGameRef.current.myTeam.color, updatedScore);
   }
 
-  const addScore = (scoreConditionArr: string[]) => {
-    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
-    if (scoreConditionArr[0] === "pellet") {
-      const currentGame = myGameRef.current;
-      currentGame.myTeam.score += Pellet.scoreValue;
-      const currentScoreCondition = scoreConditionRef.current;
-      scoreConditionRef.current = tempScoreCondition;
-      console.log(scoreConditionArr);
-    }
-  };
+  // const addScore = (scoreConditionArr: string[]) => {
+  //   const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
+  //   if (scoreConditionArr[0] === "pellet") {
+  //     const currentGame = myGameRef.current;
+  //     currentGame.myTeam.score += Pellet.scoreValue;
+  //     const currentScoreCondition = scoreConditionRef.current;
+  //     scoreConditionRef.current = tempScoreCondition;
+  //     console.log(scoreConditionArr);
+  //   }
+  // };
 
   //canvas animation functions:
   const renderFrame = () => {
@@ -479,10 +482,14 @@ function Canvas(props: any) {
       roomGameRef.current.scores.set(tempColor, tempScore);
     });
 
-    socket.on("pellet_gone", (pelletIndex: number) => {
+    socket.on("pellet_gone", (data) => {
+      const {i, isGameOver} = data;
       //update the pellet array
-      pelletsRef.current[pelletIndex].isVisible = false;
+      pelletsRef.current[i].isVisible = false;
       //pellet at pellet.position = false;
+      if(isGameOver) {
+        toggleGameOver();
+      }
     });
 
     socket.on("receive_toggle_player_control", (data) => {

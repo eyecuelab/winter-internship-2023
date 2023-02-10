@@ -44,7 +44,8 @@ io.on("connection", (socket) => {
   })
 
   socket.on("remove_pellet", (data) => {
-    socket.to (data.gameId).emit("pellet_gone", data.i)
+    const {gameId, i, isGameOver} = data;
+    socket.to (gameId).emit("pellet_gone", {i, isGameOver})
   })
 
   socket.on("send_message", (data) => {
