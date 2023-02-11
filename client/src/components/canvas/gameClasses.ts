@@ -8,7 +8,6 @@ export class Boundary {
     this.position = position;
     Boundary.width = 40;
     Boundary.height = 40;
-    // this.image = image;
   }
 }
 
@@ -18,22 +17,6 @@ export class Kart {
   radius: number;
   imgSrc: string;
   angle: number;
-
-  
-  // public constructor({
-  //   position,
-  //   velocity,
-  // }: {
-  //   position: 
-  //   velocity: { x: number; y: number };
-  // }, 
-  // imgSrc: string,
-  // angle: number,
-  // ) {
-  //   this.position = position;
-  //   this.velocity = velocity;
-  //   this.imgSrc = imgSrc;
-  //   this.angle = angle;
 
   constructor();
   constructor(kartConstructorData: kartConstructorType);
@@ -87,10 +70,6 @@ export class Team {
     this.playerInControl = teamUpdate.playerInControl;
     this.score = teamUpdate.score;
   }
-
-  // toJSON() {
-  //   return {};
-  // }
 }
 
 export class Pellet {
@@ -98,7 +77,6 @@ export class Pellet {
   position: { x: number; y: number };
   radius: number;
   isVisible: boolean;
-  // isShowing: boolean;
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
     this.radius = 3;
