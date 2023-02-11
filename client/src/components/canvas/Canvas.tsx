@@ -8,33 +8,17 @@ import kartTest from "./../../constants/images";
 import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
 import {
-  kartType,
   myGameType,
-  roomGameType,
-  teamType,
-  pelletType
+  roomGameType
 } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 
-interface Props {
-  gameId: string;
-}
-
 function Canvas(props: any) {
   const { gameId } = props;
-
-  const scoreConditionRef = useRef<string[]>([]);
   const { isOpen, toggleGameOver } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
-  // const kartRef = useRef<kartType>({
-  //   position: { x: 60, y: 60 },
-  //   velocity: { x: 0, y: 0 },
-  //   radius: 15,
-  //   angle: 0,
-  //   imgSrc:  kartTest.kartTest
-  // })
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -122,35 +106,12 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-        //console.log("Y movement: kart velocity x: " + kart.velocity.x);
-        //console.log("Y movement: kart velocity y: " + kart.velocity.y);
-        // if (kart.velocity.x === 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
-        //     kart.angle = 45;
-        //   }
-        //   if (kart.velocity.x === 5) {
-        //    kart.angle = 270;
-        //   }
-
-        //   if (kart.velocity.x > 0 && (lastKeyRef.current === 'w' || lastKeyRef.current === 's')) {
-        //     kart.angle = -45;
-        //   }
-        //   if (kart.velocity.x === -5) {
-        //     kart.angle = 90;
-        //    }
-
         kart.velocity.y = 0;
         kart.velocity.x = 0;
-
-        // kart.angle += 90;
-
-        // setTimeout(()=> {
-        //   kart.angle = 0;
-        // }, 500);
       }
     });
 
     if (kart.velocity.y != 0) {
-      //console.log("y");
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -226,26 +187,14 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-        //console.log("X movement: kart velocity x: " + kart.velocity.x);
-        //console.log("X movement: kart velocity y: " + kart.velocity.y);
-        // if (kart.velocity.y === -5) {
-        //   kart.angle = 90;
-        // }
-        // if (kart.velocity.y === 5) {
-        //   kart.angle = -90;
-        // }
 
         kart.velocity.x = 0;
         kart.velocity.y = 0;
 
-        // setTimeout(()=> {
-        //   kart.angle = 0;
-        // }, 500);
       }
     });
 
     if (kart.velocity.x != 0) {
-      //console.log("x");
       lastKeyRef.current = "";
       myGameRef.current.myTeam.changePlayerInControl();
       const tempTeamMate = myGameRef.current.myTeamMate;
@@ -258,7 +207,6 @@ function Canvas(props: any) {
 
   //pellets and score:
   const removePellets = (pelletsRef: Pellet[], kartRef: Kart | undefined) => {
-    const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
     pelletsRef.forEach((pellet, i) => {
       if (kartRef) {
         if (
@@ -270,18 +218,9 @@ function Canvas(props: any) {
           pellet.isVisible === true
         ) {
           pellet.isVisible = false;
-          //socket emit that the pellet is gone
-           // make this also send if the game is over
-          //assuming the socket server holds the entire array, it would only need to receive something to tell which pellet in the array is gone
-          //pelletsRef.splice(i, 1);
-          // tempScoreCondition.push("pellet");
-          // scoreConditionRef.current = tempScoreCondition;
-          // addScore(scoreConditionRef.current);
           updateScore(10);
-          //we need to go through each ref in the array, and if there is a single true in it, we return that gameOver is false
           const boolOfGameStatus = isGameOver(pelletsRef);
           socket.emit("remove_pellet", { gameId, i, boolOfGameStatus })
-          //eliminate the whole function
           if (boolOfGameStatus) {
             toggleGameOver();
           }
@@ -305,17 +244,6 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     updatedScore += pointValue;
     roomGameRef.current.scores.set(myGameRef.current.myTeam.color, updatedScore);
   }
-
-  // const addScore = (scoreConditionArr: string[]) => {
-  //   const tempScoreCondition: ((prevState: never[]) => never[]) | string[] = [];
-  //   if (scoreConditionArr[0] === "pellet") {
-  //     const currentGame = myGameRef.current;
-  //     currentGame.myTeam.score += Pellet.scoreValue;
-  //     const currentScoreCondition = scoreConditionRef.current;
-  //     scoreConditionRef.current = tempScoreCondition;
-  //     console.log(scoreConditionArr);
-  //   }
-  // };
 
   //canvas animation functions:
   const renderFrame = () => {
@@ -383,25 +311,16 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       }
 
       TimeMath._framesSinceFPSUpdate++;
-
-      // Update
       for (let i = 0; i < numTicks; i++) {
         TimeMath._lastTick += TimeMath._timestep;
         Time.t = TimeMath._lastTick - TimeMath._startTime;
         Time.dt = TimeMath._timestep;
-
-        //update(); //this does literally nothing
-        // renderFrame();
       }
 
-      // Draw
       Time.frame = TimeMath._currentFrame;
       Time.frameTime = t;
-      //draw(); //this moves the square in a circle
-
       TimeMath._currentFrame++;
     } catch (e) {
-      //cancelAnimationFrame(requestIdRef.current);
       throw e;
     }
     renderFrame();
@@ -484,14 +403,11 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       roomGameRef.current.karts.set(tempColor, tempKart);
       roomGameRef.current.scores.set(tempColor, tempScore);
       displayScores();
-      //console.log(roomGameRef.current.scores);
     });
 
     socket.on("pellet_gone", (data) => {
       const {i, boolOfGameStatus} = data;
-      //update the pellet array
       pelletsRef.current[i].isVisible = false;
-      //pellet at pellet.position = false;
       if(boolOfGameStatus) {
         toggleGameOver();
       }
@@ -511,9 +427,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       return { color: score[0], score: score[1] };
       
     });
-    console.log(scoresArr); // in the array, you reference the object's score
-    // for each item in the array, display ojbject.score
-    // let scoresList = document.getElementById("scoresList");
+
     let teamOne = document.getElementById("team1");
     let teamTwo = document.getElementById("team2");
 
@@ -524,13 +438,6 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       teamTwo.innerText = scoresArr[1]["score"].toString();
     }
    
-    // if(scoresList){
-    //   for(let i = 0; i <scoresArr.length; i++) {
-    //     let li = document.createElement("li");
-    //     li.innerText = scoresArr[i]["score"].toString();
-    //     scoresList.appendChild(li);
-    //   }
-    // }
     
   }
 
@@ -540,9 +447,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
-        //temp development keypress for state //console.logs
       } else if (e.key === "p") {
-        //temp development toggle playerControl:
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
         const tempTeamMate = myGameRef.current.myTeamMate;
@@ -580,7 +485,6 @@ const isGameOver = (pelletsRef: Pellet[]) => {
         </ul>
         <canvas {...size} ref={canvasRef} />
         <div>
-          {/* <button onClick={toggle}>Open GameOver </button> */}
           <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} ></GameOver>
         </div>
       </div>

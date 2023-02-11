@@ -12,8 +12,6 @@ function frameRenderer(
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
-  // (this: any, size: { width: any; height: any; }, kart: { position: { x: number; y: number; }; velocity: { x: number; y: number; }; radius: number; angle: number,imgSrc: string}, boundaries: Boundary[], pellets: Pellet[])
-
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
     this.fillRect(
@@ -47,9 +45,6 @@ function frameRenderer(
     angle: number,
     image: HTMLImageElement
   ) => {
-    //top & bottom of Kart?
-    //reflect over y axis?
-    // console.log(angle);
     this.save();
     this.beginPath();
     this.arc(x, y, radius, 0, Math.PI * 2);
@@ -57,8 +52,6 @@ function frameRenderer(
     this.fill();
 
     if (angle !== 0) {
-      //add this.transition
-      //('all', time (.2-.4))
       this.translate(x + 7.5, y + 7.5);
       this.rotate((angle * Math.PI) / 180);
       this.translate(-x - 7.5, -y - 7.5);
@@ -82,22 +75,9 @@ function frameRenderer(
     return image;
   }
 
-  //  what does karts look like?
-  //  [
-  //   { color: 'first color value', kart: 'first kart value' },
-  //   { color: 'second color value', kart: 'second kart value' }
-  // ]
-
-  // console.log(karts[0].kart);
-
-  // this.closePath();
-
   //notes for rotating kart:
   //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
   //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
-
-  //needs to check for undefined array..
-    // const kartImg = createImage(karts[0].kart.imgSrc);
 
     karts.forEach((entry) => {
       drawKart(

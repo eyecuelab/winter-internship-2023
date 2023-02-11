@@ -26,7 +26,6 @@ io.on("connection", (socket) => {
     const socketIds = Array.from(socketsInRoom);
 
     io.in(`${room}`).emit("receive_client_joined", socketIds);
-    // socket.emit("room_and_users", [room, socketIds]);
   });
 
   socket.on("send_team", (data) => {
@@ -47,10 +46,6 @@ io.on("connection", (socket) => {
     const {gameId, i, boolOfGameStatus} = data;
     socket.to(gameId).emit("pellet_gone", {i, boolOfGameStatus})
   })
-
-  socket.on("send_message", (data) => {
-    socket.broadcast.emit("receive_message", data);
-  });
 
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
