@@ -26,29 +26,26 @@ io.on("connection", (socket) => {
     const socketIds = Array.from(socketsInRoom);
 
     io.in(`${room}`).emit("receive_client_joined", socketIds);
-    // socket.emit("room_and_users", [room, socketIds]);
   });
 
   socket.on("send_team", (data) => {
-    socket.to(data.tempMyTeam.players.x).emit("receive_my_team", data.tempMyTeam);
-    io.in(data.gameId).emit("receive_team_added", data.tempMyTeam);
+    const { jsonTeam, jsonKart } = data;
+    io.in(data.gameId).emit("receive_team_added", {jsonTeam, jsonKart});
   });
 
-  socket.on("kart_update", (data) => {
-    const gameId = data.gameId;
-    const color = data.tempColor;
-    const kart = data.updatedKart;
-    console.log("41", data);
-    socket.to(`${gameId}`).emit("receive_kart_update", {color, kart});
+  socket.on("game_update", (data) => {
+    const { gameId, tempColor, tempScore, jsonKart } = data;
+    socket.to(`${gameId}`).emit("receive_game_update", {tempColor, jsonKart, tempScore});
   });
 
   socket.on("toggle_player_control", (data) => {
     socket.to(data.tempTeamMate).emit("receive_toggle_player_control", data.jsonTeam);
   })
 
-  socket.on("send_message", (data) => {
-    socket.broadcast.emit("receive_message", data);
-  });
+  socket.on("remove_pellet", (data) => {
+    const {gameId, i, boolOfGameStatus} = data;
+    socket.to(gameId).emit("pellet_gone", {i, boolOfGameStatus})
+  })
 
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
@@ -58,5 +55,6 @@ io.on("connection", (socket) => {
 server.listen(3001, () =>
   console.log("Server ready at: http://localhost:3001")
 );
+
 
 export default io;

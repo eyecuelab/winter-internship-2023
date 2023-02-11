@@ -14,7 +14,6 @@ import {
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
-
 import { getUserDataGoogle } from "./services/lobby-services";
 
 interface UserDataGoogle {
@@ -29,6 +28,7 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
+  // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
@@ -67,9 +67,10 @@ const Lobby = (props: Props) => {
     });
   };
 
-  const handleStartAGame = () => {
-    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then(
-      (newGame) => {
+  const handleStartAGame = () => { //generate game boundary and pellets
+    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then( //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
+      (newGame) => { // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
+        // db gets the boundaries and pellets as part of the game creation postData
         postData(`/gameUser`, {
           gameId: newGame.id,
           userId: userData?.id,
