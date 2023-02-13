@@ -7,10 +7,7 @@ import { gameMap } from "./Maps";
 import kartTest from "./../../constants/images";
 import { GameOver, useGameOver } from "./gameOver";
 import "./CanvasStyles.css";
-import {
-  myGameType,
-  roomGameType
-} from "../../types/Types";
+import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 
@@ -28,7 +25,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    boolOfGameStatus: false
+    boolOfGameStatus: false,
   });
 
   const myGameRef = useRef<myGameType>({
@@ -187,10 +184,8 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-
         kart.velocity.x = 0;
         kart.velocity.y = 0;
-
       }
     });
 
@@ -220,30 +215,33 @@ function Canvas(props: any) {
           pellet.isVisible = false;
           updateScore(10);
           const boolOfGameStatus = isGameOver(pelletsRef);
-          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus })
+          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus });
           if (boolOfGameStatus) {
             toggleGameOver();
           }
-           
         }
       }
     });
   };
 
-const isGameOver = (pelletsRef: Pellet[]) => {
-  for(let i = 0; i < pelletsRef.length; i++){
-    if (pelletsRef[i].isVisible === true){
-      return false;
+  const isGameOver = (pelletsRef: Pellet[]) => {
+    for (let i = 0; i < pelletsRef.length; i++) {
+      if (pelletsRef[i].isVisible === true) {
+        return false;
+      }
     }
-  }
-  return true;
-}
+    return true;
+  };
 
   const updateScore = (pointValue: number) => {
-    let updatedScore:number = roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
+    let updatedScore: number =
+      roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
     updatedScore += pointValue;
-    roomGameRef.current.scores.set(myGameRef.current.myTeam.color, updatedScore);
-  }
+    roomGameRef.current.scores.set(
+      myGameRef.current.myTeam.color,
+      updatedScore
+    );
+  };
 
   //canvas animation functions:
   const renderFrame = () => {
@@ -258,14 +256,14 @@ const isGameOver = (pelletsRef: Pellet[]) => {
 
     let updatedKart; //should this be referencing local state?
 
-    if (myGameRef.current.myTeam.playerInControl === socketId) { 
+    if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updatedKart = new Kart(updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
 
-      removePellets(pelletsRef.current, updatedKart);//consolidate this emit with game_update
+      removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
 
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
@@ -406,9 +404,9 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     });
 
     socket.on("pellet_gone", (data) => {
-      const {i, boolOfGameStatus} = data;
+      const { i, boolOfGameStatus } = data;
       pelletsRef.current[i].isVisible = false;
-      if(boolOfGameStatus) {
+      if (boolOfGameStatus) {
         toggleGameOver();
       }
     });
@@ -425,7 +423,6 @@ const isGameOver = (pelletsRef: Pellet[]) => {
   const displayScores = () => {
     const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
       return { color: score[0], score: score[1] };
-      
     });
 
     let teamOne = document.getElementById("team1");
@@ -437,9 +434,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     if (teamTwo && scoresArr[1]) {
       teamTwo.innerText = scoresArr[1]["score"].toString();
     }
-   
-    
-  }
+  };
 
   //add keyboard event listeners when component mounts
   useEffect(() => {
@@ -485,7 +480,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
         </ul>
         <canvas {...size} ref={canvasRef} />
         <div>
-          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} ></GameOver>
+          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} scores={roomGameRef.current.scores}></GameOver>
         </div>
       </div>
     </>

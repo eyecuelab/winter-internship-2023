@@ -13,8 +13,8 @@
 .gameover-box {
   display: block;
   background: rgb(216, 219, 23);
-  width: 70%;
-  height: 70%;
+  width: 50%;
+  height: 50%;
   padding: 1rem;
   border-radius: 1rem;
 }
