@@ -1,4 +1,4 @@
-export const API_ENDPOINT = "http://localhost:3001";
+export const API_ENDPOINT = "https://superpacart.fly.dev";
 
 const BASE_HEADERS = {
   headers: {

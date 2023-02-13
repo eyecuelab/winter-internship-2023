@@ -20,7 +20,7 @@ import axios from "axios"
 // }
 
 export const getUserDataGoogle = async (accessToken: string) => {
-	const { data } = await axios.get(`http://localhost:3001/api/google/userData?accessToken=${accessToken}`, {
+	const { data } = await axios.get(`https://superpacart.fly.dev/api/google/userData?accessToken=${accessToken}`, {
 		headers: {
 			"Content-Type": "application/json",
 		},
