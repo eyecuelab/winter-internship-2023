@@ -1,5 +1,5 @@
 import express, { Request, Response, Router } from "express";
-import { getUserData } from "../controllers/googleController";
+import { getUserData } from "../Controllers/googleController";
 
 const router: Router = express.Router();
 

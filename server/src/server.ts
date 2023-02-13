@@ -1,7 +1,6 @@
 import app from "./app";
 import http from "http";
-import { Server, Socket } from "socket.io";
-import googleRoutes from "./routes/googleRoutes";
+import { Server } from "socket.io";
 
 const server = http.createServer(app);
 

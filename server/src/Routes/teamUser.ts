@@ -1,4 +1,4 @@
-import teamUserControllers from "../controllers/teamUser";
+import teamUserControllers from "../Controllers/teamUser";
 import express from "express";
 
 const router = express.Router();

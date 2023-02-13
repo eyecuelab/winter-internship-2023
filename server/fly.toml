@@ -1,6 +1,6 @@
-# fly.toml file generated for super-pacart on 2023-02-10T10:38:47-08:00
+# fly.toml file generated for superpacart on 2023-02-13T09:59:15-08:00
 
-app = "super-pacart"
+app = "superpacart"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
