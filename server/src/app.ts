@@ -11,7 +11,8 @@ import googleRoutes from './Routes/googleRoutes';
 const app = express();
 
 app.use(cors({
-  origin: '*', 
+  origin: ["https://super-pacart.netlify.app/",
+  "https://superpacart.fly.dev/",],
   methods: ['GET', 'POST', 'DELETE', 'PUT'], 
 	credentials: true,}));
 
