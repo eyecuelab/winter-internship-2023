@@ -10,6 +10,7 @@ const io = new Server(server, {
       "https://super-pacart.netlify.app",
     "https://superpacart.fly.dev",
   ],
+  credentials: true,
     methods: ["GET", "POST", "DELETE", "PUT"]
   },
 });
