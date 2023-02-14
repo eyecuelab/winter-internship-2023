@@ -37,8 +37,5 @@ processes = []
     restart_limit = 0
     timeout = "2s"
 
-  [[services.http_checks]]
-    grace_period= "30s"
-
  [deploy]
   release_command = "npx prisma migrate deploy"
