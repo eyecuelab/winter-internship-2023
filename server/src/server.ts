@@ -11,7 +11,7 @@ const io = new Server(server, {
     "https://superpacart.fly.dev",
   ],
   credentials: true,
-    methods: ["GET", "POST", "DELETE", "PUT"]
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"]
   },
 });
 
