@@ -1,13 +1,15 @@
-# fly.toml file generated for superpacart on 2023-02-13T09:59:15-08:00
+# fly.toml file generated for super-pacart on 2023-02-13T18:39:06-05:00
 
-app = "superpacart"
+app = "super-pacart"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
+  PORT = "8080"
 
 [experimental]
+  allowed_public_ports = []
   auto_rollback = true
 
 [[services]]
@@ -35,3 +37,7 @@ processes = []
     interval = "15s"
     restart_limit = 0
     timeout = "2s"
+
+[deploy]
+  release_command = "npx prisma migrate deploy"
+

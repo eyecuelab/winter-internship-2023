@@ -1,14 +1,14 @@
-export const API_ENDPOINT = "https://superpacart.fly.dev";
+export const API_ENDPOINT = "https://super-pacart.fly.dev";
 
 
 
-const credentials: RequestCredentials = "include";
+// const credentials: RequestCredentials = "include";
 
 const BASE_HEADERS = {
   headers: {
     "Content-Type": "application/json",
-  },
-  credentials: credentials,
+  }//,
+  // credentials: credentials,
 };
 
 const handleResponse = async (response: Response) => {
