@@ -1,11 +1,12 @@
-# fly.toml file generated for superpacart on 2023-02-13T09:59:15-08:00
+# fly.toml file generated for super-pacart on 2023-02-13T18:39:06-05:00
 
-app = "superpacart"
+app = "super-pacart"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
+  PORT = "8080"
 
 [experimental]
   auto_rollback = true
