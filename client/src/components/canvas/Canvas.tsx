@@ -12,8 +12,14 @@ import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 
 function Canvas(props: any) {
+  const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+
+  const toggleGameOver = () => {
+    setIsGameOverModalOpen(!isGameOverModalOpen);
+  };
+
   const { gameId } = props;
-  const { isOpen, toggleGameOver } = useGameOver();
+  // const { isOpen, toggleGameOver } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
   const boundariesRef = useRef<Boundary[]>([]);
@@ -480,7 +486,7 @@ function Canvas(props: any) {
         </ul>
         <canvas {...size} ref={canvasRef} />
         <div>
-          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} scores={roomGameRef.current.scores}></GameOver>
+          <GameOver isGameOverModalOpen={isGameOverModalOpen} setIsGameOverModalOpen={setIsGameOverModalOpen} toggleGameOver={toggleGameOver} scores={roomGameRef.current.scores}></GameOver>
         </div>
       </div>
     </>
