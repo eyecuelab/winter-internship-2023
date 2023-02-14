@@ -1,4 +1,4 @@
-export const API_ENDPOINT = "https://superpacart.fly.dev";
+export const API_ENDPOINT = "https://super-pacart.fly.dev";
 
 
 
