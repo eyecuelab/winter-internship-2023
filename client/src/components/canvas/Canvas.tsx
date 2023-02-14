@@ -13,13 +13,7 @@ import mapSwitchCase from "./mapSwitchCase";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-
-  const toggleGameOver = () => {
-    setIsGameOverModalOpen(!isGameOverModalOpen);
-  };
-
   const { gameId } = props;
-  // const { isOpen, toggleGameOver } = useGameOver();
   const colors = ["yellow", "white", "teal", "blue", "white"];
   const lastKeyRef = useRef("");
   const boundariesRef = useRef<Boundary[]>([]);
@@ -41,6 +35,10 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart(),
   });
+
+  const toggleGameOver = () => {
+    setIsGameOverModalOpen(!isGameOverModalOpen);
+  };
 
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -428,18 +426,20 @@ function Canvas(props: any) {
 
   const displayScores = () => {
     const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
-      return { color: score[0], score: score[1] };
+      return [score[0], score[1]] ;
     });
 
     let teamOne = document.getElementById("team1");
     let teamTwo = document.getElementById("team2");
 
-    if (teamOne && scoresArr[0]) {
-      teamOne.innerText = scoresArr[0]["score"].toString();
-    }
-    if (teamTwo && scoresArr[1]) {
-      teamTwo.innerText = scoresArr[1]["score"].toString();
-    }
+      if (teamOne && scoresArr[0]) {
+        const teamScore = scoresArr[0][1] ?? 0;
+        teamOne.innerText = teamScore.toString();
+      }
+      if (teamTwo && scoresArr[1]) {
+        const teamScore = scoresArr[0][1] ?? 0;
+        teamTwo.innerText = scoresArr[1][1].toString();
+      }
   };
 
   //add keyboard event listeners when component mounts

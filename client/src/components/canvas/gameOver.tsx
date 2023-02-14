@@ -20,7 +20,7 @@ export function GameOver(props: GameOverType) {
     displayScores()
   }, [props.isGameOverModalOpen])
   
-  const displayScores = () => {
+  const displayScores = () => {//this function exists in canvas so we could combine them.
     const scoresArr = Array.from(props.scores, function (score) {
       return [score[0], score[1] ?? 0];
     });
