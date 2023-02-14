@@ -12,7 +12,7 @@ const app = express();
 
 app.use(cors({
   origin: ["https://super-pacart.netlify.app",
-  "https://superpacart.fly.dev",],
+  "https://super-pacart.fly.dev",],
   methods: ['GET', 'POST', 'DELETE', 'PUT'], 
 	credentials: true,}));
 

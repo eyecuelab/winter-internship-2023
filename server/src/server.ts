@@ -7,7 +7,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: ["https://super-pacart.netlify.app",
-    "https://superpacart.fly.dev",],
+    "https://super-pacart.fly.dev",],
     methods: ["GET", "POST", "DELETE", "PUT"]
   },
 });
