@@ -1,23 +1,38 @@
-import userRouter from './routes/user';
-import gameRouter from './routes/game';
-import teamRouter from './routes/team';
-import teamUserRouter from './routes/teamUser';
-import gameUserRouter from './routes/gameUser';
+import userRouter from './Routes/user';
+import gameRouter from './Routes/game';
+import teamRouter from './Routes/team';
+import teamUserRouter from './Routes/teamUser';
+import gameUserRouter from './Routes/gameUser';
+import roleRouter from './Routes/role';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';
-import googleRoutes from './routes/googleRoutes';
+import googleRoutes from './Routes/googleRoutes';
 
 const app = express();
 
+
+
 app.use(cors({
-  origin: '*', 
+  origin: ["https://super-pacart.netlify.app",
+  "https://super-pacart.fly.dev",],
   methods: ['GET', 'POST', 'DELETE', 'PUT'], 
-	credentials: true,}));
+	credentials: true,
+  // Access-Control-Allow-Origin: *,
+}));
+
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://super-pacart.netlify.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 app.use(express.json());
 
 app.use(
+  roleRouter,
 	userRouter,
   gameRouter,
   teamRouter,

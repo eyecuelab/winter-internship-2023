@@ -1,14 +1,17 @@
 import app from "./app";
 import http from "http";
-import { Server, Socket } from "socket.io";
-import googleRoutes from "./routes/googleRoutes";
+import { Server } from "socket.io";
 
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST", "DELETE", "PUT"],
+    origin: [
+      "https://super-pacart.netlify.app",
+    "https://super-pacart.fly.dev",
+  ],
+  credentials: true,
+    methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"]
   },
 });
 
@@ -52,8 +55,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3001, () =>
-  console.log("Server ready at: http://localhost:3001")
+server.listen(8080, () =>
+  console.log("Server ready at: http://localhost:3000")
 );
 
 

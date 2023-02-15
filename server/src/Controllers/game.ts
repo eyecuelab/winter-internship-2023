@@ -1,4 +1,4 @@
-import { createGame, getLastGame, updateGame, getGameById } from "../models/game";
+import { createGame, getLastGame, updateGame, getGameById } from "../Models/game";
 
 const gameControllers = {
   async createGameController(req: any, res: any) {
