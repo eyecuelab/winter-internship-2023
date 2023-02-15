@@ -8,7 +8,7 @@ const io = new Server(server, {
   cors: {
     origin: [
       "https://super-pacart.netlify.app",
-    "https://superpacart.fly.dev",
+    "https://super-pacart.fly.dev",
   ],
   credentials: true,
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"]
