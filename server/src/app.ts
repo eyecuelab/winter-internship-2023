@@ -3,6 +3,7 @@ import gameRouter from './Routes/game';
 import teamRouter from './Routes/team';
 import teamUserRouter from './Routes/teamUser';
 import gameUserRouter from './Routes/gameUser';
+import roleRouter from './Routes/role';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';
