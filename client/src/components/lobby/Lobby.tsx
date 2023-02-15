@@ -45,26 +45,26 @@ const Lobby = (props: Props) => {
       roleId: 1,
     })
     .then((gameUser) => {
-      // postData(`/team`, {
-      //   gameId: gameUser.gameId,
-      //   teamName: "team1",
-      //   score: 0,
-      //   characterId: 1,
-      //   currentDirectionMoving: "",
-      //   nextDirection: "left",
-      //   powerUp: false,
-      //   kartId: 1,
-      // }).then((team) => {
-      //   postData(`/teamUser`, {
-      //     teamId: team.id,
-      //     userId: userData?.id,
-      //     verticalOrHorizontalControl: "vertical",
-      //   });
+      postData(`/team`, {
+        gameId: gameUser.gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      }).then((team) => {
+        postData(`/teamUser`, {
+          teamId: team.id,
+          userId: userData?.id,
+          verticalOrHorizontalControl: "vertical",
+        });
 
         setGameId(gameUser.gameId);
         socket.emit("join_game_room", gameUser.gameId);
         navigate(`/game/${gameUser.gameId}`);
-      // });
+      });
     });
   };
 
