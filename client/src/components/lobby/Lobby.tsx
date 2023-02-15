@@ -45,27 +45,27 @@ const Lobby = (props: Props) => {
       roleId: 1,
     })
     .then((gameUser) => {
-      postData(`/team`, {
-        gameId: gameUser.gameId,
-        teamName: "team1",
-        score: 0,
-        characterId: 1,
-        currentDirectionMoving: "",
-        nextDirection: "left",
-        powerUp: false,
-        kartId: 1,
-      }).then((team) => {
-        postData(`/teamUser`, {
-          teamId: team.id,
-          userId: userData?.id,
-          verticalOrHorizontalControl: "vertical",
-        });
+      // postData(`/team`, {
+      //   gameId: gameUser.gameId,
+      //   teamName: "team1",
+      //   score: 0,
+      //   characterId: 1,
+      //   currentDirectionMoving: "",
+      //   nextDirection: "left",
+      //   powerUp: false,
+      //   kartId: 1,
+      // }).then((team) => {
+      //   postData(`/teamUser`, {
+      //     teamId: team.id,
+      //     userId: userData?.id,
+      //     verticalOrHorizontalControl: "vertical",
+      //   });
 
         setGameId(gameUser.gameId);
         socket.emit("join_game_room", gameUser.gameId);
         navigate(`/game/${gameUser.gameId}`);
       });
-    });
+    // });
   };
 
   const handleStartAGame = () => { //generate game boundary and pellets
@@ -77,26 +77,26 @@ const Lobby = (props: Props) => {
           userId: userData?.id,
           roleId: 1,
         }).then((newGameUser) => {
-          postData(`/team`, {
-            gameId: newGameUser.gameId,
-            teamName: "team1",
-            score: 0,
-            characterId: 1,
-            currentDirectionMoving: "",
-            nextDirection: "left",
-            powerUp: false,
-            kartId: 1,
-          }).then((newTeam) => {
-            postData(`/teamUser`, {
-              teamId: newTeam.id,
-              userId: userData?.id,
-              verticalOrHorizontalControl: "vertical",
-            });
+          // postData(`/team`, {
+          //   gameId: newGameUser.gameId,
+          //   teamName: "team1",
+          //   score: 0,
+          //   characterId: 1,
+          //   currentDirectionMoving: "",
+          //   nextDirection: "left",
+          //   powerUp: false,
+          //   kartId: 1,
+          // }).then((newTeam) => {
+          //   postData(`/teamUser`, {
+          //     teamId: newTeam.id,
+          //     userId: userData?.id,
+          //     verticalOrHorizontalControl: "vertical",
+          //   });
 
             setGameId(newGameUser.gameId);
             socket.emit("join_game_room", newGameUser.gameId);
             navigate(`/game/${newGameUser.gameId}`);
-           });
+          //  });
         });
       }
     );
