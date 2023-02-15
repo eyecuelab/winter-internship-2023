@@ -62,7 +62,7 @@ const Lobby = (props: Props) => {
 
         setGameId(team.gameId);
         socket.emit("join_game_room", team.gameId);
-        navigate(`/Game/${team.gameId}`);
+        navigate(`/game/${team.gameId}`);
       });
     });
   };
@@ -94,7 +94,7 @@ const Lobby = (props: Props) => {
 
             setGameId(newTeam.gameId);
             socket.emit("join_game_room", newTeam.gameId);
-            navigate(`/Game/${newTeam.gameId}`);
+            navigate(`/game/${newTeam.gameId}`);
           });
         });
       }

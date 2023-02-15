@@ -20,6 +20,14 @@ app.use(cors({
   // Access-Control-Allow-Origin: *,
 }));
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://super-pacart.netlify.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
+
 app.use(express.json());
 
 app.use(
