@@ -10,9 +10,9 @@ export const Time = {
 export const TimeMath = {
   _startTime: performance.now(),
   _lastTick: performance.now(),
-  _timestep: 1000/30,
+  _timestep: 1000/15,
   _currentFrame: 0,
-  _fps: 30,
+  _fps: 15,
   _lastFpsUpdate: 0,
   _framesSinceFPSUpdate: 0,
 };
