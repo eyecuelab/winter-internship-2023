@@ -412,8 +412,10 @@ function Canvas(props: any) {
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+          const teamNumber = numberOfUsers/2;
+          const spawnPosition = spawnPointsRef.current[teamNumber - 1];
           const tempMyKart = new Kart({
-            position: { x: 60 * numberOfUsers, y: 60 },
+            position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             angle: 0,
@@ -494,8 +496,9 @@ function Canvas(props: any) {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
-        console.log(roomGameRef.current);
-        console.log(myGameRef.current);
+        console.log("roomGameRef:", roomGameRef.current);
+        console.log("myGameRef:", myGameRef.current);
+        console.log("spawnPointsRef:", spawnPointsRef.current)
       } else if (e.key === "p") {
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();

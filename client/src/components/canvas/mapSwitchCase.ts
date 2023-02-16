@@ -30,7 +30,7 @@ export default function mapSwitchCase(gameMap: any) {
           break;
         case "s":
           spawnPoints.push(
-            new Pellet({
+            new SpawnPoint({
               position: {
                 x: j * Boundary.width + Boundary.width / 2,
                 y: i * Boundary.height + Boundary.height / 2,
