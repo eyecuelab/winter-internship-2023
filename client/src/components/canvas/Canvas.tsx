@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team, Pellet } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet, SpawnPoint } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
@@ -15,12 +15,15 @@ function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "white"];
-  const lastKeyRef = useRef("");
-  const boundariesRef = useRef<Boundary[]>([]);
-  const pelletsRef = useRef<Pellet[]>([]);
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
+
+  const boundariesRef = useRef<Boundary[]>([]);
+  const pelletsRef = useRef<Pellet[]>([]);
+  const spawnPointsRef = useRef<SpawnPoint[]>([]);
+  const lastKeyRef = useRef("");
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -389,9 +392,10 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
-    const { boundaries, pellets } = mapSwitchCase(gameMap);
+    const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
+    spawnPointsRef.current = spawnPoints;
 
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
