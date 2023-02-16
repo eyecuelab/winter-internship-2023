@@ -14,7 +14,7 @@ import mapSwitchCase from "./mapSwitchCase";
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
-  const colors = ["yellow", "white", "teal", "blue", "white"];
+  const colors = ["yellow", "white", "teal", "blue", "blue"];
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
