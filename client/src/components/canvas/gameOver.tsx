@@ -17,10 +17,11 @@ export function GameOver(props: GameOverType) {
   };
 
   useEffect(() => {
-    displayScores()
-  }, [props.isGameOverModalOpen])
-  
-  const displayScores = () => {//this function exists in canvas so we could combine them.
+    displayScores();
+  }, [props.isGameOverModalOpen]);
+
+  const displayScores = () => {
+    //this function exists in canvas so we could combine them.
     const scoresArr = Array.from(props.scores, function (score) {
       return [score[0], score[1] ?? 0];
     });
@@ -46,14 +47,12 @@ export function GameOver(props: GameOverType) {
     <>
       {props.isGameOverModalOpen && (
         <div className="gameover-overlay" onClick={props.toggleGameOver}>
-          
           <div onClick={(e) => e.stopPropagation()} className="gameover-box">
             <div>
-            <h1>Game Over</h1>
-            <ul id="scoresList">
-            </ul>
-            <button onClick={goToLobby}>Back to Lobby</button>
-          </div>
+              <h1>Game Over</h1>
+              <ul id="scoresList"></ul>
+              <button onClick={goToLobby}>Back to Lobby</button>
+            </div>
           </div>
         </div>
       )}

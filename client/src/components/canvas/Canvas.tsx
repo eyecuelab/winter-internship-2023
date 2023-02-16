@@ -10,6 +10,7 @@ import "./CanvasStyles.css";
 import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
+import GameStats from "./gameStats";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -515,6 +516,7 @@ function Canvas(props: any) {
           <li id="team1"></li>
           <li id="team2"></li>
         </ul>
+        <GameStats scores={roomGameRef.current.scores} playerInControl = {myGameRef.current.myTeam.playerInControl} myTeamColor={myGameRef.current.myTeam.color}/>
         <canvas {...size} ref={canvasRef} />
         <div>
           <GameOver
