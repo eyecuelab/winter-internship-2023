@@ -346,7 +346,8 @@ function Canvas(props: any) {
       size,
       kartsArr,
       boundariesRef.current,
-      pelletsRef.current
+      pelletsRef.current,
+      spawnPointsRef.current
     );
   };
 
@@ -405,8 +406,6 @@ function Canvas(props: any) {
 
   //SOCKET HANDLERS:
   useEffect(() => {
-    console.count("socket handlers");
-
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
