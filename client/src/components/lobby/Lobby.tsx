@@ -1,8 +1,11 @@
 import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
-
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
+import { userType } from "../../types/Types";
+import { socketId, socket } from "./../../GlobalSocket";
+import { getUserDataGoogle } from "./services/lobby-services";
+import CoverImage from "../../assets/cover.png";
 import {
   Button,
   Col,
@@ -11,10 +14,9 @@ import {
   Row,
   Text,
   User,
+  Card,
+  Spacer,
 } from "@nextui-org/react";
-import { userType } from "../../types/Types";
-import { socketId, socket } from "./../../GlobalSocket";
-import { getUserDataGoogle } from "./services/lobby-services";
 
 interface UserDataGoogle {
   name: string;
@@ -30,6 +32,7 @@ interface Props {
 const Lobby = (props: Props) => {
   // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
+  console.log(userData);
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
@@ -43,8 +46,7 @@ const Lobby = (props: Props) => {
       gameId: gameUsers[0].gameId,
       userId: userData?.id,
       roleId: 1,
-    })
-    .then((gameUser) => {
+    }).then((gameUser) => {
       // postData(`/team`, {
       //   gameId: gameUser.gameId,
       //   teamName: "team1",
@@ -61,16 +63,19 @@ const Lobby = (props: Props) => {
       //     verticalOrHorizontalControl: "vertical",
       //   });
 
-        setGameId(gameUser.gameId);
-        socket.emit("join_game_room", gameUser.gameId);
-        navigate(`/game/${gameUser.gameId}`);
-      });
+      setGameId(gameUser.gameId);
+      socket.emit("join_game_room", gameUser.gameId);
+      navigate(`/game/${gameUser.gameId}`);
+    });
     // });
   };
 
-  const handleStartAGame = () => { //generate game boundary and pellets
-    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then( //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
-      (newGame) => { // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
+  const handleStartAGame = () => {
+    //generate game boundary and pellets
+    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then(
+      //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
+      (newGame) => {
+        // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
         // db gets the boundaries and pellets as part of the game creation postData
         postData(`/gameUser`, {
           gameId: newGame.id,
@@ -93,9 +98,9 @@ const Lobby = (props: Props) => {
           //     verticalOrHorizontalControl: "vertical",
           //   });
 
-            setGameId(newGameUser.gameId);
-            socket.emit("join_game_room", newGameUser.gameId);
-            navigate(`/game/${newGameUser.gameId}`);
+          setGameId(newGameUser.gameId);
+          socket.emit("join_game_room", newGameUser.gameId);
+          navigate(`/game/${newGameUser.gameId}`);
           //  });
         });
       }
@@ -191,7 +196,7 @@ const Lobby = (props: Props) => {
           <button>Create Game User</button>
         </form>
       </div> */}
-      <Navbar isBordered variant="sticky">
+      {/* <Navbar isBordered variant="sticky">
         <Navbar.Brand>
           <User
             bordered
@@ -226,7 +231,42 @@ const Lobby = (props: Props) => {
       </Container>
       <div className="theButton">
         <button onClick={handleStartGameClick}>Start a Public Game!</button>
-      </div>
+      </div> */}
+
+      <Container
+        display="flex"
+        alignItems="center"
+        justify="center"
+        css={{ minHeight: "100vh" }}
+      >
+        <Card css={{ mw: "420px", p: "20px" }}>
+          <Card.Image
+            src={CoverImage}
+            objectFit="cover"
+            width="100%"
+            height="100%"
+            alt="Relaxing app background"
+          />
+
+          <Text
+            size={24}
+            weight="bold"
+            css={{
+              as: "center",
+              mb: "20px",
+            }}
+          >
+            Welcome {userData?.name}!
+          </Text>
+
+          <Spacer y={1} />
+
+          <Button color="gradient" auto ghost onClick={handleStartGameClick}>
+            <Spacer x={0.5} />
+            JOIN GAME!
+          </Button>
+        </Card>
+      </Container>
     </>
   );
 };
