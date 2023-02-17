@@ -298,11 +298,11 @@ function Canvas(props: any) {
 
     if (teamOne && scoresArr[0]) {
       const teamScore = scoresArr[0][1] ?? 0;
-      teamOne.innerText = `${scoresArr[0][0]} - ${teamScore}`;
+      teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
     }
     if (teamTwo && scoresArr[1]) {
       const teamScore = scoresArr[0][1] ?? 0;
-      teamTwo.innerText = `${scoresArr[1][0]} - ${teamScore}`;
+      teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
     }
   };
 
@@ -411,7 +411,7 @@ function Canvas(props: any) {
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
-          const teamNumber = numberOfUsers/2;
+          const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
           const tempMyKart = new Kart({
             position: spawnPosition.position,
@@ -497,7 +497,7 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         console.log("roomGameRef:", roomGameRef.current);
         console.log("myGameRef:", myGameRef.current);
-        console.log("spawnPointsRef:", spawnPointsRef.current)
+        console.log("spawnPointsRef:", spawnPointsRef.current);
       } else if (e.key === "p") {
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
@@ -522,18 +522,15 @@ function Canvas(props: any) {
           alignItems: "center",
         }}
       >
-        <p>welcome to da game</p>
-        <p>my team: {myGameRef.current.myTeam.color}</p>
-        <p>
+        <div>your kart: {myGameRef.current.myTeam.color}</div>
+        <div>
+          scores: <span id="team1"></span> || <span id="team2"></span>
+        </div>
+        <div>
           {myGameRef.current.myTeam.playerInControl === socketId
             ? `YOU ARE IN CONTROL`
             : `your are NOT in control`}
-        </p>
-        <p>scores:</p>
-        <ul>
-          <li id="team1"></li>
-          <li id="team2"></li>
-        </ul>
+        </div>
         <canvas {...size} ref={canvasRef} />
         <div>
           <GameOver

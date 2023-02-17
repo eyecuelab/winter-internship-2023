@@ -1,19 +1,18 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useParams } from 'react-router-dom'
-import Canvas from '../components/canvas/Canvas';
+import React from "react";
+import PropTypes from "prop-types";
+import { useParams } from "react-router-dom";
+import Canvas from "../components/canvas/Canvas";
 
 const GamePage = () => {
   const { gameId } = useParams();
 
   return (
     <div>
-      <p>game id: {gameId}</p>
-      <Canvas gameId={gameId}/>
-      </div>
-  )
-}
+      <Canvas gameId={gameId} />
+    </div>
+  );
+};
 
-GamePage.propTypes = {}
+GamePage.propTypes = {};
 
-export default GamePage
+export default GamePage;
