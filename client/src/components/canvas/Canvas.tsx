@@ -10,6 +10,7 @@ import "./CanvasStyles.css";
 import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
+import { postData } from "../../apiHelper";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -455,6 +456,24 @@ function Canvas(props: any) {
             gameId,
             tempTeamMate,
           });
+
+      postData(`/team`, {
+        gameId: gameId,
+        teamName: "team1",
+        score: 0,
+        characterId: 1,
+        currentDirectionMoving: "",
+        nextDirection: "left",
+        powerUp: false,
+        kartId: 1,
+      })
+        .then((team) => {
+          // postData(`/teamUser`, {
+          //   teamId: team.id,
+          //   userId: userData?.id,
+          //   verticalOrHorizontalControl: "vertical",
+          // });
+      })
         }
       }
     });
