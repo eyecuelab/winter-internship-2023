@@ -25,8 +25,7 @@ export function GameOver(props: GameOverType) {
     const scoresArr = Array.from(props.scores, function (score) {
       return [score[0], score[1] ?? 0];
     });
-    console.log(scoresArr);
-
+    
     const scoresList = document.getElementById("scoresList");
     if (scoresList) {
       while (scoresList.firstChild) {

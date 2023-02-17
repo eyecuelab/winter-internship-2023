@@ -1,4 +1,4 @@
-import { Boundary, Kart, Pellet } from "./gameClasses";
+import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
 
 function frameRenderer(
   this: any,
@@ -6,9 +6,10 @@ function frameRenderer(
   karts: {
     color: string;
     kart: Kart;
-}[],
+  }[],
   boundaries: Boundary[],
-  pellets: Pellet[]
+  pellets: Pellet[],
+  spawnPoints: SpawnPoint[]
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
@@ -21,8 +22,18 @@ function frameRenderer(
       Boundary.height
     );
   };
+
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
+      var grd = this.createLinearGradient(
+        pellet.position.x - 5,
+        pellet.position.y - 5,
+        pellet.position.x + 5,
+        pellet.position.y + 5
+      );
+      grd.addColorStop(0, "#fa06f9");
+      grd.addColorStop(1, "white");
+
       this.beginPath();
       this.arc(
         pellet.position.x,
@@ -31,10 +42,31 @@ function frameRenderer(
         0,
         Math.PI * 2
       );
-      this.fillStyle = "white";
+      this.fillStyle = grd;
       this.fill();
       this.closePath();
     }
+  };
+
+  const drawSpawnPoint = (spawnPoint: SpawnPoint) => {
+    var grd = this.createLinearGradient(
+      spawnPoint.position.x - 15,
+      spawnPoint.position.y - 15,
+      spawnPoint.position.x + 15,
+      spawnPoint.position.y,
+      +15
+    );
+    grd.addColorStop(0, "#00d4ff");
+    grd.addColorStop(0.8, "#090979");
+    grd.addColorStop(1, "#020024");
+
+    this.fillStyle = grd;
+    this.fillRect(
+      spawnPoint.position.x - 15,
+      spawnPoint.position.y - 15,
+      30,
+      30
+    );
   };
 
   const drawKart = (
@@ -69,6 +101,10 @@ function frameRenderer(
     drawPellet(pellet);
   });
 
+  spawnPoints.forEach((spawnPoint) => {
+    drawSpawnPoint(spawnPoint);
+  });
+
   function createImage(src: string) {
     const image = new Image();
     image.src = src;
@@ -79,17 +115,16 @@ function frameRenderer(
   //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
   //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
 
-    karts.forEach((entry) => {
-      drawKart(
-        entry.kart.position.x,
-        entry.kart.position.y,
-        entry.kart.radius,
-        entry.color,
-        entry.kart.angle,
-        createImage(entry.kart.imgSrc)
-      );
-    });
-
+  karts.forEach((entry) => {
+    drawKart(
+      entry.kart.position.x,
+      entry.kart.position.y,
+      entry.kart.radius,
+      entry.color,
+      entry.kart.angle,
+      createImage(entry.kart.imgSrc)
+    );
+  });
 }
 
 export default frameRenderer;

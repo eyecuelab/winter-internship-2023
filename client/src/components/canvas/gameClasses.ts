@@ -79,8 +79,15 @@ export class Pellet {
   isVisible: boolean;
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
-    this.radius = 3;
+    this.radius = 5;
     Pellet.scoreValue = 10;
     this.isVisible = true;
+  }
+}
+
+export class SpawnPoint {
+  position: { x: number; y: number };
+  constructor({ position }: { position: { x: number; y: number } }) {
+    this.position = position;
   }
 }
