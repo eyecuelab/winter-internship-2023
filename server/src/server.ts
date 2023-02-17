@@ -19,21 +19,14 @@ const io = new Server(server, {
   },
 });
 
-let updateQueue = [];
-    
-setInterval(async () => {
-  if (updateQueue.length > 0) {
-    // Batch updates
-    const updatesByTable = {};
+interface Update {
+  table: string;
+  id: number;
+  value: number | string;
+}
 
-    const updates = updateQueue.splice(0, updateQueue.length);
-
-    await prisma.myModel.updateMany({
-      where: { id: { in: updates.map(update => update.id) } },
-      data: { field: { set: updates.map(update => update.value) } }
-    });
-  }
-}, 5000);
+//(1)try it in the sockets to see if it actually decreases performance
+//(2)look for a package that does this- This is expensive as is
 
 io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
@@ -63,10 +56,40 @@ io.on("connection", (socket) => {
   });
 
   socket.on("game_update", (data) => {
-    const { gameId, tempColor, tempScore, jsonKart } = data;
+    const { gameId, teamId, tempScore, jsonKart, boolOfGameStatus, tempPellets } = data;
+    const parsedKart = JSON.parse(jsonKart)
+
+    // console.log("tempColor: "+ tempColor);
+    // console.log("tempScore: "+ tempScore);
+    // console.log("jsonKart: "+ jsonKart);
+    // console.log("tempPellets " + tempPellets);
+    // console.log(`parsedKart["velocity"] ` + parsedKart["velocity"]);
+
+    // setInterval(async () => {
+
+    //   await prisma.game.update({
+    //     where: { id: gameId },
+    //     data: { 
+    //       pellets: tempPellets,
+    //       isActive: boolOfGameStatus
+    //     },
+    //   }), await prisma.team.update({
+    //     where: { id: teamId },
+    //     data: { 
+    //       score: tempScore,
+
+    //       json blob type?
+    //       position:  parsedKart["position"],
+
+    //       velocity:  parsedKart["velocity"],
+    //       angle: parsedKart["angle"]
+    //     },
+    //   })
+    // }, 5000);
+
     socket
       .to(`${gameId}`)
-      .emit("receive_game_update", { tempColor, jsonKart, tempScore });
+      .emit("receive_game_update", { jsonKart, tempScore });
 
   });
 

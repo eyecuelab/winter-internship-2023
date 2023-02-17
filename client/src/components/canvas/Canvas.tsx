@@ -40,6 +40,7 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart(),
   });
+  const teamId = useRef<number | null>(null);
 
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
@@ -241,10 +242,12 @@ function Canvas(props: any) {
             const tempScore = roomGameRef.current.scores.get(tempColor);
 
             socket.emit("game_update", {
-              jsonKart,
-              tempColor,
-              tempScore,
               gameId,
+              teamId,
+              jsonKart,
+              // tempColor,
+              tempScore,
+              boolOfGameStatus
             });
             toggleGameOver();
           }
@@ -344,8 +347,9 @@ function Canvas(props: any) {
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
       const tempScore = roomGameRef.current.scores.get(tempColor);
+      const tempPellets = pelletsRef.current
 
-      socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
+      socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId, tempPellets });
       displayScores();
     }
 
@@ -474,6 +478,9 @@ function Canvas(props: any) {
             kartId: 1,
           })
             .then((team) => {
+              if (typeof(team.id) === "number") {
+                teamId.current = team.id;
+              }
               postData(`/teamUser`, {
                 teamId: parseInt(team.id),
                 userId: parseInt(userId),

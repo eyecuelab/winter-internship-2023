@@ -26,7 +26,7 @@ const Login = () => {
       localStorage.setItem("loginWith", "Google");
       localStorage.setItem("accessToken", response.access_token);
       navigate("/lobby");
-    },
+    },    
   });
 
   const loginAsGuest = () => {
