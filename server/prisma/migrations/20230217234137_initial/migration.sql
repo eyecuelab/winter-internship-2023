@@ -38,7 +38,7 @@ CREATE TABLE "TeamUser" (
     "id" SERIAL NOT NULL,
     "teamId" INTEGER NOT NULL,
     "userId" INTEGER NOT NULL,
-    "verticalOrHorizontalControl" TEXT NOT NULL,
+    "axisControl" TEXT NOT NULL,
 
     CONSTRAINT "TeamUser_pkey" PRIMARY KEY ("id")
 );
@@ -46,13 +46,13 @@ CREATE TABLE "TeamUser" (
 -- CreateTable
 CREATE TABLE "Team" (
     "id" SERIAL NOT NULL,
-    "gameId" INTEGER NOT NULL,
-    "teamName" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
     "score" INTEGER NOT NULL,
+    "position" JSONB[],
+    "velocity" JSONB[],
+    "angle" INTEGER NOT NULL,
     "characterId" INTEGER NOT NULL,
-    "currentDirectionMoving" TEXT NOT NULL,
-    "nextDirection" TEXT NOT NULL,
-    "powerUp" BOOLEAN NOT NULL,
+    "gameId" INTEGER NOT NULL,
     "kartid" INTEGER NOT NULL,
 
     CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
@@ -61,9 +61,11 @@ CREATE TABLE "Team" (
 -- CreateTable
 CREATE TABLE "Game" (
     "id" SERIAL NOT NULL,
-    "timeLeft" INTEGER NOT NULL,
-    "boardArray" JSONB[],
-    "pelletCount" INTEGER NOT NULL,
+    "map" INTEGER NOT NULL,
+    "boundaries" JSONB[],
+    "pellets" JSONB[],
+    "spawnPoints" JSONB[],
+    "isActive" BOOLEAN NOT NULL,
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );

@@ -3,24 +3,24 @@ import { createTeam, updateTeam } from "../Models/team";
 const teamControllers = {
   async createTeam(req: any, res: any) {
     const {
-      gameId,
-      teamName,
+      color,
       score,
-      characterId,
-      currentDirectionMoving,
-      nextDirection,
-      powerUp,
+      position,
+      velocity,
+      angle,
+      gameId,
       kartId,
+      characterId,
     } = req.body;
     const newTeam = await createTeam(
-      gameId,
-      teamName,
+      color,
       score,
+      position,
+      velocity,
+      angle,
+      gameId,
+      kartId,
       characterId,
-      currentDirectionMoving,
-      nextDirection,
-      powerUp,
-      kartId
     );
     res.status(200).json(newTeam);
   },
@@ -29,18 +29,16 @@ const teamControllers = {
     const {
       id,
       score,
-      currentDirectionMoving,
-      nextDirection,
-      powerUp,
-      kartId,
+      position,
+      velocity,
+      angle
     } = req.body;
     const updatedTeam = await updateTeam(
       id,
       score,
-      currentDirectionMoving,
-      nextDirection,
-      powerUp,
-      kartId
+      position,
+      velocity,
+      angle
     );
     res.status(200).json(updatedTeam);
   },
