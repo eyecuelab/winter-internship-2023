@@ -1,7 +1,8 @@
 import * as io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { KeyboardOptions } from "@nextui-org/react"; //declared but never read I guess
-const socket = io.connect("https://super-pacart.fly.dev");
+const socket = io.connect("http://localhost:3001");
+// const socket = io.connect("https://super-pacart.fly.dev");
 function SocketHandling() {
   const [user1, setUser1] = useState("");
   const [user2, setUser2] = useState("");

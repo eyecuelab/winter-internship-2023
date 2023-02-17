@@ -1,10 +1,9 @@
 import { useGoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { getData, postData } from "../../apiHelper";
 import React, { Dispatch, SetStateAction } from "react";
 import { userType } from "../../types/Types";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
-import { socketId, socket } from "./../../GlobalSocket";
+import CoverImage from '../../assets/cover.png';
 
 interface Props {
   userData: userType | undefined;
@@ -45,6 +44,13 @@ const Login = () => {
         css={{ minHeight: "100vh" }}
       >
         <Card css={{ mw: "420px", p: "20px" }}>
+          <Card.Image
+            src={CoverImage}
+            objectFit="cover"
+            width="100%"
+            height="100%"
+            alt="Relaxing app background"
+          />
           <Text
             size={24}
             weight="bold"

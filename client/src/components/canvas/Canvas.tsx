@@ -1,34 +1,35 @@
 import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team, Pellet } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet, SpawnPoint } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
 import kartTest from "./../../constants/images";
-import { GameOver, useGameOver } from "./gameOver";
+import { GameOver } from "./gameOver";
 import "./CanvasStyles.css";
-import {
-  myGameType,
-  roomGameType
-} from "../../types/Types";
+import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 
 function Canvas(props: any) {
+  const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
-  const { isOpen, toggleGameOver } = useGameOver();
-  const colors = ["yellow", "white", "teal", "blue", "white"];
-  const lastKeyRef = useRef("");
-  const boundariesRef = useRef<Boundary[]>([]);
-  const pelletsRef = useRef<Pellet[]>([]);
+  const colors = ["yellow", "white", "teal", "blue", "blue"];
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
+  const canvasBorderRef = useRef<object>({});
+
+  const boundariesRef = useRef<Boundary[]>([]);
+  const pelletsRef = useRef<Pellet[]>([]);
+  const spawnPointsRef = useRef<SpawnPoint[]>([]);
+  const lastKeyRef = useRef("");
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    boolOfGameStatus: false
+    boolOfGameStatus: false,
   });
 
   const myGameRef = useRef<myGameType>({
@@ -39,6 +40,21 @@ function Canvas(props: any) {
     myKart: new Kart(),
   });
 
+  //GAME OVER FUNCTIONS:
+  const toggleGameOver = () => {
+    setIsGameOverModalOpen(!isGameOverModalOpen);
+  };
+
+  const isGameOver = () => {
+    for (let i = 0; i < pelletsRef.current.length; i++) {
+      if (pelletsRef.current[i].isVisible === true) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
@@ -111,13 +127,13 @@ function Canvas(props: any) {
       }
     });
 
-    if (kart.velocity.y != 0) {
-      lastKeyRef.current = "";
-      myGameRef.current.myTeam.changePlayerInControl();
-      const tempTeamMate = myGameRef.current.myTeamMate;
-      const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-      socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    }
+    // if (kart.velocity.y != 0) {
+    //   lastKeyRef.current = "";
+    //   myGameRef.current.myTeam.changePlayerInControl();
+    //   const tempTeamMate = myGameRef.current.myTeamMate;
+    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+    // }
     return kart;
   };
 
@@ -187,25 +203,22 @@ function Canvas(props: any) {
           rectangle: boundary,
         })
       ) {
-
         kart.velocity.x = 0;
         kart.velocity.y = 0;
-
       }
     });
 
-    if (kart.velocity.x != 0) {
-      lastKeyRef.current = "";
-      myGameRef.current.myTeam.changePlayerInControl();
-      const tempTeamMate = myGameRef.current.myTeamMate;
-      const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-      socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    }
+    // if (kart.velocity.x != 0) {
+    //   lastKeyRef.current = "";
+    //   myGameRef.current.myTeam.changePlayerInControl();
+    //   const tempTeamMate = myGameRef.current.myTeamMate;
+    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+    // }
 
     return kart;
   };
 
-  //pellets and score:
   const removePellets = (pelletsRef: Pellet[], kartRef: Kart | undefined) => {
     pelletsRef.forEach((pellet, i) => {
       if (kartRef) {
@@ -219,33 +232,93 @@ function Canvas(props: any) {
         ) {
           pellet.isVisible = false;
           updateScore(10);
-          const boolOfGameStatus = isGameOver(pelletsRef);
-          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus })
+          const boolOfGameStatus = isGameOver();
+
           if (boolOfGameStatus) {
+            const tempColor = myGameRef.current.myTeam.color;
+            const jsonKart = JSON.stringify(kartRef);
+            const tempScore = roomGameRef.current.scores.get(tempColor);
+
+            socket.emit("game_update", {
+              jsonKart,
+              tempColor,
+              tempScore,
+              gameId,
+            });
             toggleGameOver();
           }
-           
+          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus });
         }
       }
     });
   };
 
-const isGameOver = (pelletsRef: Pellet[]) => {
-  for(let i = 0; i < pelletsRef.length; i++){
-    if (pelletsRef[i].isVisible === true){
-      return false;
-    }
-  }
-  return true;
-}
-
   const updateScore = (pointValue: number) => {
-    let updatedScore:number = roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
+    let updatedScore: number =
+      roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
     updatedScore += pointValue;
-    roomGameRef.current.scores.set(myGameRef.current.myTeam.color, updatedScore);
-  }
+    roomGameRef.current.scores.set(
+      myGameRef.current.myTeam.color,
+      updatedScore
+    );
+  };
 
-  //canvas animation functions:
+  const updatePlayerControl = () => {
+    if (myGameRef.current.myTeam.playerInControl === socketId) {
+      const kart = roomGameRef.current.karts.get(
+        myGameRef.current.myTeam.color
+      );
+      if (myGameRef.current.myControl === "x") {
+        if (kart?.velocity.x != 0) {
+          lastKeyRef.current = "";
+          myGameRef.current.myTeam.changePlayerInControl();
+          const tempTeamMate = myGameRef.current.myTeamMate;
+          const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+          socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+        }
+      }
+      if (myGameRef.current.myControl === "y") {
+        if (kart?.velocity.y != 0) {
+          lastKeyRef.current = "";
+          myGameRef.current.myTeam.changePlayerInControl();
+          const tempTeamMate = myGameRef.current.myTeamMate;
+          const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+          socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+        }
+      }
+    }
+  };
+
+  const displayScores = () => {
+    const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
+      return [score[0], score[1]];
+    });
+
+    const teamOne = document.getElementById("team1");
+    const teamTwo = document.getElementById("team2");
+
+    if (teamOne && scoresArr[0]) {
+      const teamScore = scoresArr[0][1] ?? 0;
+      teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
+    }
+    if (teamTwo && scoresArr[1]) {
+      const teamScore = scoresArr[0][1] ?? 0;
+      teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
+    }
+
+    const playerControlDisplay = document.getElementById("playerControlDisplay");
+    if(playerControlDisplay){
+      const isInControl = myGameRef.current.myTeam.playerInControl === socketId;
+      playerControlDisplay.innerText = isInControl ? `YOU ARE IN CONTROL` : `your are NOT in control`
+      if (isInControl){
+        canvasBorderRef.current = {borderStyle: "solid", borderColor: "red", borderWidth: 10}
+      } else {
+        canvasBorderRef.current = {borderStyle: "none"}
+      }
+    }
+  };
+
+  //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
     const canvas = canvasRef.current;
     if (!canvas) {
@@ -258,21 +331,24 @@ const isGameOver = (pelletsRef: Pellet[]) => {
 
     let updatedKart; //should this be referencing local state?
 
-    if (myGameRef.current.myTeam.playerInControl === socketId) { 
+    if (myGameRef.current.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updatedKart = new Kart(updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
 
-      removePellets(pelletsRef.current, updatedKart);//consolidate this emit with game_update
+      removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
 
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
       const tempScore = roomGameRef.current.scores.get(tempColor);
 
       socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
+      displayScores();
     }
+
+    updatePlayerControl();
 
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
@@ -282,7 +358,8 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       size,
       kartsArr,
       boundariesRef.current,
-      pelletsRef.current
+      pelletsRef.current,
+      spawnPointsRef.current
     );
   };
 
@@ -328,9 +405,10 @@ const isGameOver = (pelletsRef: Pellet[]) => {
   };
 
   useEffect(() => {
-    const { boundaries, pellets } = mapSwitchCase(gameMap);
+    const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
+    spawnPointsRef.current = spawnPoints;
 
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
@@ -338,17 +416,17 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     };
   }, []);
 
-  //socket handlers:
+  //SOCKET HANDLERS:
   useEffect(() => {
-    console.count("socket handlers");
-
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+          const teamNumber = numberOfUsers / 2;
+          const spawnPosition = spawnPointsRef.current[teamNumber - 1];
           const tempMyKart = new Kart({
-            position: { x: 60 * numberOfUsers, y: 60 },
+            position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             angle: 0,
@@ -394,6 +472,7 @@ const isGameOver = (pelletsRef: Pellet[]) => {
       }
 
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
+      roomGameRef.current.scores.set(tempTeam.color, 0);
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -406,9 +485,9 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     });
 
     socket.on("pellet_gone", (data) => {
-      const {i, boolOfGameStatus} = data;
+      const { i, boolOfGameStatus } = data;
       pelletsRef.current[i].isVisible = false;
-      if(boolOfGameStatus) {
+      if (boolOfGameStatus) {
         toggleGameOver();
       }
     });
@@ -422,31 +501,15 @@ const isGameOver = (pelletsRef: Pellet[]) => {
     };
   }, [socket]);
 
-  const displayScores = () => {
-    const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
-      return { color: score[0], score: score[1] };
-      
-    });
-
-    let teamOne = document.getElementById("team1");
-    let teamTwo = document.getElementById("team2");
-
-    if (teamOne && scoresArr[0]) {
-      teamOne.innerText = scoresArr[0]["score"].toString();
-    }
-    if (teamTwo && scoresArr[1]) {
-      teamTwo.innerText = scoresArr[1]["score"].toString();
-    }
-   
-    
-  }
-
-  //add keyboard event listeners when component mounts
+  //KEYBOARD EVEN LISTENERS when component mounts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
+        console.log("roomGameRef:", roomGameRef.current);
+        console.log("myGameRef:", myGameRef.current);
+        console.log("socketId:", socketId);
       } else if (e.key === "p") {
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
@@ -471,21 +534,21 @@ const isGameOver = (pelletsRef: Pellet[]) => {
           alignItems: "center",
         }}
       >
-        <p>welcome to da game</p>
-        <p>my team: {myGameRef.current.myTeam.color}</p>
-        <p>
-          {myGameRef.current.myTeam.playerInControl === socketId
-            ? `YOU ARE IN CONTROL`
-            : `your are NOT in control`}
-        </p>
-        <p>scores:</p>
-        <ul>
-          <li id="team1"></li>
-          <li id="team2"></li>
-        </ul>
-        <canvas {...size} ref={canvasRef} />
+        <div>your kart: {myGameRef.current.myTeam.color}</div>
         <div>
-          <GameOver isOpen={isOpen} toggleGameOver={toggleGameOver} ></GameOver>
+          scores: <span id="team1"></span> || <span id="team2"></span>
+        </div>
+        <div>
+          <span id="playerControlDisplay"></span>
+        </div>
+        <canvas {...size} ref={canvasRef}  style={canvasBorderRef.current}/>
+        <div>
+          <GameOver
+            isGameOverModalOpen={isGameOverModalOpen}
+            setIsGameOverModalOpen={setIsGameOverModalOpen}
+            toggleGameOver={toggleGameOver}
+            scores={roomGameRef.current.scores}
+          ></GameOver>
         </div>
       </div>
     </>
