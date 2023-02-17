@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-
 const prisma = new PrismaClient();
-
 export const getRole = async (id: number) => {
   return await prisma.role.findUnique({
     where: {
@@ -9,8 +7,6 @@ export const getRole = async (id: number) => {
     }
   });
 }
-
-
 export const createRole = async (name: string) => {
   return await prisma.role.create({
     data: {
