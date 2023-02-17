@@ -40,3 +40,22 @@ DATABASE_URL=postgresql://<USERNAME>:<PASSWORD>@localhost:5432/<DB_NAME>
 2. npx prisma db push
 3. npx prisma db seed
 
+
+
+
+
+
+
+/*
+const postExists = await prisma.role.findUnique({
+  where: {
+    id: 1 
+  }
+});
+
+if (postExists === null) {*/
+
+
+/*} else {
+  return null;
+}*/

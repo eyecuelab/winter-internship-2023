@@ -4,6 +4,7 @@ import teamRouter from './Routes/team';
 import teamUserRouter from './Routes/teamUser';
 import gameUserRouter from './Routes/gameUser';
 import roleRouter from './Routes/role';
+import seedRouter from './Routes/seed';
 import cors from 'cors';
 import express from 'express';
 // import githubRoutes from './Routes/github-routes';
@@ -37,6 +38,7 @@ app.use(
   gameRouter,
   teamRouter,
   gameUserRouter,
+  seedRouter,
   teamUserRouter
 );
 
