@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team, Pellet } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet, SpawnPoint } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
@@ -14,13 +14,17 @@ import mapSwitchCase from "./mapSwitchCase";
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
-  const colors = ["yellow", "white", "teal", "blue", "white"];
-  const lastKeyRef = useRef("");
-  const boundariesRef = useRef<Boundary[]>([]);
-  const pelletsRef = useRef<Pellet[]>([]);
+  const colors = ["yellow", "white", "teal", "blue", "blue"];
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
+  const canvasBorderRef = useRef<object>({});
+
+  const boundariesRef = useRef<Boundary[]>([]);
+  const pelletsRef = useRef<Pellet[]>([]);
+  const spawnPointsRef = useRef<SpawnPoint[]>([]);
+  const lastKeyRef = useRef("");
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -290,16 +294,27 @@ function Canvas(props: any) {
       return [score[0], score[1]];
     });
 
-    let teamOne = document.getElementById("team1");
-    let teamTwo = document.getElementById("team2");
+    const teamOne = document.getElementById("team1");
+    const teamTwo = document.getElementById("team2");
 
     if (teamOne && scoresArr[0]) {
       const teamScore = scoresArr[0][1] ?? 0;
-      teamOne.innerText = teamScore.toString();
+      teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
     }
     if (teamTwo && scoresArr[1]) {
       const teamScore = scoresArr[0][1] ?? 0;
-      teamTwo.innerText = scoresArr[1][1].toString();
+      teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
+    }
+
+    const playerControlDisplay = document.getElementById("playerControlDisplay");
+    if(playerControlDisplay){
+      const isInControl = myGameRef.current.myTeam.playerInControl === socketId;
+      playerControlDisplay.innerText = isInControl ? `YOU ARE IN CONTROL` : `your are NOT in control`
+      if (isInControl){
+        canvasBorderRef.current = {borderStyle: "solid", borderColor: "red", borderWidth: 10}
+      } else {
+        canvasBorderRef.current = {borderStyle: "none"}
+      }
     }
   };
 
@@ -343,7 +358,8 @@ function Canvas(props: any) {
       size,
       kartsArr,
       boundariesRef.current,
-      pelletsRef.current
+      pelletsRef.current,
+      spawnPointsRef.current
     );
   };
 
@@ -389,9 +405,10 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
-    const { boundaries, pellets } = mapSwitchCase(gameMap);
+    const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
+    spawnPointsRef.current = spawnPoints;
 
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
@@ -401,15 +418,15 @@ function Canvas(props: any) {
 
   //SOCKET HANDLERS:
   useEffect(() => {
-    console.count("socket handlers");
-
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+          const teamNumber = numberOfUsers / 2;
+          const spawnPosition = spawnPointsRef.current[teamNumber - 1];
           const tempMyKart = new Kart({
-            position: { x: 60 * numberOfUsers, y: 60 },
+            position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             angle: 0,
@@ -490,8 +507,9 @@ function Canvas(props: any) {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
         lastKeyRef.current = e.key;
       } else if (e.key === "q") {
-        console.log(roomGameRef.current);
-        console.log(myGameRef.current);
+        console.log("roomGameRef:", roomGameRef.current);
+        console.log("myGameRef:", myGameRef.current);
+        console.log("socketId:", socketId);
       } else if (e.key === "p") {
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
@@ -516,19 +534,14 @@ function Canvas(props: any) {
           alignItems: "center",
         }}
       >
-        <p>welcome to da game</p>
-        <p>my team: {myGameRef.current.myTeam.color}</p>
-        <p>
-          {myGameRef.current.myTeam.playerInControl === socketId
-            ? `YOU ARE IN CONTROL`
-            : `your are NOT in control`}
-        </p>
-        <p>scores:</p>
-        <ul>
-          <li id="team1"></li>
-          <li id="team2"></li>
-        </ul>
-        <canvas {...size} ref={canvasRef} />
+        <div>your kart: {myGameRef.current.myTeam.color}</div>
+        <div>
+          scores: <span id="team1"></span> || <span id="team2"></span>
+        </div>
+        <div>
+          <span id="playerControlDisplay"></span>
+        </div>
+        <canvas {...size} ref={canvasRef}  style={canvasBorderRef.current}/>
         <div>
           <GameOver
             isGameOverModalOpen={isGameOverModalOpen}
