@@ -1,4 +1,5 @@
-export const API_ENDPOINT = "http://localhost:3001";
+// export const API_ENDPOINT = "http://localhost:3001";
+export const API_ENDPOINT = "https://super-pacart.fly.dev";
 
 // const credentials: RequestCredentials = "include";
 
