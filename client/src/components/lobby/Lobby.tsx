@@ -35,7 +35,7 @@ const Lobby = (props: Props) => {
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
-  const [gameId, setGameId] = useState(null);
+  // const [gameId, setGameId] = useState(null);
 
   //start game functions:
   const handleJoinAGame = (gameUsers: any) => {
@@ -61,7 +61,8 @@ const Lobby = (props: Props) => {
       //     verticalOrHorizontalControl: "vertical",
       //   });
 
-        setGameId(gameUser.gameId);
+        // setGameId(gameUser.gameId);
+
         socket.emit("join_game_room", gameUser.gameId);
         navigate(`/game/${gameUser.gameId}`);
       });
@@ -93,8 +94,9 @@ const Lobby = (props: Props) => {
           //     verticalOrHorizontalControl: "vertical",
           //   });
 
-            setGameId(newGameUser.gameId);
-            socket.emit("join_game_room", newGameUser.gameId);
+            // setGameId(newGameUser.gameId);
+
+            socket.emit("join_game_room", newGameUser);
             navigate(`/game/${newGameUser.gameId}`);
           //  });
         });

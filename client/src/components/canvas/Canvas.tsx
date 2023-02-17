@@ -420,9 +420,9 @@ function Canvas(props: any) {
   //SOCKET HANDLERS:
   useEffect(() => {
     socket.on("receive_client_joined", (data) => {
-      myGameRef.current.userList = data;
-      const numberOfUsers = data.length;
-      if (socketId === data[numberOfUsers - 1]) {
+      myGameRef.current.userList = data.socketIds;
+      const numberOfUsers = data.socketIds.length;
+      if (socketId === data.socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
@@ -436,13 +436,13 @@ function Canvas(props: any) {
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data[numberOfUsers - 2],
-              y: data[numberOfUsers - 1],
+              x: data.socketIds[numberOfUsers - 2],
+              y: data.socketIds[numberOfUsers - 1],
             },
             score: 0,
           });
 
-          myGameRef.current.myTeamMate = data[numberOfUsers - 2];
+          myGameRef.current.myTeamMate = data.socketIds[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
@@ -457,23 +457,23 @@ function Canvas(props: any) {
             tempTeamMate,
           });
 
-      postData(`/team`, {
-        gameId: gameId,
-        teamName: "team1",
-        score: 0,
-        characterId: 1,
-        currentDirectionMoving: "",
-        nextDirection: "left",
-        powerUp: false,
-        kartId: 1,
-      })
-        .then((team) => {
-          // postData(`/teamUser`, {
-          //   teamId: team.id,
-          //   userId: userData?.id,
-          //   verticalOrHorizontalControl: "vertical",
-          // });
-      })
+          postData(`/team`, {
+            gameId: gameId,
+            teamName: "team1",
+            score: 0,
+            characterId: 1,
+            currentDirectionMoving: "",
+            nextDirection: "left",
+            powerUp: false,
+            kartId: 1,
+          })
+            .then((team) => {
+              postData(`/teamUser`, {
+                teamId: team.id,
+                userId: data.userId,
+                verticalOrHorizontalControl: "vertical",
+              });
+            })
         }
       }
     });

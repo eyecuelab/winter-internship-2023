@@ -21,7 +21,8 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const room = data.toString();
+    const userId = data.userId;
+    const room = data.gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
@@ -30,7 +31,8 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    io.in(`${room}`).emit("receive_client_joined", socketIds);
+
+    io.in(`${room}`).emit("receive_client_joined", {socketIds, userId});
   });
 
   socket.on("send_team", (data) => {
