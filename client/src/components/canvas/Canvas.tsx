@@ -245,7 +245,6 @@ function Canvas(props: any) {
               gameId,
               teamId,
               jsonKart,
-              // tempColor,
               tempScore,
               boolOfGameStatus
             });
@@ -464,12 +463,12 @@ function Canvas(props: any) {
 
           console.log("teamNumber: " + teamNumber);
           console.log("gameId: " + gameId);
-          console.log("teamName: " + `team${teamNumber}`);
           console.log("userId: " + userId);
+          console.log("teamName: " + tempMyTeam["color"]);
 
           postData(`/team`, {
             gameId: parseInt(gameId),
-            teamName: `team${teamNumber}`,
+            teamName: tempMyTeam["color"],
             score: 0,
             characterId: 1,
             currentDirectionMoving: "",
