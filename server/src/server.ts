@@ -21,8 +21,12 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const userId = data.userId;
-    const room = data.gameId.toString();
+    const { gameId, userId} = data;
+    console.log("serverData:" + data);
+    console.log("typeof gameId" + typeof(gameId));
+    console.log("gameId" + gameId);
+    console.log(userId);
+    const room = gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 

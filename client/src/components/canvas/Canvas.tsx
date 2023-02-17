@@ -420,9 +420,10 @@ function Canvas(props: any) {
   //SOCKET HANDLERS:
   useEffect(() => {
     socket.on("receive_client_joined", (data) => {
-      myGameRef.current.userList = data.socketIds;
-      const numberOfUsers = data.socketIds.length;
-      if (socketId === data.socketIds[numberOfUsers - 1]) {
+      const { socketIds, userId } = data;
+      myGameRef.current.userList = socketIds;
+      const numberOfUsers = socketIds.length;
+      if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
@@ -436,13 +437,13 @@ function Canvas(props: any) {
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data.socketIds[numberOfUsers - 2],
-              y: data.socketIds[numberOfUsers - 1],
+              x: socketIds[numberOfUsers - 2],
+              y: socketIds[numberOfUsers - 1],
             },
             score: 0,
           });
 
-          myGameRef.current.myTeamMate = data.socketIds[numberOfUsers - 2];
+          myGameRef.current.myTeamMate = socketIds[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
@@ -457,9 +458,14 @@ function Canvas(props: any) {
             tempTeamMate,
           });
 
+          console.log("teamNumber: " + teamNumber);
+          console.log("gameId: " + gameId);
+          console.log("teamName: " + `team${teamNumber}`);
+          console.log("userId: " + userId);
+
           postData(`/team`, {
-            gameId: gameId,
-            teamName: "team1",
+            gameId: parseInt(gameId),
+            teamName: `team${teamNumber}`,
             score: 0,
             characterId: 1,
             currentDirectionMoving: "",
@@ -469,8 +475,8 @@ function Canvas(props: any) {
           })
             .then((team) => {
               postData(`/teamUser`, {
-                teamId: team.id,
-                userId: data.userId,
+                teamId: parseInt(team.id),
+                userId: parseInt(userId),
                 verticalOrHorizontalControl: "vertical",
               });
             })
