@@ -12,22 +12,22 @@ export const create1 = async () => {
     data: {
       name: roles[0].name
   }
-}), prisma.role.create({
+}), await prisma.role.create({
   data: {
     name: roles[1].name
   }
-}), prisma.kart.create({
+}), await prisma.kart.create({
   data: {
     name: karts[0].name,
     topSpeed: karts[0].topSpeed,
     acceleration: karts[0].acceleration,
     handling: karts[0].handling
   }
-}), prisma.character.create({
+}), await prisma.character.create({
   data: {
     name: characters[0].name
   }
-}), prisma.character.create({
+}), await prisma.character.create({
   data: {
     name: characters[1].name
   }
