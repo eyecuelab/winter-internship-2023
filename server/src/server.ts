@@ -1,7 +1,9 @@
 import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -16,6 +18,22 @@ const io = new Server(server, {
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"],
   },
 });
+
+let updateQueue = [];
+    
+setInterval(async () => {
+  if (updateQueue.length > 0) {
+    // Batch updates
+    const updatesByTable = {};
+
+    const updates = updateQueue.splice(0, updateQueue.length);
+
+    await prisma.myModel.updateMany({
+      where: { id: { in: updates.map(update => update.id) } },
+      data: { field: { set: updates.map(update => update.value) } }
+    });
+  }
+}, 5000);
 
 io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
@@ -49,6 +67,7 @@ io.on("connection", (socket) => {
     socket
       .to(`${gameId}`)
       .emit("receive_game_update", { tempColor, jsonKart, tempScore });
+
   });
 
   socket.on("toggle_player_control", (data) => {

@@ -1,6 +1,4 @@
-import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
-
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
 import {
@@ -13,7 +11,7 @@ import {
   User,
 } from "@nextui-org/react";
 import { userType } from "../../types/Types";
-import { socketId, socket } from "./../../GlobalSocket";
+import { socket } from "./../../GlobalSocket";
 import { getUserDataGoogle } from "./services/lobby-services";
 
 interface UserDataGoogle {
@@ -50,7 +48,6 @@ const Lobby = (props: Props) => {
         socket.emit("join_game_room", {gameId, userId});
         navigate(`/game/${gameId}`);
       });
-    // });
   };
 
   const handleStartAGame = () => { //generate game boundary and pellets
@@ -155,13 +152,6 @@ const Lobby = (props: Props) => {
 
   return (
     <>
-      {/* <div>
-        <form>
-          <label htmlFor="name">Game Display Name:</label>
-          <input type="text" placeholder="Name"></input>
-          <button>Create Game User</button>
-        </form>
-      </div> */}
       <Navbar isBordered variant="sticky">
         <Navbar.Brand>
           <User
