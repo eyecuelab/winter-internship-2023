@@ -19,6 +19,7 @@ function Canvas(props: any) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
+  const canvasBorderRef = useRef<object>({});
 
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
@@ -293,8 +294,8 @@ function Canvas(props: any) {
       return [score[0], score[1]];
     });
 
-    let teamOne = document.getElementById("team1");
-    let teamTwo = document.getElementById("team2");
+    const teamOne = document.getElementById("team1");
+    const teamTwo = document.getElementById("team2");
 
     if (teamOne && scoresArr[0]) {
       const teamScore = scoresArr[0][1] ?? 0;
@@ -303,6 +304,17 @@ function Canvas(props: any) {
     if (teamTwo && scoresArr[1]) {
       const teamScore = scoresArr[0][1] ?? 0;
       teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
+    }
+
+    const playerControlDisplay = document.getElementById("playerControlDisplay");
+    if(playerControlDisplay){
+      const isInControl = myGameRef.current.myTeam.playerInControl === socketId;
+      playerControlDisplay.innerText = isInControl ? `YOU ARE IN CONTROL` : `your are NOT in control`
+      if (isInControl){
+        canvasBorderRef.current = {borderStyle: "solid", borderColor: "red", borderWidth: 10}
+      } else {
+        canvasBorderRef.current = {}
+      }
     }
   };
 
@@ -497,7 +509,7 @@ function Canvas(props: any) {
       } else if (e.key === "q") {
         console.log("roomGameRef:", roomGameRef.current);
         console.log("myGameRef:", myGameRef.current);
-        console.log("spawnPointsRef:", spawnPointsRef.current);
+        console.log("socketId:", socketId);
       } else if (e.key === "p") {
         lastKeyRef.current = "";
         myGameRef.current.myTeam.changePlayerInControl();
@@ -527,11 +539,9 @@ function Canvas(props: any) {
           scores: <span id="team1"></span> || <span id="team2"></span>
         </div>
         <div>
-          {myGameRef.current.myTeam.playerInControl === socketId
-            ? `YOU ARE IN CONTROL`
-            : `your are NOT in control`}
+          <span id="playerControlDisplay"></span>
         </div>
-        <canvas {...size} ref={canvasRef} />
+        <canvas {...size} ref={canvasRef}  style={canvasBorderRef.current}/>
         <div>
           <GameOver
             isGameOverModalOpen={isGameOverModalOpen}
