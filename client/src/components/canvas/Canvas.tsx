@@ -313,7 +313,7 @@ function Canvas(props: any) {
       if (isInControl){
         canvasBorderRef.current = {borderStyle: "solid", borderColor: "red", borderWidth: 10}
       } else {
-        canvasBorderRef.current = {}
+        canvasBorderRef.current = {borderStyle: "none"}
       }
     }
   };
