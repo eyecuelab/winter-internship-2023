@@ -21,7 +21,9 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const room = data.toString();
+    console.log("user that joined's name: " + data.userName)
+    //in order to get it all nice we need to store a temporary array of usernames or something like io.sockets.adapter.rooms.get(`$room}`)
+    const room = data.gameIdVar.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 

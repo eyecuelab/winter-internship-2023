@@ -16,6 +16,7 @@ import {
   User,
   Card,
   Spacer,
+  Input,
 } from "@nextui-org/react";
 
 interface UserDataGoogle {
@@ -41,36 +42,21 @@ const Lobby = (props: Props) => {
   const [gameId, setGameId] = useState(null);
 
   //start game functions:
-  const handleJoinAGame = (gameUsers: any) => {
+  const joinGame = (gameUsers: any, userName: string) => {
     postData(`/gameUser`, {
       gameId: gameUsers[0].gameId,
       userId: userData?.id,
       roleId: 1,
     }).then((gameUser) => {
-      // postData(`/team`, {
-      //   gameId: gameUser.gameId,
-      //   teamName: "team1",
-      //   score: 0,
-      //   characterId: 1,
-      //   currentDirectionMoving: "",
-      //   nextDirection: "left",
-      //   powerUp: false,
-      //   kartId: 1,
-      // }).then((team) => {
-      //   postData(`/teamUser`, {
-      //     teamId: team.id,
-      //     userId: userData?.id,
-      //     verticalOrHorizontalControl: "vertical",
-      //   });
-
       setGameId(gameUser.gameId);
-      socket.emit("join_game_room", gameUser.gameId);
+      const gameIdVar = gameUser.gameId
+      socket.emit("join_game_room", gameIdVar, userName); //this sends username to the sockets, we still need to send it to the canvas
       navigate(`/game/${gameUser.gameId}`);
     });
     // });
   };
 
-  const handleStartAGame = () => {
+  const startGame = (userName: string) => {
     //generate game boundary and pellets
     postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then(
       //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
@@ -82,24 +68,9 @@ const Lobby = (props: Props) => {
           userId: userData?.id,
           roleId: 1,
         }).then((newGameUser) => {
-          // postData(`/team`, {
-          //   gameId: newGameUser.gameId,
-          //   teamName: "team1",
-          //   score: 0,
-          //   characterId: 1,
-          //   currentDirectionMoving: "",
-          //   nextDirection: "left",
-          //   powerUp: false,
-          //   kartId: 1,
-          // }).then((newTeam) => {
-          //   postData(`/teamUser`, {
-          //     teamId: newTeam.id,
-          //     userId: userData?.id,
-          //     verticalOrHorizontalControl: "vertical",
-          //   });
-
           setGameId(newGameUser.gameId);
-          socket.emit("join_game_room", newGameUser.gameId);
+          const gameIdVar = newGameUser.gameId
+          socket.emit("join_game_room", gameIdVar, userName);
           navigate(`/game/${newGameUser.gameId}`);
           //  });
         });
@@ -107,16 +78,26 @@ const Lobby = (props: Props) => {
     );
   };
 
+  // also make sure that startGame can also take an argument that can be null
+
   const handleStartGameClick = async () => {
+    let userName = (document.getElementById("customName") as HTMLInputElement).value
+    //so the issue is that its pulling all of the html from that line lmao
+    console.log(userName) //so we see if we have the text here
+    console.log(typeof(userName))
+    // DOMPURIFY STUFF GOES HERE
+    // next is to get the sanitized version FROM DOMPURIFY
+    // then we check to see if it exists and we send it to the game function
+    // so that we can send it to the 
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
-        handleStartAGame();
+        startGame(userName);
       } else {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
-            handleJoinAGame(gameUsers);
+            joinGame(gameUsers, userName);
           } else if ((gameUsers.length = 0 || 4)) {
-            handleStartAGame();
+            startGame(userName);
           }
         });
       }
@@ -260,7 +241,7 @@ const Lobby = (props: Props) => {
           </Text>
 
           <Spacer y={1} />
-
+          <input type="text" id="customName" placeholder="Custom Name" />
           <Button color="gradient" auto ghost onClick={handleStartGameClick}>
             <Spacer x={0.5} />
             JOIN GAME!
