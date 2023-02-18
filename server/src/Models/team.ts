@@ -1,27 +1,27 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const createTeam = async (
-  gameId: number,
-  teamName: string,
+  color: string,
   score: number,
+  position: Prisma.JsonArray,
+  velocity: Prisma.JsonArray,
+  angle: number,
   characterId: number,
-  currentDirectionMoving: string,
-  nextDirection: string,
-  powerUp: boolean,
+  gameId: number,
   kartId: number
 ) => {
   return await prisma.team.create({
     data: {
       ...{
-        game: { connect: { id: gameId } },
-        teamName: teamName,
+        color: color,
         score: score,
+        position: position,
+        velocity: velocity,
+        angle: angle,
         character: { connect: { id: characterId } },
-        currentDirectionMoving: currentDirectionMoving,
-        nextDirection: nextDirection,
-        powerUp: powerUp,
+        game: { connect: { id: gameId } },
         kart: { connect: { id: kartId } },
       },
     },
@@ -31,19 +31,17 @@ export const createTeam = async (
 export const updateTeam = async (
   id: number,
   score: number,
-  currentDirectionMoving: string,
-  nextDirection: string,
-  powerUp: boolean,
-  kartId: number
+  position: Prisma.JsonArray,
+  velocity: Prisma.JsonArray,
+  angle: number
 ) => {
   return await prisma.team.update({
     where: { id: Number(id) },
     data: {
       score: score,
-      currentDirectionMoving: currentDirectionMoving,
-      nextDirection: nextDirection,
-      powerUp: powerUp,
-      kart: { connect: { id: kartId } },
+      position: position,
+      velocity: velocity,
+      angle: angle,
     },
   });
 };

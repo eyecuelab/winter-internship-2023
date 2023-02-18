@@ -41,20 +41,20 @@ model TeamUser {
   id                          Int    @id @default(autoincrement())
   teamId                      Int
   userId                      Int
-  verticalOrHorizontalControl String
+  axisControl                 String
   team                        Team   @relation(fields: [teamId], references: [id])
   user                        User   @relation(fields: [userId], references: [id])
 }
 
 model Team {
   id                     Int        @id @default(autoincrement())
-  gameId                 Int
-  teamName               String
+  color                  String
   score                  Int
+  position               Json[]
+  velocity               Json[]
+  angle                  Int
   characterId            Int
-  currentDirectionMoving String
-  nextDirection          String
-  powerUp                Boolean
+  gameId                 Int
   kartid                 Int
   character              Character  @relation(fields: [characterId], references: [id])
   game                   Game       @relation(fields: [gameId], references: [id])
@@ -64,9 +64,11 @@ model Team {
 
 model Game {
   id          Int        @id @default(autoincrement())
-  timeLeft    Int
-  boardArray  Json[]
-  pelletCount Int
+  map         Int
+  boundaries  Json[]
+  pellets     Json[]
+  spawnPoints Json[]
+  isActive    Boolean
   users       GameUser[]
   teams       Team[]
 }
