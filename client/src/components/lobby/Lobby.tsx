@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
 import { userType } from "../../types/Types";
-import { socketId, socket } from "./../../GlobalSocket";
 import { getUserDataGoogle } from "./services/lobby-services";
 import CoverImage from "../../assets/cover.png";
 import {
@@ -16,12 +15,9 @@ import {
   Card,
   Spacer,
 } from "@nextui-org/react";
-<<<<<<< HEAD
-import { userType } from "../../types/Types";
 import { socket } from "./../../GlobalSocket";
-import { getUserDataGoogle } from "./services/lobby-services";
-=======
->>>>>>> aa61ed15faf263490463cb00a6b3983e6b7aa902
+import mapSwitchCase from "../canvas/mapSwitchCase";
+import { gameMap } from "../canvas/Maps";
 
 interface UserDataGoogle {
   name: string;
@@ -46,7 +42,7 @@ const Lobby = (props: Props) => {
   // const [gameId, setGameId] = useState(null);
 
   //start game functions:
-  const handleJoinAGame = (gameUsers: any) => {
+  const joinAGame = (gameUsers: any) => {
     postData(`/gameUser`, {
       gameId: gameUsers[0].gameId,
       userId: userData?.id,
@@ -60,9 +56,9 @@ const Lobby = (props: Props) => {
       });
   };
 
-  const handleStartAGame = () => {
+  const startANewGame = () => {
     //generate game boundary and pellets
-    postData(`/game`, { timeLeft: 0, boardArray: [], pelletCount: 0 }).then(
+    postData(`/game`, { map: 0, boundaries: mapSwitchCase(gameMap).boundaries, pellets: mapSwitchCase(gameMap).pellets, spawnPoints: mapSwitchCase(gameMap).spawnPoints, isActive: true}).then(
       //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
       (newGame) => {
         // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
@@ -70,6 +66,7 @@ const Lobby = (props: Props) => {
         postData(`/gameUser`, {
           gameId: newGame.id,
           userId: userData?.id,
+          //update roleId
           roleId: 1,
         }).then((newGameUser) => {
           console.log("clientData:" + newGameUser);
@@ -86,13 +83,13 @@ const Lobby = (props: Props) => {
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
-        handleStartAGame();
+        startANewGame();
       } else {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
-            handleJoinAGame(gameUsers);
+            joinAGame(gameUsers);
           } else if ((gameUsers.length = 0 || 4)) {
-            handleStartAGame();
+            startANewGame();
           }
         });
       }

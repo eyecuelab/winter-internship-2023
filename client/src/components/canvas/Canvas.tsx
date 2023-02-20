@@ -32,6 +32,7 @@ function Canvas(props: any) {
     scores: new Map(),
     boolOfGameStatus: false,
   });
+//don't reference score from myTeam, myKart from myGameRef
 
   const myGameRef = useRef<myGameType>({
     userList: [],
