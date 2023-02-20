@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team, Pellet, SpawnPoint } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet, SpawnPoint, GameMap } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
@@ -10,6 +10,7 @@ import "./CanvasStyles.css";
 import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
+import { generateMapQuadrants } from "./quadrants";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -516,8 +517,14 @@ function Canvas(props: any) {
         const tempTeamMate = myGameRef.current.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-      }
-    };
+      } else if (e.key === "m") {
+        const quads = generateMapQuadrants();
+        const newMap = new GameMap(quads);
+        
+        newMap.generateMapArray();
+        console.log(newMap);
+      };
+    }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {

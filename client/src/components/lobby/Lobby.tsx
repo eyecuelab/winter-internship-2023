@@ -17,6 +17,8 @@ import {
   Card,
   Spacer,
 } from "@nextui-org/react";
+import { generateMapQuadrants } from "../canvas/quadrants";
+import { GameMap } from "../canvas/gameClasses";
 
 interface UserDataGoogle {
   name: string;
