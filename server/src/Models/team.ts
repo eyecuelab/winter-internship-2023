@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 export const createTeam = async (
   color: string,
   score: number,
-  position: Prisma.JsonArray,
-  velocity: Prisma.JsonArray,
+  position: Prisma.JsonObject,
+  velocity: Prisma.JsonObject,
   angle: number,
   characterId: number,
   gameId: number,
@@ -31,8 +31,8 @@ export const createTeam = async (
 export const updateTeam = async (
   id: number,
   score: number,
-  position: Prisma.JsonArray,
-  velocity: Prisma.JsonArray,
+  position: Prisma.JsonObject,
+  velocity: Prisma.JsonObject,
   angle: number
 ) => {
   return await prisma.team.update({

@@ -48,8 +48,8 @@ CREATE TABLE "Team" (
     "id" SERIAL NOT NULL,
     "color" TEXT NOT NULL,
     "score" INTEGER NOT NULL,
-    "position" JSONB[],
-    "velocity" JSONB[],
+    "position" JSONB NOT NULL,
+    "velocity" JSONB NOT NULL,
     "angle" INTEGER NOT NULL,
     "characterId" INTEGER NOT NULL,
     "gameId" INTEGER NOT NULL,
@@ -61,7 +61,7 @@ CREATE TABLE "Team" (
 -- CreateTable
 CREATE TABLE "Game" (
     "id" SERIAL NOT NULL,
-    "map" INTEGER NOT NULL,
+    "map" JSONB NOT NULL,
     "boundaries" JSONB[],
     "pellets" JSONB[],
     "spawnPoints" JSONB[],

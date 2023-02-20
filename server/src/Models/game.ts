@@ -3,7 +3,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const createGame = async (
-  map: number,
+  map: Prisma.JsonObject,
   boundaries: Prisma.JsonArray,
   pellets: Prisma.JsonArray,
   spawnPoints: Prisma.JsonArray

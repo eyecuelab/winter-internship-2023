@@ -50,8 +50,8 @@ model Team {
   id                     Int        @id @default(autoincrement())
   color                  String
   score                  Int
-  position               Json[]
-  velocity               Json[]
+  position               Json
+  velocity               Json
   angle                  Int
   characterId            Int
   gameId                 Int
@@ -64,7 +64,7 @@ model Team {
 
 model Game {
   id          Int        @id @default(autoincrement())
-  map         Int
+  map         Json
   boundaries  Json[]
   pellets     Json[]
   spawnPoints Json[]
