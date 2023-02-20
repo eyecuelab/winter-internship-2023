@@ -110,6 +110,14 @@ const Lobby = (props: Props) => {
   };
 
   const handleStartGameClick = async () => {
+    //temp console log to test GameMap class
+    const quads = generateMapQuadrants();
+    const newMap = new GameMap(quads);
+
+    newMap.generateMapArr();
+    newMap.generateMapPropertiesArrs();
+    console.log(newMap);
+
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
         handleStartAGame();

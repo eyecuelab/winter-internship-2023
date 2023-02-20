@@ -1,4 +1,5 @@
 import { kartConstructorType, kartType, teamConstructorType, teamType } from "../../types/Types";
+import mapSwitchCase from "./mapSwitchCase";
 import { quadrants } from "./quadrants";
 
 export class Boundary {
@@ -110,7 +111,7 @@ export class GameMap {
     this.spawnPoints = [];
   }
 
-  generateMapArray() {
+  generateMapArr() {
     function reverseArrs(arr: any) {
       //reverses each arrays elements w/in a 2d array
       for (let i = 0; i < arr.length; i++) {
@@ -145,6 +146,14 @@ export class GameMap {
     const combinedBottom = quad3.map((arr: any[], i: number) => arr.concat(quad4[i]));
 
     this.mapArr = [...combinedTop, ...combinedBottom];
+  }
+
+  generateMapPropertiesArrs(){
+    const {boundaries, pellets, spawnPoints} = mapSwitchCase(this.mapArr);
+
+    this.boundaries = boundaries;
+    this.pellets = pellets;
+    this.spawnPoints = spawnPoints;
   }
 }
 
