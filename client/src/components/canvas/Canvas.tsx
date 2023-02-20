@@ -468,14 +468,14 @@ function Canvas(props: any) {
           console.log("teamName: " + tempMyTeam["color"]);
 
           postData(`/team`, {
-            gameId: parseInt(gameId),
-            teamName: tempMyTeam["color"],
+            color: tempMyTeam["color"],
             score: 0,
+            position: tempMyKart.position,
+            velocity:tempMyKart.velocity,
+            angle: tempMyKart.angle,
             characterId: 1,
-            currentDirectionMoving: "",
-            nextDirection: "left",
-            powerUp: false,
-            kartId: 1,
+            gameId: parseInt(gameId),
+            kartid: 1,
           })
             .then((team) => {
               if (typeof(team.id) === "number") {
@@ -484,7 +484,8 @@ function Canvas(props: any) {
               postData(`/teamUser`, {
                 teamId: parseInt(team.id),
                 userId: parseInt(userId),
-                verticalOrHorizontalControl: "vertical",
+                //dummy data
+                axisControl: "vertical",
               });
             })
         }

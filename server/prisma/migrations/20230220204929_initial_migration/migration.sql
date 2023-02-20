@@ -53,7 +53,7 @@ CREATE TABLE "Team" (
     "angle" INTEGER NOT NULL,
     "characterId" INTEGER NOT NULL,
     "gameId" INTEGER NOT NULL,
-    "kartid" INTEGER NOT NULL,
+    "kartId" INTEGER NOT NULL,
 
     CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
 );
@@ -103,4 +103,4 @@ ALTER TABLE "Team" ADD CONSTRAINT "Team_characterId_fkey" FOREIGN KEY ("characte
 ALTER TABLE "Team" ADD CONSTRAINT "Team_gameId_fkey" FOREIGN KEY ("gameId") REFERENCES "Game"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Team" ADD CONSTRAINT "Team_kartid_fkey" FOREIGN KEY ("kartid") REFERENCES "Kart"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Team" ADD CONSTRAINT "Team_kartId_fkey" FOREIGN KEY ("kartId") REFERENCES "Kart"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

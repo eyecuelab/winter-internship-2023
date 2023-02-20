@@ -20,9 +20,9 @@ export const createTeam = async (
         position: position,
         velocity: velocity,
         angle: angle,
-        character: { connect: { id: characterId } },
-        game: { connect: { id: gameId } },
-        kart: { connect: { id: kartId } },
+        characterId: { connect: { id: characterId } },
+        gameId: { connect: { id: gameId } },
+        kartId: { connect: { id: kartId } },
       },
     },
   });
