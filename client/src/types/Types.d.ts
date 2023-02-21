@@ -28,6 +28,7 @@ export type teamConstructorType = {
   color: string;
   players: { x: string; y: string };
   score: number;
+  ghost: boolean;
 };
 
 export type kartType = {

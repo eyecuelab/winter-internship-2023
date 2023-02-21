@@ -192,9 +192,11 @@ function Canvas(props: any) {
         }
       }
     }
-
+    
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+    //run circle collides with circle here for each player
+    //ghosts will only check for each instance of a player
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -337,8 +339,11 @@ function Canvas(props: any) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-
-      removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
+      //maybe only call removePellets if you're not a ghost?
+      if (myGameRef.current.myTeam.ghost == false) {
+        removePellets(pelletsRef.current, updatedKart);
+      }
+       //consolidate this emit with game_update
 
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
@@ -431,6 +436,7 @@ function Canvas(props: any) {
             imgSrc: kartTest.kartTest,
             angle: 0,
           });
+          //logic needed to determine that the first group of players should not be ghosts and the rest should
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
@@ -439,6 +445,7 @@ function Canvas(props: any) {
               y: data[numberOfUsers - 1],
             },
             score: 0,
+            ghost: false
           });
 
           myGameRef.current.myTeamMate = data[numberOfUsers - 2];

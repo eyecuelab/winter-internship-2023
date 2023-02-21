@@ -24,7 +24,6 @@ io.on("connection", (socket) => {
     const room = data.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
-
     //fetches all socket ids in the room:
     const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
     console.log(`guests in room ${room}`, socketsInRoom);

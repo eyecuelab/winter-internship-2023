@@ -44,6 +44,7 @@ export class Team {
   playerInControl: string;
   players: { x: string; y: string };
   score: number;
+  ghost: boolean
   constructor();
   constructor(teamData: teamConstructorType);
   constructor(teamData?: teamConstructorType) {
@@ -52,6 +53,7 @@ export class Team {
     this.players = teamData?.players ?? { x: "", y: "string" };
     this.playerInControl = teamData?.players ? teamData.players.x :  "";
     this.score = teamData?.score ?? 0;
+    this.ghost = teamData?.ghost ?? false;
   }
 
   changePlayerInControl() {
