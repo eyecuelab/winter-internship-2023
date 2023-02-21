@@ -6,7 +6,6 @@ RUN apt-get update; apt install -y curl python-is-python3 pkg-config build-essen
 RUN curl https://get.volta.sh | bash
 ENV VOLTA_HOME /root/.volta
 ENV PATH /root/.volta/bin:$PATH
-RUN volta install node@${NODE_VERSION}
 
 #######################################################################
 
