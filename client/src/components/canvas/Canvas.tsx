@@ -440,24 +440,40 @@ function Canvas(props: any) {
             angle: 0,
           });
           //logic needed to determine that the first group of players should not be ghosts and the rest should
-          const tempMyTeam = new Team({
-            teamId: numberOfUsers.toString(),
-            color: colors[numberOfUsers],
-            players: {
-              x: data[numberOfUsers - 2],
-              y: data[numberOfUsers - 1],
-            },
-            score: 0,
-            ghost: false
-          });
-
-          myGameRef.current.myTeamMate = data[numberOfUsers - 2];
-          myGameRef.current.myControl = "y";
-          myGameRef.current.myTeam = tempMyTeam;
-          myGameRef.current.myKart = tempMyKart;
-
+          
+          if (numberOfUsers < 3) {
+            const tempMyTeam = new Team({
+              teamId: numberOfUsers.toString(),
+              color: colors[numberOfUsers],
+              players: {
+                x: data[numberOfUsers - 2],
+                y: data[numberOfUsers - 1],
+              },
+              score: 0,
+              ghost: false
+            });
+            myGameRef.current.myTeamMate = data[numberOfUsers - 2];
+            myGameRef.current.myControl = "y";
+            myGameRef.current.myTeam = tempMyTeam;
+            myGameRef.current.myKart = tempMyKart;
+          } else {
+            const tempMyTeam = new Team({
+              teamId: numberOfUsers.toString(),
+              color: colors[numberOfUsers],
+              players: {
+                x: data[numberOfUsers - 2],
+                y: data[numberOfUsers - 1],
+              },
+              score: 0,
+              ghost: true
+            });
+            myGameRef.current.myTeamMate = data[numberOfUsers - 2];
+            myGameRef.current.myControl = "y";
+            myGameRef.current.myTeam = tempMyTeam;
+            myGameRef.current.myKart = tempMyKart;
+          }
           const tempTeamMate = myGameRef.current.myTeamMate;
-          const jsonTeam = JSON.stringify(tempMyTeam);
+          const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
           const jsonKart = JSON.stringify(tempMyKart);
           socket.emit("send_team", {
             jsonTeam,
