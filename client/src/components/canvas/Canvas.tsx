@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import frameRenderer from "./frameRenderer";
-import { Boundary, Kart, Team, Pellet, SpawnPoint } from "./gameClasses";
+import { Boundary, Kart, Team, Pellet, SpawnPoint, GameMap } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
@@ -10,6 +10,7 @@ import "./CanvasStyles.css";
 import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
+import { generateMapQuadrants, quadrants } from "./quadrants";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -405,6 +406,7 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
+    //replace these lines with updating your refs from a socket data
     const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
@@ -422,6 +424,7 @@ function Canvas(props: any) {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
+        //set the map properties
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
@@ -516,8 +519,18 @@ function Canvas(props: any) {
         const tempTeamMate = myGameRef.current.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-      }
-    };
+      } else if (e.key === "m") {
+        const quads = generateMapQuadrants();
+        const newMap = new GameMap(quads);
+        
+        newMap.generateMapArr();
+        newMap.generateMapPropertiesArrs();
+        console.log(newMap);
+        boundariesRef.current = newMap.boundaries;
+        pelletsRef.current = newMap.pellets;
+        spawnPointsRef.current = newMap.spawnPoints;
+      };
+    }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => {
