@@ -64,7 +64,7 @@ model Team {
 
 model Game {
   id          Int        @id @default(autoincrement())
-  map         Int
+  map         Json
   boundaries  Json[]
   pellets     Json[]
   spawnPoints Json[]

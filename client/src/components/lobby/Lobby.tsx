@@ -18,6 +18,8 @@ import {
 import { socket } from "./../../GlobalSocket";
 import mapSwitchCase from "../canvas/mapSwitchCase";
 import { gameMap } from "../canvas/Maps";
+import { generateMapQuadrants } from "../canvas/quadrants";
+import { GameMap } from "../canvas/gameClasses";
 
 interface UserDataGoogle {
   name: string;
@@ -81,6 +83,14 @@ const Lobby = (props: Props) => {
   };
 
   const handleStartGameClick = async () => {
+    //temp console log to test GameMap class
+    const quads = generateMapQuadrants();
+    const newMap = new GameMap(quads);
+
+    newMap.generateMapArr();
+    newMap.generateMapPropertiesArrs();
+    console.log(newMap);
+
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
         startANewGame();
