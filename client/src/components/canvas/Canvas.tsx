@@ -466,6 +466,9 @@ function Canvas(props: any) {
           console.log("gameId: " + gameId);
           console.log("userId: " + userId);
           console.log("teamName: " + tempMyTeam["color"]);
+          console.log(parseInt(gameId));
+
+          const gameIdInt = parseInt(gameId);
 
           postData(`/team`, {
             color: tempMyTeam["color"],
@@ -474,8 +477,8 @@ function Canvas(props: any) {
             velocity:tempMyKart.velocity,
             angle: tempMyKart.angle,
             characterId: 1,
-            gameId: parseInt(gameId),
-            kartid: 1,
+            gameId: gameIdInt,
+            kartId: 1,
           })
             .then((team) => {
               if (typeof(team.id) === "number") {

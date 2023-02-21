@@ -8,9 +8,9 @@ const teamControllers = {
       position,
       velocity,
       angle,
-      gameId,
-      kartId,
       characterId,
+      gameId,
+      kartId
     } = req.body;
     const newTeam = await createTeam(
       color,
@@ -18,9 +18,9 @@ const teamControllers = {
       position,
       velocity,
       angle,
-      gameId,
-      kartId,
       characterId,
+      gameId,
+      kartId
     );
     res.status(200).json(newTeam);
   },
