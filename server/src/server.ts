@@ -33,10 +33,6 @@ io.on("connection", (socket) => {
 
   socket.on("join_game_room", async (data) => {
     const { gameId, userId} = data;
-    console.log("serverData:" + data);
-    console.log("typeof gameId" + typeof(gameId));
-    console.log("gameId" + gameId);
-    console.log(userId);
     const room = gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
@@ -56,8 +52,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("game_update", (data) => {
-    const { gameId, teamId, tempScore, jsonKart, boolOfGameStatus, tempPellets } = data;
-    const parsedKart = JSON.parse(jsonKart)
+    const { tempColor, gameId, teamId, tempScore, jsonKart, boolOfGameStatus, tempPellets } = data;
+ 
+
+    // const parsedKart = JSON.parse(jsonKart)
 
     // console.log("tempColor: "+ tempColor);
     // console.log("tempScore: "+ tempScore);
@@ -89,7 +87,7 @@ io.on("connection", (socket) => {
 
     socket
       .to(`${gameId}`)
-      .emit("receive_game_update", { jsonKart, tempScore });
+      .emit("receive_game_update", { tempColor, jsonKart, tempScore });
 
   });
 

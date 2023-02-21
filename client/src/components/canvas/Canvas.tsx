@@ -22,12 +22,10 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
   const canvasBorderRef = useRef<object>({});
-
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const lastKeyRef = useRef("");
-
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
@@ -138,6 +136,7 @@ function Canvas(props: any) {
     //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
     //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
     // }
+    // console.log(roomGameRef.current.karts);
     return kart;
   };
 
@@ -342,6 +341,8 @@ function Canvas(props: any) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
+      // console.log(updatedKart);
+      //update Kart for player 1 & 2 are different
 
       removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
 
@@ -350,6 +351,8 @@ function Canvas(props: any) {
       const tempScore = roomGameRef.current.scores.get(tempColor);
       const tempPellets = pelletsRef.current
 
+      // console.log(jsonKart);
+      //1 Kart
       socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId, tempPellets });
       displayScores();
     }
@@ -359,6 +362,9 @@ function Canvas(props: any) {
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
+
+    // console.log(kartsArr);
+
     frameRenderer.call(
       context,
       size,
@@ -463,12 +469,11 @@ function Canvas(props: any) {
             tempTeamMate,
           });
 
-          console.log("teamNumber: " + teamNumber);
-          console.log("gameId: " + gameId);
-          console.log("userId: " + userId);
-          console.log("teamName: " + tempMyTeam["color"]);
-          console.log(parseInt(gameId));
-
+          // console.log("teamNumber: " + teamNumber);
+          // console.log("gameId: " + gameId);
+          // console.log("userId: " + userId);
+          // console.log("teamName: " + tempMyTeam["color"]);
+          // console.log(parseInt(gameId));
           postData(`/team`, {
             color: tempMyTeam["color"],
             score: 0,
@@ -505,9 +510,12 @@ function Canvas(props: any) {
         myGameRef.current.myControl = "x";
         myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
       }
-
+      // console.log(tempTeam);
+      // console.log(tempKart);
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
+      // console.log(roomGameRef.current);
+      //1 Kart here
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -516,6 +524,8 @@ function Canvas(props: any) {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current.karts.set(tempColor, tempKart);
       roomGameRef.current.scores.set(tempColor, tempScore);
+      //2 karts here
+      // console.log(roomGameRef.current)
       displayScores();
     });
 
@@ -555,7 +565,7 @@ function Canvas(props: any) {
         const quads = generateMapQuadrants();
         const newMap = new GameMap(quads);
         
-        newMap.generateMapArray();
+        newMap.generateMapArr();
         console.log(newMap);
       };
     }

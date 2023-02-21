@@ -35,13 +35,11 @@ interface Props {
 const Lobby = (props: Props) => {
   // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
-  console.log(userData);
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
-  // const [gameId, setGameId] = useState(null);
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
@@ -59,8 +57,14 @@ const Lobby = (props: Props) => {
   };
 
   const startANewGame = () => {
+    const quads = generateMapQuadrants();
+    const newMap = new GameMap(quads);
+
+    newMap.generateMapArr();
+    newMap.generateMapPropertiesArrs();
+
     //generate game boundary and pellets
-    postData(`/game`, { map: 0, boundaries: mapSwitchCase(gameMap).boundaries, pellets: mapSwitchCase(gameMap).pellets, spawnPoints: mapSwitchCase(gameMap).spawnPoints, isActive: true}).then(
+    postData(`/game`, { map: newMap.mapArr, boundaries: mapSwitchCase(gameMap).boundaries, pellets: mapSwitchCase(gameMap).pellets, spawnPoints: mapSwitchCase(gameMap).spawnPoints, isActive: true}).then(
       //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
       (newGame) => {
         // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
@@ -84,12 +88,12 @@ const Lobby = (props: Props) => {
 
   const handleStartGameClick = async () => {
     //temp console log to test GameMap class
-    const quads = generateMapQuadrants();
-    const newMap = new GameMap(quads);
+    // const quads = generateMapQuadrants();
+    // const newMap = new GameMap(quads);
 
-    newMap.generateMapArr();
-    newMap.generateMapPropertiesArrs();
-    console.log(newMap);
+    // newMap.generateMapArr();
+    // newMap.generateMapPropertiesArrs();
+    // console.log(newMap);
 
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
