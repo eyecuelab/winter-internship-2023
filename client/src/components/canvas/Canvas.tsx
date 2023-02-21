@@ -468,8 +468,6 @@ function Canvas(props: any) {
           console.log("teamName: " + tempMyTeam["color"]);
           console.log(parseInt(gameId));
 
-          const gameIdInt = parseInt(gameId);
-
           postData(`/team`, {
             color: tempMyTeam["color"],
             score: 0,
@@ -477,7 +475,7 @@ function Canvas(props: any) {
             velocity:tempMyKart.velocity,
             angle: tempMyKart.angle,
             characterId: 1,
-            gameId: gameIdInt,
+            gameId: parseInt(gameId),
             kartId: 1,
           })
             .then((team) => {
