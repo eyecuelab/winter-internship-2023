@@ -29,7 +29,8 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    io.in(`${room}`).emit("receive_client_joined", socketIds);
+    //database fetch game boundaries/pellets/spawnpoints arrays
+    io.in(`${room}`).emit("receive_client_joined", socketIds);//send map properties from the database
   });
 
   socket.on("send_team", (data) => {

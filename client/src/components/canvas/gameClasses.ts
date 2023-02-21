@@ -1,4 +1,6 @@
 import { kartConstructorType, kartType, teamConstructorType, teamType } from "../../types/Types";
+import mapSwitchCase from "./mapSwitchCase";
+import { quadrants } from "./quadrants";
 
 export class Boundary {
   static width = 40;
@@ -93,3 +95,56 @@ export class SpawnPoint {
     this.position = position;
   }
 }
+export class GameMap {
+  mapQuadrants: { i: number; ii: number; iii: number; iv: number };
+  mapArr: any[];
+  boundaries: Boundary[];
+  pellets: Pellet[];
+  spawnPoints: SpawnPoint[];
+
+  constructor(
+    mapQuadrants
+  : {i: number; ii: number; iii: number; iv: number }
+  ) {
+    this.mapQuadrants = mapQuadrants;
+    this.mapArr = [];
+    this.boundaries = [];
+    this.pellets = [];
+    this.spawnPoints = [];
+  }
+
+  generateMapArr() {
+    const tempQuads = quadrants.map((quad) => quad.slice().map(innerArr => innerArr.slice()));
+  
+    function reverseArrs(arr: any[]) {
+      //reverses each arrays elements w/in a 2d array
+      const reversedArr = arr.map((innerArr: any[]) => innerArr.slice().reverse());
+      return reversedArr;
+    }
+  
+    function reverseOrderOfArrs(arr: any[]) {
+      //reverses order of arrays w/in a 2d array
+      const reversedArr = arr.slice().reverse().map((innerArr: any[]) => innerArr.slice());
+      return reversedArr;
+    }
+  
+    const quad1 = tempQuads[this.mapQuadrants.i];
+    const quad2 = reverseArrs(tempQuads[this.mapQuadrants.ii]);
+    const quad3 = reverseOrderOfArrs(tempQuads[this.mapQuadrants.iii]);
+    const quad4 = reverseArrs(reverseOrderOfArrs(tempQuads[this.mapQuadrants.iv]));
+  
+    const combinedTop = quad1.map((arr, i) => arr.concat(quad2[i]));
+    const combinedBottom = quad3.map((arr, i) => arr.concat(quad4[i]));
+    this.mapArr = [...combinedTop, ...combinedBottom];
+  }
+  
+
+  generateMapPropertiesArrs(){
+    const {boundaries, pellets, spawnPoints} = mapSwitchCase(this.mapArr);
+
+    this.boundaries = boundaries;
+    this.pellets = pellets;
+    this.spawnPoints = spawnPoints;
+  }
+}
+
