@@ -34,7 +34,6 @@ interface Props {
 const Lobby = (props: Props) => {
   // const logo = require('./kartTest.png')
   const { userData, updateUserData } = props;
-  console.log(userData);
   const navigate = useNavigate();
   const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null

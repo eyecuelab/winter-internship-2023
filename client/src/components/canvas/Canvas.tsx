@@ -10,9 +10,10 @@ import "./CanvasStyles.css";
 import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
-import { generateMapQuadrants } from "./quadrants";
+import { generateMapQuadrants, quadrants } from "./quadrants";
 
 function Canvas(props: any) {
+  console.log("quadrants from canvas comp:", quadrants);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "blue"];
@@ -521,7 +522,8 @@ function Canvas(props: any) {
         const quads = generateMapQuadrants();
         const newMap = new GameMap(quads);
         
-        newMap.generateMapArray();
+        newMap.generateMapArr();
+        newMap.generateMapPropertiesArrs();
         console.log(newMap);
       };
     }
