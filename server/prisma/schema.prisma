@@ -55,10 +55,10 @@ model Team {
   angle                  Int
   characterId            Int
   gameId                 Int
-  kartid                 Int
+  kartId                 Int
   character              Character  @relation(fields: [characterId], references: [id])
   game                   Game       @relation(fields: [gameId], references: [id])
-  kart                   Kart       @relation(fields: [kartid], references: [id])
+  kart                   Kart       @relation(fields: [kartId], references: [id])
   users                  TeamUser[]
 }
 
