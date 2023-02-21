@@ -113,7 +113,6 @@ export class GameMap {
 
   generateMapArr() {
     const tempQuads = quadrants.map((quad) => quad.slice().map(innerArr => innerArr.slice()));
-    console.log("quadrants before any changes:", tempQuads);
   
     function reverseArrs(arr: any[]) {
       //reverses each arrays elements w/in a 2d array
@@ -127,14 +126,10 @@ export class GameMap {
       return reversedArr;
     }
   
-    console.log("quadrants:", this.mapQuadrants);
-  
     const quad1 = tempQuads[this.mapQuadrants.i];
     const quad2 = reverseArrs(tempQuads[this.mapQuadrants.ii]);
     const quad3 = reverseOrderOfArrs(tempQuads[this.mapQuadrants.iii]);
     const quad4 = reverseArrs(reverseOrderOfArrs(tempQuads[this.mapQuadrants.iv]));
-  
-    console.log("quadrants after changes:", tempQuads);
   
     const combinedTop = quad1.map((arr, i) => arr.concat(quad2[i]));
     const combinedBottom = quad3.map((arr, i) => arr.concat(quad4[i]));

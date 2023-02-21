@@ -13,7 +13,6 @@ import mapSwitchCase from "./mapSwitchCase";
 import { generateMapQuadrants, quadrants } from "./quadrants";
 
 function Canvas(props: any) {
-  console.log("quadrants from canvas comp:", quadrants);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "blue"];
@@ -407,6 +406,7 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
+    //replace these lines with updating your refs from a socket data
     const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
@@ -424,6 +424,7 @@ function Canvas(props: any) {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
+        //set the map properties
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
@@ -525,6 +526,9 @@ function Canvas(props: any) {
         newMap.generateMapArr();
         newMap.generateMapPropertiesArrs();
         console.log(newMap);
+        boundariesRef.current = newMap.boundaries;
+        pelletsRef.current = newMap.pellets;
+        spawnPointsRef.current = newMap.spawnPoints;
       };
     }
 
