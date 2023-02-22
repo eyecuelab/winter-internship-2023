@@ -69,42 +69,50 @@ io.on("connection", (socket) => {
 
   });
 
-  socket.on("db_update", (data) => {
-    const { gameId, teamId, currentScore, currentKart, currentBoolOfGameStatus, currentPellets, testIsActiveBool } = data;
+  
+socket.on("db_update", (data) => {
+//teamId wasn't be sent before on sockets, that is why only the 2nd team has the current ID
 
-    // const parsedKart = JSON.parse(currentKart);
-    // console.log(currentKart);
-    // console.log(parsedKart);
-    console.log(gameId);
-    // console.log(teamId);
-    // console.log(currentScore);
-    // console.log(currentBoolOfGameStatus);
-    // console.log(currentPellets);
-    console.log(testIsActiveBool);
+  const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
 
-    
-    const gameUpdatesOnInterval = async () => {
-      await prisma.game.update({
-        where: { id: parseInt(gameId) },
+  // const parsedKart = JSON.parse(currentKart);
+  // console.log(currentKart);
+  // console.log(parsedKart);
+  console.log("gameId " + gameId);
+  console.log("teamId " + currentTeamId);
+  console.log("currentScore " + currentScore);
+  console.log("currentKart "+ currentKart);
+  console.log("currentIsGameOver " + currentIsGameOver);
+  // console.log(currentPellets);
+
+
+  
+  const gameUpdatesOnInterval = async () => {
+    await prisma.game.update({
+      where: { id: parseInt(gameId) },
+      data: { 
+        pellets: currentPellets,
+        isActive: currentIsGameOver
+      },
+    }), 
+    await prisma.team.update({
+        where: { id: parseInt(currentTeamId) },
         data: { 
-          // pellets: tempPellets,
-          isActive: testIsActiveBool
+          score: currentScore,
+          position:  currentKart["position"],
+          velocity:  currentKart["velocity"],
+          angle: currentKart["angle"]
         },
       })
-    }
+  }
+ 
+  if (currentTeamId) {
+    console.count("db_update2");
     gameUpdatesOnInterval();
-      // await prisma.team.update({
-      //   where: { id: teamId },
-      //   data: { 
-      //     score: tempScore,
-      //     position:  parsedKart["position"],
-      //     velocity:  parsedKart["velocity"],
-      //     angle: parsedKart["angle"]
-      //   },
-      // })
+  }
 
-    console.count("db_update");
-  })
+  console.count("db_update");
+})
 
   socket.on("toggle_player_control", (data) => {
     socket

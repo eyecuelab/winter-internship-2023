@@ -437,8 +437,31 @@ function Canvas(props: any) {
       const numberOfUsers = socketIds.length;
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
+
+          //this isn't getting called everytime
+          postData(`/team`, {
+            color: colors[numberOfUsers],
+            score: 0,
+            position: spawnPosition.position,
+            velocity: { x: 0, y: 0 },
+            angle: 0,
+            characterId: 1,
+            gameId: parseInt(gameId),
+            kartId: 1,
+          })
+            .then((team) => {
+              teamId.current = team.id;
+              console.log(teamId.current);
+              postData(`/teamUser`, {
+                teamId: parseInt(team.id),
+                userId: parseInt(userId),
+                //dummy data
+                axisControl: "vertical",
+              });
+            })
           const tempMyKart = new Kart({
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
@@ -475,26 +498,7 @@ function Canvas(props: any) {
           // console.log("userId: " + userId);
           // console.log("teamName: " + tempMyTeam["color"]);
           // console.log(parseInt(gameId));
-          postData(`/team`, {
-            color: tempMyTeam["color"],
-            score: 0,
-            position: tempMyKart.position,
-            velocity:tempMyKart.velocity,
-            angle: tempMyKart.angle,
-            characterId: 1,
-            gameId: parseInt(gameId),
-            kartId: 1,
-          })
-            .then((team) => {
-              teamId.current = team.id;
-              console.log(teamId.current);
-              postData(`/teamUser`, {
-                teamId: parseInt(team.id),
-                userId: parseInt(userId),
-                //dummy data
-                axisControl: "vertical",
-              });
-            })
+
         }
       }
     });
@@ -547,42 +551,29 @@ function Canvas(props: any) {
     };
   }, [socket]);
 
-  // if (myGameRef.current.userList.length >= 4) {
+  console.log(teamId.current)
+  // while (teamId.current) {
   setInterval(async () => {
+  if (teamId.current) {
     const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)
     const currentKart =  roomGameRef.current.karts.get(
       myGameRef.current.myTeam.color
     );
-    // const currentIsGameOver = roomGameRef.current.isGameOver;
+    const currentIsGameOver = roomGameRef.current.isGameOver;
     const currentPellets = pelletsRef.current;
+    const currentTeamId = teamId.current;
 
-    const testIsActiveBool = false;
-
-    //undefined
     console.log("color:" + myGameRef.current.myTeam.color)
     console.log(" currentScore" + currentScore);
-    console.log(currentKart);
-
-    // console.log(gameId);
-
-
-    //
-    //{current: null}
-    console.log(teamId);
-
-    //undefined
-    // console.log(currentScore);
-
-    //false
-    // console.log(currentIsGameOver);
-
-
-    // console.log(currentPellets);
+    console.log("currentKart" + currentKart);
+    console.log("teamId" + currentTeamId);
+    console.log("currentIsGameOver" + currentIsGameOver);
 
     socket.emit("db_update", {
-      gameId, currentPellets, testIsActiveBool
+      gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver
     })
-  }, 10000);
+}
+}, 10000);
 // }
 
   // socket.emit("send_team", {
