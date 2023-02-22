@@ -209,14 +209,6 @@ function Canvas(props: any) {
       }
     });
 
-    // if (kart.velocity.x != 0) {
-    //   lastKeyRef.current = "";
-    //   myGameRef.current.myTeam.changePlayerInControl();
-    //   const tempTeamMate = myGameRef.current.myTeamMate;
-    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
-
     return kart;
   };
 
@@ -406,12 +398,6 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
-    //replace these lines with updating your refs from a socket data
-    const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
-    boundariesRef.current = boundaries;
-    pelletsRef.current = pellets;
-    spawnPointsRef.current = spawnPoints;
-
     requestIdRef.current = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(requestIdRef.current);
@@ -420,6 +406,14 @@ function Canvas(props: any) {
 
   //SOCKET HANDLERS:
   useEffect(() => {
+    socket.on("receive_initial_game_data", (gameData)=>{
+      const initialGameData = JSON.parse(gameData);
+      console.log(initialGameData);
+      boundariesRef.current = initialGameData.boundaries;
+      pelletsRef.current = initialGameData.pellets;
+      spawnPointsRef.current = initialGameData.spawnPoints;
+    })
+
     socket.on("receive_client_joined", (data) => {
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;

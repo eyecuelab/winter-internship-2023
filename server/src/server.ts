@@ -1,6 +1,7 @@
 import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
+import { getGameById } from "./Models/game";
 
 const server = http.createServer(app);
 
@@ -25,7 +26,9 @@ io.on("connection", (socket) => {
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
-    //fetches all socket ids in the room:
+    const gameData = JSON.stringify(await getGameById(room));
+    io.to(socket.id).emit("receive_initial_game_data", gameData);
+
     const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
@@ -62,12 +65,12 @@ io.on("connection", (socket) => {
   });
 });
 
-// server.listen(3001, () =>
-//   console.log("Server ready at: http://localhost:3001")
-// );
-server.listen(8080, () =>
-  console.log("Server ready at: 8080")
+server.listen(3001, () =>
+  console.log("Server ready at: http://localhost:3001")
 );
+// server.listen(8080, () =>
+//   console.log("Server ready at: 8080")
+// );
 
 
 export default io;
