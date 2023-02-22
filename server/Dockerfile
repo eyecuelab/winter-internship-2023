@@ -35,3 +35,5 @@ ENV PATH /root/.volta/bin:$PATH
 ENV DATABASE_URL="postgres://postgres:XDAZX8mpzryhRYO@super-pacart-db.internal:5432"
 
 CMD [ "npm", "run", "start" ]
+
+EXPOSE 8080
