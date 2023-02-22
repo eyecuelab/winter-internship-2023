@@ -1,5 +1,3 @@
-
-
 export const generateMapQuadrants = () => {
   const randomNumberSelector = () => {
     return Math.floor(Math.random() * 3);

@@ -11,7 +11,7 @@ import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 import { postData } from "../../apiHelper";
-import { generateMapQuadrants } from "./quadrants";
+import { generateMapQuadrants, quadrants } from "./quadrants";
 import { RouterProvider } from "react-router-dom";
 
 function Canvas(props: any) {
@@ -129,15 +129,6 @@ function Canvas(props: any) {
         kart.velocity.x = 0;
       }
     });
-
-    // if (kart.velocity.y != 0) {
-    //   lastKeyRef.current = "";
-    //   myGameRef.current.myTeam.changePlayerInControl();
-    //   const tempTeamMate = myGameRef.current.myTeamMate;
-    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
-    // console.log(roomGameRef.current.karts);
     return kart;
   };
 
@@ -211,14 +202,6 @@ function Canvas(props: any) {
         kart.velocity.y = 0;
       }
     });
-
-    // if (kart.velocity.x != 0) {
-    //   lastKeyRef.current = "";
-    //   myGameRef.current.myTeam.changePlayerInControl();
-    //   const tempTeamMate = myGameRef.current.myTeamMate;
-    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
 
     return kart;
   };
@@ -342,8 +325,6 @@ function Canvas(props: any) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-      // console.log(updatedKart);
-      //update Kart for player 1 & 2 are different
 
       removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
 
@@ -418,6 +399,7 @@ function Canvas(props: any) {
   };
 
   useEffect(() => {
+    //replace these lines with updating your refs from a socket data
     const { boundaries, pellets, spawnPoints } = mapSwitchCase(gameMap);
     boundariesRef.current = boundaries;
     pelletsRef.current = pellets;
@@ -435,13 +417,13 @@ function Canvas(props: any) {
       const { socketIds, userId } = data;
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
+      //console/log this data for QA
+
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
-
           const teamNumber = numberOfUsers / 2;
           const spawnPosition = spawnPointsRef.current[teamNumber - 1];
 
-          //this isn't getting called everytime
           postData(`/team`, {
             color: colors[numberOfUsers],
             score: 0,
@@ -469,6 +451,8 @@ function Canvas(props: any) {
             angle: 0,
           });
           const tempMyTeam = new Team({
+
+            //get ride of teamId
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
@@ -580,7 +564,11 @@ function Canvas(props: any) {
         const newMap = new GameMap(quads);
         
         newMap.generateMapArr();
-        // console.log(newMap);
+        newMap.generateMapPropertiesArrs();
+        console.log(newMap);
+        boundariesRef.current = newMap.boundaries;
+        pelletsRef.current = newMap.pellets;
+        spawnPointsRef.current = newMap.spawnPoints;
       };
     }
 

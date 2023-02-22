@@ -112,41 +112,30 @@ export class GameMap {
   }
 
   generateMapArr() {
-    function reverseArrs(arr: any) {
+    const tempQuads = quadrants.map((quad) => quad.slice().map(innerArr => innerArr.slice()));
+  
+    function reverseArrs(arr: any[]) {
       //reverses each arrays elements w/in a 2d array
-      for (let i = 0; i < arr.length; i++) {
-        arr[i].reverse();
-      }
-      return arr;
+      const reversedArr = arr.map((innerArr: any[]) => innerArr.slice().reverse());
+      return reversedArr;
     }
-
-    function reverseOrderOfArrs(arr: any) {
+  
+    function reverseOrderOfArrs(arr: any[]) {
       //reverses order of arrays w/in a 2d array
-      let left = 0;
-      let right = arr.length - 1;
-
-      while (left < right) {
-        const temp = arr[left];
-        arr[left] = arr[right];
-        arr[right] = temp;
-
-        left++;
-        right--;
-      }
-
-      return arr;
+      const reversedArr = arr.slice().reverse().map((innerArr: any[]) => innerArr.slice());
+      return reversedArr;
     }
-
-    const quad1 = quadrants[this.mapQuadrants.i];
-    const quad2 = reverseArrs(quadrants[this.mapQuadrants.ii]);
-    const quad3 = reverseOrderOfArrs(quadrants[this.mapQuadrants.iii]);
-    const quad4 = reverseArrs(reverseOrderOfArrs(quadrants[this.mapQuadrants.iv]));
-
-    const combinedTop = quad1.map((arr: any[], i: number) => arr.concat(quad2[i]));
-    const combinedBottom = quad3.map((arr: any[], i: number) => arr.concat(quad4[i]));
-
+  
+    const quad1 = tempQuads[this.mapQuadrants.i];
+    const quad2 = reverseArrs(tempQuads[this.mapQuadrants.ii]);
+    const quad3 = reverseOrderOfArrs(tempQuads[this.mapQuadrants.iii]);
+    const quad4 = reverseArrs(reverseOrderOfArrs(tempQuads[this.mapQuadrants.iv]));
+  
+    const combinedTop = quad1.map((arr, i) => arr.concat(quad2[i]));
+    const combinedBottom = quad3.map((arr, i) => arr.concat(quad4[i]));
     this.mapArr = [...combinedTop, ...combinedBottom];
   }
+  
 
   generateMapPropertiesArrs(){
     const {boundaries, pellets, spawnPoints} = mapSwitchCase(this.mapArr);

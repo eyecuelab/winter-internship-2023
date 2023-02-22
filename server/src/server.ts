@@ -19,11 +19,6 @@ const io = new Server(server, {
   },
 });
 
-interface Update {
-  table: string;
-  id: number;
-  value: number | string;
-}
 
 //(1)try it in the sockets to see if it actually decreases performance
 //(2)look for a package that does this- This is expensive as is
@@ -32,8 +27,7 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const { gameId, userId} = data;
-    const room = gameId.toString();
+    const room = data.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
@@ -42,8 +36,8 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-
-    io.in(`${room}`).emit("receive_client_joined", {socketIds, userId});
+    //there was a UserId in here that I deleted- check that this emit didn't need it
+    io.in(`${room}`).emit("receive_client_joined", socketIds);
   });
 
   socket.on("send_team", (data) => {
@@ -53,52 +47,11 @@ io.on("connection", (socket) => {
 
 
   socket.on("game_update", (data) => {
-    const { tempColor, gameId, teamId, tempScore, jsonKart, boolOfGameStatus, tempPellets } = data;
-    // console.log("tempColor: "+ tempColor);
-    // console.log("tempScore: "+ tempScore);
-    // console.log("jsonKart: "+ jsonKart);
-    // console.log("tempPellets " + tempPellets);
-    // console.log(`parsedKart["velocity"] ` + parsedKart["velocity"]);
-
-    // post update 
-    // move the setInterval to client side, make a separate socket listener on the server, only posts when its receives the client data
-
+    const { tempColor, gameId, tempScore, jsonKart } = data;
     socket
       .to(`${gameId}`)
       .emit("receive_game_update", { tempColor, jsonKart, tempScore });
-
   });
-
-  
-socket.on("db_update", (data) => {
-  const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
-
-  const gameUpdatesOnInterval = async () => {
-    await prisma.game.update({
-      where: { id: parseInt(gameId) },
-      data: { 
-        pellets: currentPellets,
-        isActive: currentIsGameOver
-      },
-    }), 
-    await prisma.team.update({
-        where: { id: parseInt(currentTeamId) },
-        data: { 
-          score: currentScore,
-          position:  currentKart["position"],
-          velocity:  currentKart["velocity"],
-          angle: currentKart["angle"]
-        },
-      })
-  }
- //only 1 player per Team has an existing currentTeamId
-  if (currentTeamId) {
-    console.count("db_update2");
-    gameUpdatesOnInterval();
-  }
-
-  console.count("db_update");
-})
 
   socket.on("toggle_player_control", (data) => {
     socket
@@ -114,7 +67,39 @@ socket.on("db_update", (data) => {
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
   });
+
+  socket.on("db_update", (data) => {
+    const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
+  
+    const gameUpdatesOnInterval = async () => {
+      await prisma.game.update({
+        where: { id: parseInt(gameId) },
+        data: { 
+          pellets: currentPellets,
+          isActive: currentIsGameOver
+        },
+      }), 
+      await prisma.team.update({
+          where: { id: parseInt(currentTeamId) },
+          data: { 
+            score: currentScore,
+            position:  currentKart["position"],
+            velocity:  currentKart["velocity"],
+            angle: currentKart["angle"]
+          },
+        })
+    }
+   //only 1 player per Team has an existing currentTeamId
+    if (currentTeamId) {
+      console.count("db_update2");
+      gameUpdatesOnInterval();
+    }
+  
+    console.count("db_update");
+  })
 });
+
+
 
 server.listen(3001, () =>
   console.log("Server ready at: http://localhost:3001")

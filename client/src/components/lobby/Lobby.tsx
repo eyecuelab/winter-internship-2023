@@ -58,13 +58,14 @@ const Lobby = (props: Props) => {
 
   const startANewGame = () => {
     const quads = generateMapQuadrants();
-    const newMap = new GameMap(quads);
+    const newGameMap = new GameMap(quads);
 
-    newMap.generateMapArr();
-    newMap.generateMapPropertiesArrs();
+    newGameMap.generateMapArr();
+    newGameMap.generateMapPropertiesArrs();
+    console.log(newGameMap);
 
     //generate game boundary and pellets
-    postData(`/game`, { map: newMap.mapArr, boundaries: mapSwitchCase(gameMap).boundaries, pellets: mapSwitchCase(gameMap).pellets, spawnPoints: mapSwitchCase(gameMap).spawnPoints, isActive: true}).then(
+    postData(`/game`, { map: newGameMap.mapArr, boundaries: mapSwitchCase(gameMap).boundaries, pellets: mapSwitchCase(gameMap).pellets, spawnPoints: mapSwitchCase(gameMap).spawnPoints, isActive: true}).then(
       //replace boardarray and pelletcount with boundary array and pellet object, canvas has a map we can move to the lobby and the map switch cases that can run in the lobby and send to the db
       (newGame) => {
         // move boundary and pellets from canvas to lobby (state stays, functions to create are moved. Then canvas creates state from the lobby -> canvas prop transition)
@@ -87,14 +88,6 @@ const Lobby = (props: Props) => {
   };
 
   const handleStartGameClick = async () => {
-    //temp console log to test GameMap class
-    // const quads = generateMapQuadrants();
-    // const newMap = new GameMap(quads);
-
-    // newMap.generateMapArr();
-    // newMap.generateMapPropertiesArrs();
-    // console.log(newMap);
-
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
         startANewGame();

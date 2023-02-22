@@ -4,11 +4,11 @@ const roleControllers = {
   async getRoleById(req: any, res: any) {
 		const { id } = req.params;
     const role = await getRole(id);
-    // if (role == null) {
-    //   res.status(204)//come back and make this like user
-    // } else {
-      res.json(role);
-    // }
+    if (!role) {
+      res.status(204).send();
+    } else {
+      res.status(200).json(role);
+    }
   },
 
   async createRole(req: any, res: any) {

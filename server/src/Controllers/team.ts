@@ -12,6 +12,7 @@ const teamControllers = {
       gameId,
       kartId
     } = req.body;
+    
     const newTeam = await createTeam(
       color,
       score,
