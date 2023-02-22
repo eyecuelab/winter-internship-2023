@@ -492,13 +492,6 @@ function Canvas(props: any) {
             gameId,
             tempTeamMate,
           });
-
-          // console.log("teamNumber: " + teamNumber);
-          // console.log("gameId: " + gameId);
-          // console.log("userId: " + userId);
-          // console.log("teamName: " + tempMyTeam["color"]);
-          // console.log(parseInt(gameId));
-
         }
       }
     });
@@ -514,12 +507,8 @@ function Canvas(props: any) {
         myGameRef.current.myControl = "x";
         myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
       }
-      // console.log(tempTeam);
-      // console.log(tempKart);
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
-      // console.log(roomGameRef.current);
-      //1 Kart here
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -528,8 +517,6 @@ function Canvas(props: any) {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current.karts.set(tempColor, tempKart);
       roomGameRef.current.scores.set(tempColor, tempScore);
-      //2 karts here
-      // console.log(roomGameRef.current)
       displayScores();
     });
 
@@ -537,7 +524,6 @@ function Canvas(props: any) {
       const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
       if (isGameOver) {
-
         toggleGameOver();
       }
     });
@@ -552,7 +538,6 @@ function Canvas(props: any) {
   }, [socket]);
 
   console.log(teamId.current)
-  // while (teamId.current) {
   setInterval(async () => {
   if (teamId.current) {
     const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)
@@ -563,25 +548,17 @@ function Canvas(props: any) {
     const currentPellets = pelletsRef.current;
     const currentTeamId = teamId.current;
 
-    console.log("color:" + myGameRef.current.myTeam.color)
-    console.log(" currentScore" + currentScore);
-    console.log("currentKart" + currentKart);
-    console.log("teamId" + currentTeamId);
-    console.log("currentIsGameOver" + currentIsGameOver);
+    // console.log("color:" + myGameRef.current.myTeam.color)
+    // console.log("currentScore" + currentScore);
+    // console.log("currentKart" + currentKart);
+    // console.log("teamId" + currentTeamId);
+    // console.log("currentIsGameOver" + currentIsGameOver);
 
     socket.emit("db_update", {
       gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver
     })
 }
 }, 10000);
-// }
-
-  // socket.emit("send_team", {
-  //   jsonTeam,
-  //   jsonKart,
-  //   gameId,
-  //   tempTeamMate,
-  // });
 
   //KEYBOARD EVEN LISTENERS when component mounts
   useEffect(() => {

@@ -71,22 +71,8 @@ io.on("connection", (socket) => {
 
   
 socket.on("db_update", (data) => {
-//teamId wasn't be sent before on sockets, that is why only the 2nd team has the current ID
-
   const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
 
-  // const parsedKart = JSON.parse(currentKart);
-  // console.log(currentKart);
-  // console.log(parsedKart);
-  console.log("gameId " + gameId);
-  console.log("teamId " + currentTeamId);
-  console.log("currentScore " + currentScore);
-  console.log("currentKart "+ currentKart);
-  console.log("currentIsGameOver " + currentIsGameOver);
-  // console.log(currentPellets);
-
-
-  
   const gameUpdatesOnInterval = async () => {
     await prisma.game.update({
       where: { id: parseInt(gameId) },
@@ -105,7 +91,7 @@ socket.on("db_update", (data) => {
         },
       })
   }
- 
+ //only 1 player per Team has an existing currentTeamId
   if (currentTeamId) {
     console.count("db_update2");
     gameUpdatesOnInterval();
