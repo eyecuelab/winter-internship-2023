@@ -6,7 +6,6 @@ import Canvas from "./components/canvas/Canvas";
 import Lobby from "./components/lobby/Lobby";
 import Test1 from "./Test1";
 import Test2 from "./Test2";
-import SocketHandling from "./components/socketHandling/socketHandling";
 import { userType } from "./types/Types";
 import GamePage from "./pages/GamePage";
 
@@ -37,7 +36,6 @@ function App() {
             />
           }
         />
-        <Route path="/sockets" element={<SocketHandling />} />
         <Route path="/game" element={<Canvas />} />
 
         <Route path="/game/:gameId" element={<GamePage />} />
