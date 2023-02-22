@@ -486,9 +486,8 @@ function Canvas(props: any) {
             kartId: 1,
           })
             .then((team) => {
-              if (typeof(team.id) === "number") {
-                teamId.current = team.id;
-              }
+              teamId.current = team.id;
+              console.log(teamId.current);
               postData(`/teamUser`, {
                 teamId: parseInt(team.id),
                 userId: parseInt(userId),
@@ -560,13 +559,16 @@ function Canvas(props: any) {
     const testIsActiveBool = false;
 
     //undefined
-    console.log(myGameRef.current.myTeam.color)
+    console.log("color:" + myGameRef.current.myTeam.color)
+    console.log(" currentScore" + currentScore);
     console.log(currentKart);
 
     // console.log(gameId);
 
+
+    //
     //{current: null}
-    // console.log(teamId);
+    console.log(teamId);
 
     //undefined
     // console.log(currentScore);
