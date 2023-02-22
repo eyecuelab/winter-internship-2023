@@ -2,8 +2,8 @@ import { createGame, getLastGame, updateGame, getGameById } from "../Models/game
 
 const gameControllers = {
   async createGameController(req: any, res: any) {
-    const { timeLeft, boardArray, pelletCount } = req.body;
-    const newGame = await createGame(timeLeft, boardArray, pelletCount);
+    const { map, boundaries, pellets, spawnPoints } = req.body;
+    const newGame = await createGame(map, boundaries, pellets, spawnPoints);
     res.status(200).json(newGame);
   },
 
@@ -19,8 +19,8 @@ const gameControllers = {
   },
 
   async updateGameController(req: any, res: any) {
-    const { id, timeLeft, pelletCount } = req.params;
-    const updatedGame = await updateGame(id, timeLeft, pelletCount);
+    const { id, pellets, isActive } = req.params;
+    const updatedGame = await updateGame(id, pellets, isActive);
     res.status(200).json(updatedGame);
   },
 };
