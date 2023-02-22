@@ -12,6 +12,7 @@ import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 import { postData } from "../../apiHelper";
 import { generateMapQuadrants } from "./quadrants";
+import { RouterProvider } from "react-router-dom";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -29,7 +30,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    boolOfGameStatus: false,
+    isGameOver: false,
   });
 //don't reference score from myTeam, myKart from myGameRef
 
@@ -235,9 +236,9 @@ function Canvas(props: any) {
         ) {
           pellet.isVisible = false;
           updateScore(10);
-          const boolOfGameStatus = isGameOver();
+          const isGameOverBool = isGameOver();
 
-          if (boolOfGameStatus) {
+          if (isGameOverBool) {
             const tempColor = myGameRef.current.myTeam.color;
             const jsonKart = JSON.stringify(kartRef);
             const tempScore = roomGameRef.current.scores.get(tempColor);
@@ -247,11 +248,11 @@ function Canvas(props: any) {
               teamId,
               jsonKart,
               tempScore,
-              boolOfGameStatus
+              isGameOver
             });
             toggleGameOver();
           }
-          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus });
+          socket.emit("remove_pellet", { gameId, i, isGameOver });
         }
       }
     });
@@ -530,9 +531,10 @@ function Canvas(props: any) {
     });
 
     socket.on("pellet_gone", (data) => {
-      const { i, boolOfGameStatus } = data;
+      const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
-      if (boolOfGameStatus) {
+      if (isGameOver) {
+
         toggleGameOver();
       }
     });
@@ -545,6 +547,48 @@ function Canvas(props: any) {
       socket.removeAllListeners();
     };
   }, [socket]);
+
+  // if (myGameRef.current.userList.length >= 4) {
+  setInterval(async () => {
+    const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)
+    const currentKart =  roomGameRef.current.karts.get(
+      myGameRef.current.myTeam.color
+    );
+    // const currentIsGameOver = roomGameRef.current.isGameOver;
+    const currentPellets = pelletsRef.current;
+
+    const testIsActiveBool = false;
+
+    //undefined
+    console.log(myGameRef.current.myTeam.color)
+    console.log(currentKart);
+
+    // console.log(gameId);
+
+    //{current: null}
+    // console.log(teamId);
+
+    //undefined
+    // console.log(currentScore);
+
+    //false
+    // console.log(currentIsGameOver);
+
+
+    // console.log(currentPellets);
+
+    socket.emit("db_update", {
+      gameId, currentPellets, testIsActiveBool
+    })
+  }, 10000);
+// }
+
+  // socket.emit("send_team", {
+  //   jsonTeam,
+  //   jsonKart,
+  //   gameId,
+  //   tempTeamMate,
+  // });
 
   //KEYBOARD EVEN LISTENERS when component mounts
   useEffect(() => {
@@ -566,7 +610,7 @@ function Canvas(props: any) {
         const newMap = new GameMap(quads);
         
         newMap.generateMapArr();
-        console.log(newMap);
+        // console.log(newMap);
       };
     }
 

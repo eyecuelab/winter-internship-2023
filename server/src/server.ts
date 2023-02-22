@@ -51,45 +51,60 @@ io.on("connection", (socket) => {
     io.in(data.gameId).emit("receive_team_added", { jsonTeam, jsonKart });
   });
 
+
   socket.on("game_update", (data) => {
     const { tempColor, gameId, teamId, tempScore, jsonKart, boolOfGameStatus, tempPellets } = data;
- 
-
-    // const parsedKart = JSON.parse(jsonKart)
-
     // console.log("tempColor: "+ tempColor);
     // console.log("tempScore: "+ tempScore);
     // console.log("jsonKart: "+ jsonKart);
     // console.log("tempPellets " + tempPellets);
     // console.log(`parsedKart["velocity"] ` + parsedKart["velocity"]);
 
-    // setInterval(async () => {
-
-    //   await prisma.game.update({
-    //     where: { id: gameId },
-    //     data: { 
-    //       pellets: tempPellets,
-    //       isActive: boolOfGameStatus
-    //     },
-    //   }), await prisma.team.update({
-    //     where: { id: teamId },
-    //     data: { 
-    //       score: tempScore,
-
-    //       json blob type?
-    //       position:  parsedKart["position"],
-
-    //       velocity:  parsedKart["velocity"],
-    //       angle: parsedKart["angle"]
-    //     },
-    //   })
-    // }, 5000);
+    // post update 
+    // move the setInterval to client side, make a separate socket listener on the server, only posts when its receives the client data
 
     socket
       .to(`${gameId}`)
       .emit("receive_game_update", { tempColor, jsonKart, tempScore });
 
   });
+
+  socket.on("db_update", (data) => {
+    const { gameId, teamId, currentScore, currentKart, currentBoolOfGameStatus, currentPellets, testIsActiveBool } = data;
+
+    // const parsedKart = JSON.parse(currentKart);
+    // console.log(currentKart);
+    // console.log(parsedKart);
+    console.log(gameId);
+    // console.log(teamId);
+    // console.log(currentScore);
+    // console.log(currentBoolOfGameStatus);
+    // console.log(currentPellets);
+    console.log(testIsActiveBool);
+
+    
+    const gameUpdatesOnInterval = async () => {
+      await prisma.game.update({
+        where: { id: parseInt(gameId) },
+        data: { 
+          // pellets: tempPellets,
+          isActive: testIsActiveBool
+        },
+      })
+    }
+    gameUpdatesOnInterval();
+      // await prisma.team.update({
+      //   where: { id: teamId },
+      //   data: { 
+      //     score: tempScore,
+      //     position:  parsedKart["position"],
+      //     velocity:  parsedKart["velocity"],
+      //     angle: parsedKart["angle"]
+      //   },
+      // })
+
+    console.count("db_update");
+  })
 
   socket.on("toggle_player_control", (data) => {
     socket

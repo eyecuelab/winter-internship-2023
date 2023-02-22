@@ -13,7 +13,8 @@ const userControllers = {
 
     const user = await findUserByEmail(email);
     if (!user) {
-      res.status(204).send();
+      createUser(req, res);
+      //update client
     } else {
       res.status(200).json(user);
     }
