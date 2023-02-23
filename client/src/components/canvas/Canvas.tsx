@@ -7,10 +7,12 @@ import { gameMap } from "./Maps";
 import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import "./CanvasStyles.css";
-import { myGameType, roomGameType } from "../../types/Types";
+import { myGameType, roomGameType, kartType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 import { generateMapQuadrants, quadrants } from "./quadrants";
+import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
+import { postData } from "../../apiHelper";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -30,7 +32,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    boolOfGameStatus: false,
+    isGameOver: false,
   });
 
   const myGameRef = useRef<myGameType>({
@@ -38,15 +40,17 @@ function Canvas(props: any) {
     myTeamMate: "",
     myControl: "",
     myTeam: new Team(),
-    myKart: new Kart(),
+    myKart: new Kart(), // deprecated
   });
+
+  const teamId = useRef<number | null>(null);
 
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
   };
 
-  const isGameOver = () => {
+  const hasPellets = () => {
     for (let i = 0; i < pelletsRef.current.length; i++) {
       if (pelletsRef.current[i].isVisible === true) {
         return false;
@@ -55,19 +59,28 @@ function Canvas(props: any) {
     return true;
   };
 
+
+
+  const kill = (victimsColor: string) => {
+    
+    const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
+    if (kart) {
+      kart.isGhost = true;
+      roomGameRef.current.karts.set(victimsColor, kart)
+    }
+
+    //move their location to a spawn point
+    //change their velocity possibly
+
+  }
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor) || {
-      position: { x: 0, y: 0 },
-      velocity: { x: 0, y: 0 },
-      radius: 0,
-      imgSrc: "",
-      angle: 0,
-    };
+    const kart:Kart = roomGameRef.current.karts.get(myColor) ?? new Kart();//not sure about this..
+    const previousXVelocity = kart.velocity.x;
 
-    if (lastKeyRef.current === "w") {
+    if (lastKeyRef.current === "w" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -75,7 +88,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kart.velocity.x,
+                x: 0,
                 y: -5,
               },
             },
@@ -83,14 +96,16 @@ function Canvas(props: any) {
           })
         ) {
           kart.velocity.y = 0;
+          kart.velocity.x = previousXVelocity;
           break;
         } else {
           kart.angle = -90;
-          //make this based off of velocity instead of lastKey
           kart.velocity.y = -5;
+          kart.velocity.x = 0
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
-    } else if (lastKeyRef.current === "s") {
+    } else if (lastKeyRef.current === "s" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -106,15 +121,49 @@ function Canvas(props: any) {
           })
         ) {
           kart.velocity.y = 0;
+          kart.velocity.x = previousXVelocity;
           break;
         } else {
           kart.angle = 90;
           kart.velocity.y = 5;
+          kart.velocity.x = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+
+
+    //
+
+    if (kart.isGhost === true){
+      const kartsArr = Array.from(roomGameRef.current.karts, function (entry) {
+          return { color: entry[0], pacmanKart: entry[1] }
+      }); //[{color: "teal", pacmanKart: {}}, {color: "orange", pacmanKart: {}}]
+
+      const aliveKartsArr:any[] = []
+      
+      kartsArr.forEach((mapargument) => {
+        if (mapargument.pacmanKart.isGhost === false) {
+          aliveKartsArr.push(mapargument)
+        }
+      })
+
+      aliveKartsArr.forEach((item) => {
+        if(item){
+          //console.log("is this even working?")
+            if (circleCollidesWithCircle({ghost: kart, paCart: item.pacmanKart})){
+              kill(item.color)
+              //myGameRef.current.myTeam.ghost = false
+              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+              // make the server and receiver for this emit
+            }
+        }
+      })
+    }
+    //
+
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -127,28 +176,16 @@ function Canvas(props: any) {
         kart.velocity.x = 0;
       }
     });
-
-    // if (kart.velocity.y != 0) {
-    //   lastKeyRef.current = "";
-    //   myGameRef.current.myTeam.changePlayerInControl();
-    //   const tempTeamMate = myGameRef.current.myTeamMate;
-    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
     return kart;
   };
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart = roomGameRef.current.karts.get(myColor) || {
-      position: { x: 0, y: 0 },
-      velocity: { x: 0, y: 0 },
-      radius: 0,
-      imgSrc: "",
-      angle: 0,
-    };
+    const kart:Kart = roomGameRef.current.karts.get(myColor) ?? new Kart();//not sure about this..
 
-    if (lastKeyRef.current === "a") {
+    const previousYVelocity = kart.velocity.y;
+
+    if (lastKeyRef.current === "a" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -157,20 +194,23 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: -5,
-                y: kart.velocity.y,
+                y: 0,
               },
             },
             rectangle: boundary,
           })
         ) {
           kart.velocity.x = 0;
+          kart.velocity.y = previousYVelocity;
           break;
         } else {
           kart.angle = 180;
           kart.velocity.x = -5;
+          kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
-    } else if (lastKeyRef.current === "d") {
+    } else if (lastKeyRef.current === "d" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -179,23 +219,49 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: 5,
-                y: kart.velocity.y,
+                y: 0,
               },
             },
             rectangle: boundary,
           })
         ) {
           kart.velocity.x = 0;
+          kart.velocity.y = previousYVelocity;
           break;
         } else {
           kart.angle = 0;
           kart.velocity.x = 5;
+          kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }
-
+    
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+    if (kart.isGhost === true){
+      const aliveKartsArr = Array.from(roomGameRef.current.karts, function (entry) {
+        if (entry[1].isGhost === false) {
+        // return [ entry[0], entry[1] ];
+        return { color: entry[0], pacmanKart: entry[1] } //[{color: "teal", kart: kart}, {"orange", kart}]
+        }
+      });
+      //console.log(aliveKartsArr);
+
+      aliveKartsArr.forEach((item) => {
+        if(item){
+            if (circleCollidesWithCircle({ghost:kart, paCart: item.pacmanKart})){
+              kill(item.color)
+              console.log("pacman killed! on the x axis controlled person");
+              //myGameRef.current.myTeam.ghost = false
+              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+              // make the server and receiver for this emit
+            }
+        }
+      })
+    }
+    //run circle collides with circle here for each player
+    //ghosts will only check for each instance of a player
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -225,9 +291,9 @@ function Canvas(props: any) {
         ) {
           pellet.isVisible = false;
           updateScore(10);
-          const boolOfGameStatus = isGameOver();
+          const isGameOver = hasPellets();
 
-          if (boolOfGameStatus) {
+          if (isGameOver) {
             const tempColor = myGameRef.current.myTeam.color;
             const jsonKart = JSON.stringify(kartRef);
             const tempScore = roomGameRef.current.scores.get(tempColor);
@@ -240,7 +306,7 @@ function Canvas(props: any) {
             });
             toggleGameOver();
           }
-          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus });
+          socket.emit("remove_pellet", { gameId, i, isGameOver });
         }
       }
     });
@@ -295,7 +361,7 @@ function Canvas(props: any) {
       teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
     }
     if (teamTwo && scoresArr[1]) {
-      const teamScore = scoresArr[0][1] ?? 0;
+      const teamScore = scoresArr[1][1] ?? 0;
       teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
     }
 
@@ -330,9 +396,15 @@ function Canvas(props: any) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-
-      removePellets(pelletsRef.current, updatedKart); //consolidate this emit with game_update
-
+      //maybe only call removePellets if you're not a ghost?
+      const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color);
+      if (kart) {
+        if (kart.isGhost === false) {
+          removePellets(pelletsRef.current, updatedKart);
+        }
+      }
+      
+       //consolidate this emit with game_update
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
       const tempScore = roomGameRef.current.scores.get(tempColor);
@@ -346,6 +418,7 @@ function Canvas(props: any) {
     const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
       return { color: kart[0], kart: kart[1] };
     });
+
     frameRenderer.call(
       context,
       size,
@@ -408,16 +481,18 @@ function Canvas(props: any) {
   useEffect(() => {
     socket.on("receive_initial_game_data", (gameData)=>{
       const initialGameData = JSON.parse(gameData);
-      console.log(initialGameData);
+      //console.log(initialGameData);
       boundariesRef.current = initialGameData.boundaries;
       pelletsRef.current = initialGameData.pellets;
       spawnPointsRef.current = initialGameData.spawnPoints;
     })
 
     socket.on("receive_client_joined", (data) => {
-      myGameRef.current.userList = data;
-      const numberOfUsers = data.length;
-      if (socketId === data[numberOfUsers - 1]) {
+      const { socketIds, userId } = data;
+
+      myGameRef.current.userList = socketIds;
+      const numberOfUsers = socketIds.length;
+      if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
@@ -426,25 +501,28 @@ function Canvas(props: any) {
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
+            radius: 15,
             angle: 0,
+            isGhost: numberOfUsers > 3 ? true : false,
           });
+
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data[numberOfUsers - 2],
-              y: data[numberOfUsers - 1],
+              x: socketIds[numberOfUsers - 2],
+              y: socketIds[numberOfUsers - 1],
             },
             score: 0,
           });
 
-          myGameRef.current.myTeamMate = data[numberOfUsers - 2];
+          myGameRef.current.myTeamMate = socketIds[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
-
+          
           const tempTeamMate = myGameRef.current.myTeamMate;
-          const jsonTeam = JSON.stringify(tempMyTeam);
+          const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
           const jsonKart = JSON.stringify(tempMyKart);
           socket.emit("send_team", {
             jsonTeam,
@@ -452,6 +530,27 @@ function Canvas(props: any) {
             gameId,
             tempTeamMate,
           });
+          postData(`/team`, {
+            color: colors[numberOfUsers],
+            score: 0,
+            position: spawnPosition.position,
+            velocity: { x: 0, y: 0 },
+            angle: 0,
+            characterId: 1,
+            gameId: parseInt(gameId),
+            kartId: 1,
+          })
+          //I think this actually needs to go elsewhere, because It's not being called for every User
+            .then((team) => {
+              teamId.current = team.id;
+              console.log(teamId.current);
+              postData(`/teamUser`, {
+                teamId: parseInt(team.id),
+                userId: parseInt(userId),
+                //dummy data
+                axisControl: "vertical",
+              });
+            })
         }
       }
     });
@@ -467,7 +566,6 @@ function Canvas(props: any) {
         myGameRef.current.myControl = "x";
         myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
       }
-
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
     });
@@ -482,9 +580,9 @@ function Canvas(props: any) {
     });
 
     socket.on("pellet_gone", (data) => {
-      const { i, boolOfGameStatus } = data;
+      const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
-      if (boolOfGameStatus) {
+      if (isGameOver) {
         toggleGameOver();
       }
     });
@@ -497,6 +595,28 @@ function Canvas(props: any) {
       socket.removeAllListeners();
     };
   }, [socket]);
+
+  setInterval(async () => {
+    if (teamId.current) {
+      const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)
+      const currentKart =  roomGameRef.current.karts.get(
+        myGameRef.current.myTeam.color
+      );
+      const currentIsGameOver = roomGameRef.current.isGameOver;
+      const currentPellets = pelletsRef.current;
+      const currentTeamId = teamId.current;
+  
+      // console.log("color:" + myGameRef.current.myTeam.color)
+      // console.log("currentScore" + currentScore);
+      // console.log("currentKart" + currentKart);
+      // console.log("teamId" + currentTeamId);
+      // console.log("currentIsGameOver" + currentIsGameOver);
+  
+      socket.emit("db_update", {
+        gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver
+      })
+  }
+  }, 10000);
 
   //KEYBOARD EVEN LISTENERS when component mounts
   useEffect(() => {

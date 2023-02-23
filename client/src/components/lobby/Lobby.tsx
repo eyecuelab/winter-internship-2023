@@ -42,7 +42,7 @@ const Lobby = (props: Props) => {
   const [gameId, setGameId] = useState(null);
 
   //start game functions:
-  const handleJoinAGame = (gameUsers: any) => {
+  const joinAGame = (gameUsers: any) => {
     postData(`/gameUser`, {
       gameId: gameUsers[0].gameId,
       userId: userData?.id,
@@ -63,15 +63,17 @@ const Lobby = (props: Props) => {
       //     userId: userData?.id,
       //     verticalOrHorizontalControl: "vertical",
       //   });
+      const gameId = gameUser.gameId;
+      const userId = gameUser.userId;
 
       setGameId(gameUser.gameId);
-      socket.emit("join_game_room", gameUser.gameId);
-      navigate(`/game/${gameUser.gameId}`);
+      socket.emit("join_game_room", {gameId, userId});
+      navigate(`/game/${gameId}`);
     });
     // });
   };
 
-  const handleStartAGame = () => {
+  const startAGame = () => {
     //temp console log to test GameMap class
     const quads = generateMapQuadrants();
     const newGameMap = new GameMap(quads);
@@ -102,11 +104,13 @@ const Lobby = (props: Props) => {
           //     userId: userData?.id,
           //     verticalOrHorizontalControl: "vertical",
           //   });
+          
+          const gameId = newGameUser.gameId;
+          const userId = newGameUser.userId;
 
           setGameId(newGameUser.gameId);
-          socket.emit("join_game_room", newGameUser.gameId);
-          navigate(`/game/${newGameUser.gameId}`);
-          //  });
+          socket.emit("join_game_room", {gameId, userId});
+          navigate(`/game/${gameId}`);
         });
       }
     );
@@ -115,13 +119,13 @@ const Lobby = (props: Props) => {
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
-        handleStartAGame();
+        startAGame();
       } else {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
-            handleJoinAGame(gameUsers);
+            joinAGame(gameUsers);
           } else if ((gameUsers.length = 0 || 4)) {
-            handleStartAGame();
+            startAGame();
           }
         });
       }
@@ -266,7 +270,7 @@ const Lobby = (props: Props) => {
 
           <Spacer y={1} />
 
-          <Button color="gradient" auto ghost onClick={handleStartGameClick}>
+          <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
             JOIN GAME!
           </Button>

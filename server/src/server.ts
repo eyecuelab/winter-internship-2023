@@ -2,7 +2,9 @@ import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
 import { getGameById } from "./Models/game";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -22,7 +24,11 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const room = data.toString();
+    const { gameId, userId } = data;
+    console.log("gameId " + gameId);
+    console.log("userId " + userId);
+
+    const room = gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
@@ -34,7 +40,7 @@ io.on("connection", (socket) => {
     const socketIds = Array.from(socketsInRoom);
 
     //database fetch game boundaries/pellets/spawnpoints arrays
-    io.in(`${room}`).emit("receive_client_joined", socketIds);//send map properties from the database
+    io.in(`${room}`).emit("receive_client_joined", { socketIds, userId }); //send map properties from the database
   });
 
   socket.on("send_team", (data) => {
@@ -56,12 +62,59 @@ io.on("connection", (socket) => {
   });
 
   socket.on("remove_pellet", (data) => {
-    const { gameId, i, boolOfGameStatus } = data;
-    socket.to(gameId).emit("pellet_gone", { i, boolOfGameStatus });
+    const { gameId, i, isGameOver } = data;
+    socket.to(gameId).emit("pellet_gone", { i, isGameOver });
+  });
+
+  //potential
+  // socket.on("leave_room", async ({ roomId, userId }) => {
+  //   socket.leave(roomId);
+  //   const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${roomId}`);
+  //   console.log(`updated guests in room: ${roomId}`, socketsInRoom);
+  //   const usersInRoom = Array.from(socketsInRoom);
+
+  //   socket.to(roomId).emit("update_user_list", { usersInRoom });
+  // });
+
+  socket.on("db_update", (data) => {
+    const {
+      gameId,
+      currentTeamId,
+      currentScore,
+      currentKart,
+      currentPellets,
+      currentIsGameOver,
+    } = data;
+
+    const gameUpdatesOnInterval = async () => {
+      await prisma.game.update({
+        where: { id: parseInt(gameId) },
+        data: {
+          pellets: currentPellets,
+          isActive: !currentIsGameOver,
+        },
+      }),
+        await prisma.team.update({
+          where: { id: parseInt(currentTeamId) },
+          data: {
+            score: currentScore,
+            position: currentKart["position"],
+            velocity: currentKart["velocity"],
+            angle: Math.round(currentKart["angle"]),
+          },
+        });
+    };
+    //only 1 player per Team has an existing currentTeamId
+    if (currentTeamId) {
+      console.count("db_update2");
+      gameUpdatesOnInterval();
+    }
+
+    console.count("db_update");
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(socket.id + " disconnected");
+    console.log(socket.id + "disconnected");
   });
 });
 
@@ -71,6 +124,5 @@ server.listen(3001, () =>
 // server.listen(8080, () =>
 //   console.log("Server ready at: 8080")
 // );
-
 
 export default io;
