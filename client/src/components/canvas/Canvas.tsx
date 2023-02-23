@@ -31,7 +31,7 @@ function Canvas(props: any) {
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
-    boolOfGameStatus: false,
+    isGameActive: false,
   });
 
   const myGameRef = useRef<myGameType>({
@@ -228,9 +228,9 @@ function Canvas(props: any) {
         ) {
           pellet.isVisible = false;
           updateScore(10);
-          const boolOfGameStatus = isGameOver();
+          const isGameActive = isGameOver();
 
-          if (boolOfGameStatus) {
+          if (isGameActive) {
             const tempColor = myGameRef.current.myTeam.color;
             const jsonKart = JSON.stringify(kartRef);
             const tempScore = roomGameRef.current.scores.get(tempColor);
@@ -243,7 +243,7 @@ function Canvas(props: any) {
             });
             toggleGameOver();
           }
-          socket.emit("remove_pellet", { gameId, i, boolOfGameStatus });
+          socket.emit("remove_pellet", { gameId, i, isGameActive });
         }
       }
     });
@@ -508,9 +508,9 @@ function Canvas(props: any) {
     });
 
     socket.on("pellet_gone", (data) => {
-      const { i, boolOfGameStatus } = data;
+      const { i, isGameActive } = data;
       pelletsRef.current[i].isVisible = false;
-      if (boolOfGameStatus) {
+      if (isGameActive) {
         toggleGameOver();
       }
     });
@@ -530,7 +530,7 @@ function Canvas(props: any) {
       const currentKart =  roomGameRef.current.karts.get(
         myGameRef.current.myTeam.color
       );
-      const currentIsGameOver = roomGameRef.current.boolOfGameStatus;
+      const currentIsGameOver = roomGameRef.current.isGameActive;
       const currentPellets = pelletsRef.current;
       const currentTeamId = teamId.current;
   

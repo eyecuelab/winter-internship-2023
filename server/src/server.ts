@@ -62,8 +62,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("remove_pellet", (data) => {
-    const { gameId, i, boolOfGameStatus } = data;
-    socket.to(gameId).emit("pellet_gone", { i, boolOfGameStatus });
+    const { gameId, i, isGameActive  } = data;
+    socket.to(gameId).emit("pellet_gone", { i, isGameActive });
   });
 
   socket.on("disconnect", (reason) => {

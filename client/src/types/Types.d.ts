@@ -56,7 +56,7 @@ export type myGameType = {
 export type roomGameType = {
   karts: Map<string, Kart>;
   scores: Map<string, number>;
-  boolOfGameStatus: boolean;
+  isGameActive: boolean;
 };
 
 export type pelletType = {

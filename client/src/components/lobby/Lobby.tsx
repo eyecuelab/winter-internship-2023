@@ -42,7 +42,7 @@ const Lobby = (props: Props) => {
   const [gameId, setGameId] = useState(null);
 
   //start game functions:
-  const handleJoinAGame = (gameUsers: any) => {
+  const joinAGame = (gameUsers: any) => {
     postData(`/gameUser`, {
       gameId: gameUsers[0].gameId,
       userId: userData?.id,
@@ -73,7 +73,7 @@ const Lobby = (props: Props) => {
     // });
   };
 
-  const handleStartAGame = () => {
+  const startAGame = () => {
     //temp console log to test GameMap class
     const quads = generateMapQuadrants();
     const newGameMap = new GameMap(quads);
