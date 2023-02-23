@@ -51,6 +51,7 @@ const Lobby = (props: Props) => {
     .then((gameUser) => {
        const gameId = gameUser.gameId;
         const userId = gameUser.userId;
+        console.log(socket.id);
         socket.emit("join_game_room", {gameId, userId});
         navigate(`/game/${gameId}`);
       });
@@ -76,7 +77,7 @@ const Lobby = (props: Props) => {
           //update roleId
           roleId: 1,
         }).then((newGameUser) => {
-          console.log("clientData:" + newGameUser);
+          // console.log("clientData:" + newGameUser);
           const gameId = newGameUser.gameId;
           const userId = newGameUser.userId;
             socket.emit

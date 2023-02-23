@@ -27,7 +27,8 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const room = data.toString();
+    const { gameId, userId } = data;
+    const room = gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
@@ -36,15 +37,16 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    //there was a UserId in here that I deleted- check that this emit didn't need it
-    io.in(`${room}`).emit("receive_client_joined", socketIds);
+    //possible origin of bug, try sending an individual emit to the last player joined in the room:
+    // to individual socketid (private message)
+    //io.to(socketId).emit(/* ... */);
+    io.in(`${room}`).emit("receive_client_joined", {socketIds, userId});
   });
 
   socket.on("send_team", (data) => {
     const { jsonTeam, jsonKart } = data;
     io.in(data.gameId).emit("receive_team_added", { jsonTeam, jsonKart });
   });
-
 
   socket.on("game_update", (data) => {
     const { tempColor, gameId, tempScore, jsonKart } = data;
@@ -58,6 +60,8 @@ io.on("connection", (socket) => {
       .to(data.tempTeamMate)
       .emit("receive_toggle_player_control", data.jsonTeam);
   });
+
+  // right now, the removePellet AND the renderFrame are emitting to the same listener different information. The only thing being updated in the client based on receive_game_update is the kart position.
 
   socket.on("remove_pellet", (data) => {
     const { gameId, i, boolOfGameStatus } = data;

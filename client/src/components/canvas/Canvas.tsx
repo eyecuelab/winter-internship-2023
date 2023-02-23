@@ -23,10 +23,12 @@ function Canvas(props: any) {
   const requestIdRef = useRef<any>(null);
   const size = { width: 1120, height: 1240 };
   const canvasBorderRef = useRef<object>({});
+
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const lastKeyRef = useRef("");
+
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
     scores: new Map(),
@@ -41,6 +43,7 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart(),
   });
+
   const teamId = useRef<number | null>(null);
 
   //GAME OVER FUNCTIONS:
@@ -228,10 +231,9 @@ function Canvas(props: any) {
 
             socket.emit("game_update", {
               gameId,
-              teamId,
               jsonKart,
               tempScore,
-              isGameOver
+              tempColor
             });
             toggleGameOver();
           }
@@ -333,9 +335,8 @@ function Canvas(props: any) {
       const tempScore = roomGameRef.current.scores.get(tempColor);
       const tempPellets = pelletsRef.current
 
-      // console.log(jsonKart);
-      //1 Kart
-      socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId, tempPellets });
+      
+      socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
       displayScores();
     }
 
@@ -417,8 +418,8 @@ function Canvas(props: any) {
       const { socketIds, userId } = data;
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
-      //console/log this data for QA
-
+      //last player who joins is not getting this emit
+      console.log(socketIds);
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
@@ -521,7 +522,7 @@ function Canvas(props: any) {
     };
   }, [socket]);
 
-  console.log(teamId.current)
+  // console.log(teamId.current)
   setInterval(async () => {
   if (teamId.current) {
     const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)

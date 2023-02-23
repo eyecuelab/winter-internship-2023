@@ -8,7 +8,6 @@
 // const characters = [{name: "pacman"}, {name: "ghost"}]
 
 // async function main() {
-
 //   for (let i = 0; i < roles.length; i++) {
 //     await prisma.role.upsert({
 //       where: { id: i },
