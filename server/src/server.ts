@@ -66,6 +66,16 @@ io.on("connection", (socket) => {
     socket.to(gameId).emit("pellet_gone", { i, isGameActive });
   });
 
+  //potential
+  // socket.on("leave_room", async ({ roomId, userId }) => {
+  //   socket.leave(roomId);
+  //   const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${roomId}`);
+  //   console.log(`updated guests in room: ${roomId}`, socketsInRoom);
+  //   const usersInRoom = Array.from(socketsInRoom);
+
+  //   socket.to(roomId).emit("update_user_list", { usersInRoom });
+  // });
+
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
   });
@@ -87,7 +97,7 @@ io.on("connection", (socket) => {
             score: currentScore,
             position:  currentKart["position"],
             velocity:  currentKart["velocity"],
-            angle: currentKart["angle"]
+            angle: Math.round(currentKart["angle"])
           },
         })
     }

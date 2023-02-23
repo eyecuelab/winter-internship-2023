@@ -119,13 +119,13 @@ const Lobby = (props: Props) => {
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
       if (!lastPost) {
-        handleStartAGame();
+        startAGame();
       } else {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (gameUsers.length !== 0 && gameUsers.length < 4) {
-            handleJoinAGame(gameUsers);
+            joinAGame(gameUsers);
           } else if ((gameUsers.length = 0 || 4)) {
-            handleStartAGame();
+            startAGame();
           }
         });
       }
@@ -270,7 +270,7 @@ const Lobby = (props: Props) => {
 
           <Spacer y={1} />
 
-          <Button color="gradient" auto ghost onClick={handleStartGameClick}>
+          <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
             JOIN GAME!
           </Button>
