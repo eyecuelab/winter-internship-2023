@@ -43,6 +43,12 @@ io.on("connection", (socket) => {
     io.in(`${room}`).emit("receive_client_joined", { socketIds, userId }); //send map properties from the database
   });
 
+  socket.on("player_killed", (data) => {
+    const { ghost, victim, spawnNum, gameId } = data;
+    io.in(data.gameId).emit("receive_kill", { ghost, victim, spawnNum})
+    // possibly change io.in to socket.to
+  })
+
   socket.on("send_team", (data) => {
     const { jsonTeam, jsonKart } = data;
     io.in(data.gameId).emit("receive_team_added", { jsonTeam, jsonKart });
