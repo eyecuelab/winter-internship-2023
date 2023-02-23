@@ -67,7 +67,11 @@ function Canvas(props: any) {
       angle: 0,
     };
 
-    if (lastKeyRef.current === "w") {
+    // console.log("x update, remainder:", ((kart.position.x - 20) % 40));
+    // console.log(kart.position);
+    // console.log("y update, remainder:", ((kart.position.y - 20) % 40));
+    
+    if (lastKeyRef.current === "w" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -82,15 +86,20 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
+          console.log("collision detected", kart.position, kart.velocity);
           kart.velocity.y = 0;
+          console.log("collision detected", kart.position, kart.velocity);
           break;
         } else {
+          console.log("good turn before changes", kart.position, kart.velocity)
           kart.angle = -90;
           //make this based off of velocity instead of lastKey
           kart.velocity.y = -5;
+          kart.velocity.x = 0;
+          console.log("good turn after changes", kart.position, kart.velocity)
         }
       }
-    } else if (lastKeyRef.current === "s") {
+    } else if (lastKeyRef.current === "s" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -105,11 +114,14 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
+          console.log("collision detected", kart.position, kart.velocity);
           kart.velocity.y = 0;
+          console.log("collision detected", kart.position, kart.velocity);
           break;
         } else {
           kart.angle = 90;
           kart.velocity.y = 5;
+          kart.velocity.x = 0;
         }
       }
     }
@@ -148,7 +160,11 @@ function Canvas(props: any) {
       angle: 0,
     };
 
-    if (lastKeyRef.current === "a") {
+    // console.log("x update, remainder:", ((kart.position.x - 20) % 40));
+    // console.log(kart.position);
+    // console.log("y update, remainder:", ((kart.position.y - 20) % 40));
+
+    if (lastKeyRef.current === "a" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -163,14 +179,17 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
+          console.log("collision detected", kart.position, kart.velocity);
           kart.velocity.x = 0;
+          console.log("collision detected", kart.position, kart.velocity);
           break;
         } else {
           kart.angle = 180;
           kart.velocity.x = -5;
+          kart.velocity.y = 0;
         }
       }
-    } else if (lastKeyRef.current === "d") {
+    } else if (lastKeyRef.current === "d" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -185,11 +204,14 @@ function Canvas(props: any) {
             rectangle: boundary,
           })
         ) {
+          console.log("collision detected", kart.position, kart.velocity);
           kart.velocity.x = 0;
+          console.log("collision detected", kart.position, kart.velocity);
           break;
         } else {
           kart.angle = 0;
           kart.velocity.x = 5;
+          kart.velocity.y = 0;
         }
       }
     }
@@ -415,6 +437,7 @@ function Canvas(props: any) {
     })
 
     socket.on("receive_client_joined", (data) => {
+      console.log(data);
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
