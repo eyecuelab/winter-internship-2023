@@ -28,7 +28,6 @@ export type teamConstructorType = {
   color: string;
   players: { x: string; y: string };
   score: number;
-  ghost: boolean;
 };
 
 export type kartType = {
@@ -37,13 +36,16 @@ export type kartType = {
   radius: number;
   angle: number;
   imgSrc: string;
+  isGhost: boolean;
 };
 
 export type kartConstructorType = {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
+  radius: number;
   imgSrc: string;
   angle: number;
+  isGhost: boolean
 }
 
 export type myGameType = {

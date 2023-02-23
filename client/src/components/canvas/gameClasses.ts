@@ -19,6 +19,7 @@ export class Kart {
   radius: number;
   imgSrc: string;
   angle: number;
+  isGhost: boolean
 
   constructor();
   constructor(kartConstructorData: kartConstructorType);
@@ -28,6 +29,7 @@ export class Kart {
     this.radius = 15;
     this.imgSrc = kartConstructorData?.imgSrc ?? '';
     this.angle = kartConstructorData?.angle ?? 0;
+    this.isGhost = kartConstructorData?.isGhost ?? false;
   }
 
   updateKartWithJson(jsonString: string) {
@@ -37,6 +39,7 @@ export class Kart {
     this.radius = kartUpdate.radius;
     this.imgSrc = kartUpdate.imgSrc;
     this.angle = kartUpdate.angle;
+    this.isGhost = kartUpdate.isGhost;
   }
 }
 
@@ -46,7 +49,7 @@ export class Team {
   playerInControl: string;
   players: { x: string; y: string };
   score: number;
-  ghost: boolean
+  
   constructor();
   constructor(teamData: teamConstructorType);
   constructor(teamData?: teamConstructorType) {
@@ -55,7 +58,6 @@ export class Team {
     this.players = teamData?.players ?? { x: "", y: "string" };
     this.playerInControl = teamData?.players ? teamData.players.x :  "";
     this.score = teamData?.score ?? 0;
-    this.ghost = teamData?.ghost ?? false;
   }
 
   changePlayerInControl() {

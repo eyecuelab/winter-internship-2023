@@ -68,13 +68,13 @@ const Login = () => {
             GitHub
           </Button> */}
 
-          <Button color="gradient" auto ghost onClick={() => loginToGoogle()}>
+          <Button color="gradient" onClick={() => loginToGoogle()}>
             {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Google
           </Button>
           <Spacer y={1} />
-          <Button color="gradient" auto ghost onClick={() => loginAsGuest()}>
+          <Button color="gradient" onClick={() => loginAsGuest()}>
             {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Continue as Guest
