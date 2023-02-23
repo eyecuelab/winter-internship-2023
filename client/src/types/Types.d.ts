@@ -45,8 +45,8 @@ export type kartConstructorType = {
   radius: number;
   imgSrc: string;
   angle: number;
-  isGhost: boolean
-}
+  isGhost: boolean;
+};
 
 export type myGameType = {
   userList: [];
@@ -59,7 +59,7 @@ export type myGameType = {
 export type roomGameType = {
   karts: Map<string, Kart>;
   scores: Map<string, number>;
-  isGameActive: boolean;
+  isGameOver: boolean;
 };
 
 export type pelletType = {

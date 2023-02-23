@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
     const socketIds = Array.from(socketsInRoom);
 
     //database fetch game boundaries/pellets/spawnpoints arrays
-    io.in(`${room}`).emit("receive_client_joined", {socketIds, userId});//send map properties from the database
+    io.in(`${room}`).emit("receive_client_joined", { socketIds, userId }); //send map properties from the database
   });
 
   socket.on("send_team", (data) => {
@@ -62,8 +62,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("remove_pellet", (data) => {
-    const { gameId, i, isGameActive  } = data;
-    socket.to(gameId).emit("pellet_gone", { i, isGameActive });
+    const { gameId, i, isGameOver } = data;
+    socket.to(gameId).emit("pellet_gone", { i, isGameOver });
   });
 
   //potential
@@ -76,39 +76,46 @@ io.on("connection", (socket) => {
   //   socket.to(roomId).emit("update_user_list", { usersInRoom });
   // });
 
-  socket.on("disconnect", (reason) => {
-    console.log(socket.id + " disconnected");
-  });
-
   socket.on("db_update", (data) => {
-    const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
-  
+    const {
+      gameId,
+      currentTeamId,
+      currentScore,
+      currentKart,
+      currentPellets,
+      currentIsGameOver,
+    } = data;
+
     const gameUpdatesOnInterval = async () => {
       await prisma.game.update({
         where: { id: parseInt(gameId) },
-        data: { 
+        data: {
           pellets: currentPellets,
-          isActive: currentIsGameOver
+          isActive: !currentIsGameOver,
         },
-      }), 
-      await prisma.team.update({
+      }),
+        await prisma.team.update({
           where: { id: parseInt(currentTeamId) },
-          data: { 
+          data: {
             score: currentScore,
-            position:  currentKart["position"],
-            velocity:  currentKart["velocity"],
-            angle: Math.round(currentKart["angle"])
+            position: currentKart["position"],
+            velocity: currentKart["velocity"],
+            angle: Math.round(currentKart["angle"]),
           },
-        })
-    }
-   //only 1 player per Team has an existing currentTeamId
+        });
+    };
+    //only 1 player per Team has an existing currentTeamId
     if (currentTeamId) {
       console.count("db_update2");
       gameUpdatesOnInterval();
     }
-  
+
     console.count("db_update");
-  })
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.log(socket.id + "disconnected");
+  });
 });
 
 server.listen(3001, () =>
@@ -117,6 +124,5 @@ server.listen(3001, () =>
 // server.listen(8080, () =>
 //   console.log("Server ready at: 8080")
 // );
-
 
 export default io;
