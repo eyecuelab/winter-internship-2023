@@ -91,7 +91,7 @@ function frameRenderer(
     this.fillStyle = color;
     this.fill();
 
-    this.drawImage(image, x, y, height, width);
+    // this.drawImage(image, x, y, height, width);
     this.restore();
   };
 
