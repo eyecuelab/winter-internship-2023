@@ -75,7 +75,9 @@ function Canvas(props: any) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart:Kart = roomGameRef.current.karts.get(myColor) ?? new Kart();//not sure about this..
-    if (lastKeyRef.current === "w") {
+    const previousXVelocity = kart.velocity.x;
+
+    if (lastKeyRef.current === "w" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -83,7 +85,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: kart.velocity.x,
+                x: 0,
                 y: -5,
               },
             },
@@ -91,14 +93,16 @@ function Canvas(props: any) {
           })
         ) {
           kart.velocity.y = 0;
+          kart.velocity.x = previousXVelocity;
           break;
         } else {
           kart.angle = -90;
-          //make this based off of velocity instead of lastKey
           kart.velocity.y = -5;
+          kart.velocity.x = 0
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
-    } else if (lastKeyRef.current === "s") {
+    } else if (lastKeyRef.current === "s" && ((kart.position.x - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -114,10 +118,13 @@ function Canvas(props: any) {
           })
         ) {
           kart.velocity.y = 0;
+          kart.velocity.x = previousXVelocity;
           break;
         } else {
           kart.angle = 90;
           kart.velocity.y = 5;
+          kart.velocity.x = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }
@@ -139,7 +146,6 @@ function Canvas(props: any) {
           aliveKartsArr.push(mapargument)
         }
       })
-      console.log(aliveKartsArr)
 
       aliveKartsArr.forEach((item) => {
         if(item){
@@ -167,14 +173,6 @@ function Canvas(props: any) {
         kart.velocity.x = 0;
       }
     });
-
-    // if (kart.velocity.y != 0) {
-    //   lastKeyRef.current = "";
-    //   myGameRef.current.myTeam.changePlayerInControl();
-    //   const tempTeamMate = myGameRef.current.myTeamMate;
-    //   const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-    //   socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
     return kart;
   };
 
@@ -182,7 +180,9 @@ function Canvas(props: any) {
     const myColor = myGameRef.current.myTeam.color;
     const kart:Kart = roomGameRef.current.karts.get(myColor) ?? new Kart();//not sure about this..
 
-    if (lastKeyRef.current === "a") {
+    const previousYVelocity = kart.velocity.y;
+
+    if (lastKeyRef.current === "a" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -191,20 +191,23 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: -5,
-                y: kart.velocity.y,
+                y: 0,
               },
             },
             rectangle: boundary,
           })
         ) {
           kart.velocity.x = 0;
+          kart.velocity.y = previousYVelocity;
           break;
         } else {
           kart.angle = 180;
           kart.velocity.x = -5;
+          kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
-    } else if (lastKeyRef.current === "d") {
+    } else if (lastKeyRef.current === "d" && ((kart.position.y - 20) % 40) === 0) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -213,17 +216,20 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: 5,
-                y: kart.velocity.y,
+                y: 0,
               },
             },
             rectangle: boundary,
           })
         ) {
           kart.velocity.x = 0;
+          kart.velocity.y = previousYVelocity;
           break;
         } else {
           kart.angle = 0;
           kart.velocity.x = 5;
+          kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }
@@ -352,7 +358,7 @@ function Canvas(props: any) {
       teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
     }
     if (teamTwo && scoresArr[1]) {
-      const teamScore = scoresArr[0][1] ?? 0;
+      const teamScore = scoresArr[1][1] ?? 0;
       teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
     }
 
@@ -479,6 +485,7 @@ function Canvas(props: any) {
     })
 
     socket.on("receive_client_joined", (data) => {
+      console.log(data);
       myGameRef.current.userList = data;
       const numberOfUsers = data.length;
       if (socketId === data[numberOfUsers - 1]) {
