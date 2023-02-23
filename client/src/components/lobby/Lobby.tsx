@@ -266,7 +266,7 @@ const Lobby = (props: Props) => {
 
           <Spacer y={1} />
 
-          <Button color="gradient" auto ghost onClick={handleStartGameClick}>
+          <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
             JOIN GAME!
           </Button>
