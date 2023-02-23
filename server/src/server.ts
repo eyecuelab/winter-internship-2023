@@ -22,7 +22,11 @@ io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
 
   socket.on("join_game_room", async (data) => {
-    const room = data.toString();
+    const { gameId, userId } = data;
+    console.log("gameId " + gameId);
+    console.log("userId " + userId);
+
+    const room = gameId.toString();
     socket.join(room);
     console.log(socket.id, "joined room: ", room);
 
@@ -34,7 +38,7 @@ io.on("connection", (socket) => {
     const socketIds = Array.from(socketsInRoom);
 
     //database fetch game boundaries/pellets/spawnpoints arrays
-    io.in(`${room}`).emit("receive_client_joined", socketIds);//send map properties from the database
+    io.in(`${room}`).emit("receive_client_joined", {socketIds, userId});//send map properties from the database
   });
 
   socket.on("send_team", (data) => {

@@ -63,10 +63,12 @@ const Lobby = (props: Props) => {
       //     userId: userData?.id,
       //     verticalOrHorizontalControl: "vertical",
       //   });
+      const gameId = gameUser.gameId;
+      const userId = gameUser.userId;
 
       setGameId(gameUser.gameId);
-      socket.emit("join_game_room", gameUser.gameId);
-      navigate(`/game/${gameUser.gameId}`);
+      socket.emit("join_game_room", {gameId, userId});
+      navigate(`/game/${gameId}`);
     });
     // });
   };
@@ -102,11 +104,13 @@ const Lobby = (props: Props) => {
           //     userId: userData?.id,
           //     verticalOrHorizontalControl: "vertical",
           //   });
+          
+          const gameId = newGameUser.gameId;
+          const userId = newGameUser.userId;
 
           setGameId(newGameUser.gameId);
-          socket.emit("join_game_room", newGameUser.gameId);
-          navigate(`/game/${newGameUser.gameId}`);
-          //  });
+          socket.emit("join_game_room", {gameId, userId});
+          navigate(`/game/${gameId}`);
         });
       }
     );

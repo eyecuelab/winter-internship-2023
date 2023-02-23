@@ -415,9 +415,11 @@ function Canvas(props: any) {
     })
 
     socket.on("receive_client_joined", (data) => {
-      myGameRef.current.userList = data;
-      const numberOfUsers = data.length;
-      if (socketId === data[numberOfUsers - 1]) {
+      const { socketIds, userId } = data;
+
+      myGameRef.current.userList = socketIds;
+      const numberOfUsers = socketIds.length;
+      if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
           const teamNumber = numberOfUsers / 2;
@@ -432,13 +434,13 @@ function Canvas(props: any) {
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
             players: {
-              x: data[numberOfUsers - 2],
-              y: data[numberOfUsers - 1],
+              x: socketIds[numberOfUsers - 2],
+              y: socketIds[numberOfUsers - 1],
             },
             score: 0,
           });
 
-          myGameRef.current.myTeamMate = data[numberOfUsers - 2];
+          myGameRef.current.myTeamMate = socketIds[numberOfUsers - 2];
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
