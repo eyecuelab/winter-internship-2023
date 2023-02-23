@@ -11,6 +11,7 @@ import { myGameType, roomGameType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import mapSwitchCase from "./mapSwitchCase";
 import { generateMapQuadrants, quadrants } from "./quadrants";
+import { postData } from "../../apiHelper";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -40,6 +41,8 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart(),
   });
+
+  const teamId = useRef<number | null>(null);
 
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
@@ -454,6 +457,26 @@ function Canvas(props: any) {
             gameId,
             tempTeamMate,
           });
+          postData(`/team`, {
+            color: colors[numberOfUsers],
+            score: 0,
+            position: spawnPosition.position,
+            velocity: { x: 0, y: 0 },
+            angle: 0,
+            characterId: 1,
+            gameId: parseInt(gameId),
+            kartId: 1,
+          })
+            .then((team) => {
+              teamId.current = team.id;
+              console.log(teamId.current);
+              postData(`/teamUser`, {
+                teamId: parseInt(team.id),
+                userId: parseInt(userId),
+                //dummy data
+                axisControl: "vertical",
+              });
+            })
         }
       }
     });
