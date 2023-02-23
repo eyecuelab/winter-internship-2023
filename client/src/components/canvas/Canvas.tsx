@@ -302,7 +302,7 @@ function Canvas(props: any) {
       teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
     }
     if (teamTwo && scoresArr[1]) {
-      const teamScore = scoresArr[0][1] ?? 0;
+      const teamScore = scoresArr[1][1] ?? 0;
       teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
     }
 
