@@ -467,6 +467,7 @@ function Canvas(props: any) {
             gameId: parseInt(gameId),
             kartId: 1,
           })
+          //I think this actually needs to go elsewhere, because It's not being called for every User
             .then((team) => {
               teamId.current = team.id;
               console.log(teamId.current);
@@ -522,6 +523,28 @@ function Canvas(props: any) {
       socket.removeAllListeners();
     };
   }, [socket]);
+
+  setInterval(async () => {
+    if (teamId.current) {
+      const currentScore = roomGameRef.current.scores.get(myGameRef.current.myTeam.color)
+      const currentKart =  roomGameRef.current.karts.get(
+        myGameRef.current.myTeam.color
+      );
+      const currentIsGameOver = roomGameRef.current.boolOfGameStatus;
+      const currentPellets = pelletsRef.current;
+      const currentTeamId = teamId.current;
+  
+      // console.log("color:" + myGameRef.current.myTeam.color)
+      // console.log("currentScore" + currentScore);
+      // console.log("currentKart" + currentKart);
+      // console.log("teamId" + currentTeamId);
+      // console.log("currentIsGameOver" + currentIsGameOver);
+  
+      socket.emit("db_update", {
+        gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver
+      })
+  }
+  }, 10000);
 
   //KEYBOARD EVEN LISTENERS when component mounts
   useEffect(() => {

@@ -2,7 +2,9 @@ import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
 import { getGameById } from "./Models/game";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -67,6 +69,36 @@ io.on("connection", (socket) => {
   socket.on("disconnect", (reason) => {
     console.log(socket.id + " disconnected");
   });
+
+  socket.on("db_update", (data) => {
+    const { gameId, currentTeamId, currentScore, currentKart, currentPellets, currentIsGameOver } = data;
+  
+    const gameUpdatesOnInterval = async () => {
+      await prisma.game.update({
+        where: { id: parseInt(gameId) },
+        data: { 
+          pellets: currentPellets,
+          isActive: currentIsGameOver
+        },
+      }), 
+      await prisma.team.update({
+          where: { id: parseInt(currentTeamId) },
+          data: { 
+            score: currentScore,
+            position:  currentKart["position"],
+            velocity:  currentKart["velocity"],
+            angle: currentKart["angle"]
+          },
+        })
+    }
+   //only 1 player per Team has an existing currentTeamId
+    if (currentTeamId) {
+      console.count("db_update2");
+      gameUpdatesOnInterval();
+    }
+  
+    console.count("db_update");
+  })
 });
 
 server.listen(3001, () =>
