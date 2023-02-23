@@ -91,6 +91,7 @@ function Canvas(props: any) {
           kart.angle = -90;
           kart.velocity.y = -5;
           kart.velocity.x = 0
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     } else if (lastKeyRef.current === "s" && ((kart.position.x - 20) % 40) === 0) {
@@ -115,6 +116,7 @@ function Canvas(props: any) {
           kart.angle = 90;
           kart.velocity.y = 5;
           kart.velocity.x = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }
@@ -169,6 +171,7 @@ function Canvas(props: any) {
           kart.angle = 180;
           kart.velocity.x = -5;
           kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     } else if (lastKeyRef.current === "d" && ((kart.position.y - 20) % 40) === 0) {
@@ -193,6 +196,7 @@ function Canvas(props: any) {
           kart.angle = 0;
           kart.velocity.x = 5;
           kart.velocity.y = 0;
+          kart.angle = Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
     }

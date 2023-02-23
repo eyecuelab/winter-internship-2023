@@ -72,24 +72,26 @@ function frameRenderer(
   const drawKart = (
     x: number,
     y: number,
-    radius: number,
+    velocityX: number,
+    velocityY: number,
+    width: number,
+    height: number,
     color: string,
     angle: number,
     image: HTMLImageElement
   ) => {
     this.save();
+    this.translate(x, y);
+    this.rotate(angle);
     this.beginPath();
-    this.arc(x, y, radius, 0, Math.PI * 2);
+    this.moveTo(-width / 2, height / 2);//start at the bottom left corner
+    this.lineTo(width / 2, height / 2);//draw to bottom right
+    this.lineTo(0, -height / 2)//to top center
+    this.closePath();
     this.fillStyle = color;
     this.fill();
 
-    if (angle !== 0) {
-      this.translate(x + 7.5, y + 7.5);
-      this.rotate((angle * Math.PI) / 180);
-      this.translate(-x - 7.5, -y - 7.5);
-    }
-
-    this.drawImage(image, x - 20, y - 30, 40, 40);
+    this.drawImage(image, x, y, height, width);
     this.restore();
   };
 
@@ -119,7 +121,10 @@ function frameRenderer(
     drawKart(
       entry.kart.position.x,
       entry.kart.position.y,
-      entry.kart.radius,
+      entry.kart.velocity.x,
+      entry.kart.velocity.y,
+      30,
+      30,
       entry.color,
       entry.kart.angle,
       createImage(entry.kart.imgSrc)
