@@ -115,6 +115,7 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (reason) => {
     console.log(socket.id + "disconnected");
+    socket.broadcast.emit("client_disconnect");
   });
 });
 

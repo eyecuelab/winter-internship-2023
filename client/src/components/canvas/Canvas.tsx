@@ -646,6 +646,10 @@ function Canvas(props: any) {
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
+    socket.on("client_disconnect", () => {
+      console.log("client side disconnect");
+      });
+
     return () => {
       socket.removeAllListeners();
     };
