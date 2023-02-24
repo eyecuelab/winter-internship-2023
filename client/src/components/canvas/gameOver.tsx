@@ -45,7 +45,7 @@ export function GameOver(props: GameOverType) {
   return (
     <>
       {props.isGameOverModalOpen && (
-        <div className="gameover-overlay" onClick={props.toggleGameOver}>
+        <div className="gameover-overlay">
           <div onClick={(e) => e.stopPropagation()} className="gameover-box">
             <div>
               <h1>Game Over</h1>
