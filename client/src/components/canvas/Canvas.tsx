@@ -70,16 +70,25 @@ function Canvas(props: any) {
     return true;
   };
 
-  const kill = (victimsColor: string) => {
-    const kart: Kart | undefined = roomGameRef.current.karts.get(victimsColor);
+  const kill = (/*victimsColor: string, */spawnNum: number) => {
+
+    console.log("I was killed!")
+    const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
+
+  
+
+
+    // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
     if (kart) {
       kart.isGhost = true;
-      roomGameRef.current.karts.set(victimsColor, kart);
-    }
+      kart.position = spawnPointsRef.current[spawnNum].position
+      kart.velocity = { x: 0, y: 0}
+    //   roomGameRef.current.karts.set(victimsColor, kart)
+      
 
-    //move their location to a spawn point
-    //change their velocity possibly
-  };
+      /*this technically works but the other users send out the information that their isGhost is false still */
+    }
+  }
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -162,16 +171,41 @@ function Canvas(props: any) {
       });
 
       aliveKartsArr.forEach((item) => {
-        if (item) {
-          //console.log("is this even working?")
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            kill(item.color);
-            //myGameRef.current.myTeam.ghost = false
-            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-            // make the server and receiver for this emit
-          }
+        if(item){
+         
+            if (circleCollidesWithCircle({ghost: kart, paCart: item.pacmanKart})){
+              const spawnNum = Math.floor(Math.random() * 4)
+              
+              //kill(item.color, spawnNum)
+              kart.isGhost = false;
+              const victim = item.color
+              socket.emit("player_killed", { victim, spawnNum, gameId })
+              /*
+              todo: 
+              this function sets own .isGhost to false
+              maybe done
+              
+
+              kill function moves victim location and velocity to a set point
+              maybe done
+
+              socket emit from here with the correct data (killer, victim, spawn number)
+
+
+              make the socket receiver that takes in the above 3 things and also does the things
+              (turns killer .isGhost to false, turns victim's .isGhost to true, moves victim to spawn point and changes their velocity to (0, 0))
+
+              */
+
+
+
+
+
+
+              //myGameRef.current.myTeam.ghost = false
+              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+              // make the server and receiver for this emit
+            }
         }
       });
     }
@@ -269,16 +303,20 @@ function Canvas(props: any) {
       //console.log(aliveKartsArr);
 
       aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            kill(item.color);
-            console.log("pacman killed! on the x axis controlled person");
-            //myGameRef.current.myTeam.ghost = false
-            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-            // make the server and receiver for this emit
-          }
+        if(item){
+            if (circleCollidesWithCircle({ghost:kart, paCart: item.pacmanKart})){
+              const spawnNum = Math.floor(Math.random() * 4)
+              
+              //kill(item.color, spawnNum)
+              console.log("pacman killed! on the x axis controlled person");
+              kart.isGhost = false;
+              console.log(item);
+              const victim = item.color //{"orange", kart} item.kart jsonified
+              socket.emit("player_killed", { victim, spawnNum, gameId })
+              //myGameRef.current.myTeam.ghost = false
+              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+              // make the server and receiver for this emit
+            }
         }
       });
     }
@@ -492,6 +530,7 @@ function Canvas(props: any) {
         TimeMath._lastTick += TimeMath._timestep;
         Time.t = TimeMath._lastTick - TimeMath._startTime;
         Time.dt = TimeMath._timestep;
+        renderFrame();
       }
 
       Time.frame = TimeMath._currentFrame;
@@ -500,7 +539,7 @@ function Canvas(props: any) {
     } catch (e) {
       throw e;
     }
-    renderFrame();
+    
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
@@ -598,7 +637,7 @@ function Canvas(props: any) {
             //I think this actually needs to go elsewhere, because It's not being called for every User
             .then((team) => {
               teamId.current = team.id;
-              console.log(teamId.current);
+              //console.log(teamId.current);
               postData(`/teamUser`, {
                 teamId: parseInt(team.id),
                 userId: parseInt(userId),
@@ -633,6 +672,17 @@ function Canvas(props: any) {
       roomGameRef.current.scores.set(tempColor, tempScore);
       displayScores();
     });
+
+    socket.on("receive_kill", (data) => {
+      const { victim, spawnNum } = data;
+      console.log(data)
+      //JSON.parse(ghost) and victim
+      //if (my team is the victims color AND I'm the player in control)
+      if (myGameRef.current.myTeam.playerInControl === socket.id && myGameRef.current.myTeam.color === victim) {
+        kill(spawnNum);
+      }
+      
+    })
 
     socket.on("pellet_gone", (data) => {
       const { i, isGameOver } = data;
