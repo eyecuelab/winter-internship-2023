@@ -44,8 +44,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("player_killed", (data) => {
-    const { ghost, victim, spawnNum, gameId } = data;
-    io.in(data.gameId).emit("receive_kill", { ghost, victim, spawnNum})
+    const { victim, spawnNum, gameId } = data;
+    io.in(data.gameId).emit("receive_kill", {victim, spawnNum})
     // possibly change io.in to socket.to
   })
 
