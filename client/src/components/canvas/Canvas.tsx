@@ -16,8 +16,9 @@ import { postData } from "../../apiHelper";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const { gameId } = props;
+  const { gameId, blobUrl} = props;
   const colors = ["yellow", "white", "teal", "blue", "orange"];
+  console.log(blobUrl);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -425,7 +426,8 @@ function Canvas(props: any) {
       kartsArr,
       boundariesRef.current,
       pelletsRef.current,
-      spawnPointsRef.current
+      spawnPointsRef.current,
+      blobUrl
     );
   };
 

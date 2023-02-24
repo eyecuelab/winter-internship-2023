@@ -10,11 +10,11 @@ function frameRenderer(
   }[],
   boundaries: Boundary[],
   pellets: Pellet[],
-  spawnPoints: SpawnPoint[]
+  spawnPoints: SpawnPoint[],
+  blobUrl: string
 ) {
   this.clearRect(0, 0, size.width, size.height);
-
-  
+  // console.log(blobUrl);
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
@@ -72,32 +72,37 @@ function frameRenderer(
     );
   };
 
-  const drawKart = (
-    x: number,
-    y: number,
-    velocityX: number,
-    velocityY: number,
-    width: number,
-    height: number,
-    color: string,
-    angle: number,
-    image: HTMLImageElement
-  ) => {
-    this.save();
-    this.translate(x, y);
-    this.rotate(angle);
-    this.beginPath();
-    this.moveTo(-width / 2, height / 2);//start at the bottom left corner
-    this.lineTo(width / 2, height / 2);//draw to bottom right
-    this.lineTo(0, -height / 2)//to top center
-    this.closePath();
-    this.fillStyle = color;
-    this.fill();
-
-    // this.drawImage(image, x, y, height, width);
-    this.restore();
-  };
-
+  const image = new Image();
+  image.src = "http://localhost:3000/69bfcb7c-6021-4307-9468-450bf2335eed";
+ 
+  if (image.onload) {
+    const drawKart = (
+      x: number,
+      y: number,
+      velocityX: number,
+      velocityY: number,
+      width: number,
+      height: number,
+      color: string,
+      angle: number,
+      image: HTMLImageElement
+    ) => {
+      this.save();
+      this.translate(x, y);
+      this.rotate(angle);
+      this.beginPath();
+      this.moveTo(-width / 2, height / 2);//start at the bottom left corner
+      this.lineTo(width / 2, height / 2);//draw to bottom right
+      this.lineTo(0, -height / 2)//to top center
+      this.closePath();
+      this.fillStyle = color;
+      this.fill();
+  
+      this.drawImage(image, 0, 0);
+      this.restore();
+    };
+  } 
+  
   boundaries.forEach((boundary) => {
     drawBoundary(boundary);
   });
@@ -110,16 +115,21 @@ function frameRenderer(
     drawSpawnPoint(spawnPoint);
   });
 
-  function createImage(src: string) {
-    const image = new Image();
-    image.src = src;
-    return image;
-  }
+  // const createImage = (src: string) => {
+  //   const image = new Image();
+  //   // console.log(src);
+  //   image.src = src;
+  //   return image;
+  // }
+
+
+
+
 
   //notes for rotating kart:
   //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
   //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
-
+  
   karts.forEach((entry) => {
     drawKart(
       entry.kart.position.x,
@@ -130,7 +140,7 @@ function frameRenderer(
       30,
       entry.color,
       entry.kart.angle,
-      createImage(entry.kart.imgSrc)
+      createImage(blobUrl)
     );
   });
 }
