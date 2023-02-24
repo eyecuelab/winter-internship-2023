@@ -1,4 +1,4 @@
-<svg width="196" height="196" viewBox="0 0 196 196" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const mapBrickSvgString = `<svg width="196" height="196" viewBox="0 0 196 196" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_1_3114)">
 <path d="M191 0H5C2.23858 0 0 2.23858 0 5V191C0 193.761 2.23858 196 5 196H191C193.761 196 196 193.761 196 191V5C196 2.23858 193.761 0 191 0Z" fill="#706FAF"/>
 <path d="M185 0H5C2.23858 0 0 2.23858 0 5V185C0 187.761 2.23858 190 5 190H185C187.761 190 190 187.761 190 185V5C190 2.23858 187.761 0 185 0Z" fill="#8584CF"/>
@@ -16,4 +16,5 @@
 <rect width="196" height="196" fill="white"/>
 </clipPath>
 </defs>
-</svg>
+</svg>`
+

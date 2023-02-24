@@ -10,7 +10,8 @@ function frameRenderer(
   boundaries: Boundary[],
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
-  mapBrick: HTMLImageElement | undefined
+  mapBrickSvg: HTMLImageElement | undefined,
+  pelletSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
@@ -24,7 +25,7 @@ function frameRenderer(
       Boundary.width,
       Boundary.height
     );
-    this.drawImage(mapBrick, boundary.position.x, boundary.position.y, 40, 40)
+    this.drawImage(mapBrickSvg, boundary.position.x, boundary.position.y, 40, 40)
   };
 
   const drawPellet = (pellet: Pellet) => {
@@ -48,6 +49,8 @@ function frameRenderer(
       );
       this.fillStyle = grd;
       this.fill();
+      this.drawImage(pelletSvg, pellet.position.x - 5,
+        pellet.position.y - 5, 11, 11)
       this.closePath();
     }
   };
