@@ -530,6 +530,7 @@ function Canvas(props: any) {
         TimeMath._lastTick += TimeMath._timestep;
         Time.t = TimeMath._lastTick - TimeMath._startTime;
         Time.dt = TimeMath._timestep;
+        renderFrame();
       }
 
       Time.frame = TimeMath._currentFrame;
@@ -538,7 +539,7 @@ function Canvas(props: any) {
     } catch (e) {
       throw e;
     }
-    renderFrame();
+    
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
