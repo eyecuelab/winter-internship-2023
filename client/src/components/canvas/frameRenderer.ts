@@ -9,9 +9,13 @@ function frameRenderer(
   }[],
   boundaries: Boundary[],
   pellets: Pellet[],
-  spawnPoints: SpawnPoint[]
+  spawnPoints: SpawnPoint[],
+  mapBrickSvg: HTMLImageElement | undefined,
+  pelletSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
+
+  // this.drawImage(mapBrick, 1, 100, 100, 100);
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
@@ -21,6 +25,7 @@ function frameRenderer(
       Boundary.width,
       Boundary.height
     );
+    this.drawImage(mapBrickSvg, boundary.position.x, boundary.position.y, 40, 40)
   };
 
   const drawPellet = (pellet: Pellet) => {
@@ -44,6 +49,8 @@ function frameRenderer(
       );
       this.fillStyle = grd;
       this.fill();
+      this.drawImage(pelletSvg, pellet.position.x - 5,
+        pellet.position.y - 5, 11, 11)
       this.closePath();
     }
   };
@@ -84,9 +91,9 @@ function frameRenderer(
     this.translate(x, y);
     this.rotate(angle);
     this.beginPath();
-    this.moveTo(-width / 2, height / 2);//start at the bottom left corner
-    this.lineTo(width / 2, height / 2);//draw to bottom right
-    this.lineTo(0, -height / 2)//to top center
+    this.moveTo(-width / 2, height / 2); //start at the bottom left corner
+    this.lineTo(width / 2, height / 2); //draw to bottom right
+    this.lineTo(0, -height / 2); //to top center
     this.closePath();
     this.fillStyle = color;
     this.fill();
@@ -131,5 +138,4 @@ function frameRenderer(
     );
   });
 }
-
 export default frameRenderer;
