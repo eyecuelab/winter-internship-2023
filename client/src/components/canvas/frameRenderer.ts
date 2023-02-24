@@ -1,4 +1,5 @@
 import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
+import pinkKart from "./../../src/assets/karts/pinkKart.svg";
 
 function frameRenderer(
   this: any,
@@ -12,6 +13,8 @@ function frameRenderer(
   spawnPoints: SpawnPoint[]
 ) {
   this.clearRect(0, 0, size.width, size.height);
+
+  
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
