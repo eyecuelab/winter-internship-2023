@@ -1,6 +1,5 @@
 import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
 
-
 function frameRenderer(
   this: any,
   size: { width: any; height: any },
@@ -11,14 +10,11 @@ function frameRenderer(
   boundaries: Boundary[],
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
-  mapBrick: HTMLImageElement|undefined
+  mapBrick: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
-  if (typeof window !== 'undefined') {
-    
-      this.drawImage(mapBrick, 1, 100, 100, 100);
-  }
+  // this.drawImage(mapBrick, 1, 100, 100, 100);
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
@@ -28,6 +24,7 @@ function frameRenderer(
       Boundary.width,
       Boundary.height
     );
+    this.drawImage(mapBrick, boundary.position.x, boundary.position.y, 40, 40)
   };
 
   const drawPellet = (pellet: Pellet) => {
@@ -91,9 +88,9 @@ function frameRenderer(
     this.translate(x, y);
     this.rotate(angle);
     this.beginPath();
-    this.moveTo(-width / 2, height / 2);//start at the bottom left corner
-    this.lineTo(width / 2, height / 2);//draw to bottom right
-    this.lineTo(0, -height / 2)//to top center
+    this.moveTo(-width / 2, height / 2); //start at the bottom left corner
+    this.lineTo(width / 2, height / 2); //draw to bottom right
+    this.lineTo(0, -height / 2); //to top center
     this.closePath();
     this.fillStyle = color;
     this.fill();

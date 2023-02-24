@@ -521,6 +521,7 @@ function Canvas(props: any) {
 `;
 
 const mapBrickRef = useRef<HTMLImageElement|undefined>();
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
