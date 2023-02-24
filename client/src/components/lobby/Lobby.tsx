@@ -45,33 +45,33 @@ const Lobby = (props: Props) => {
   const [gameId, setGameId] = useState(null);
 
   //svg
-//   const svgRef = useRef<SVGSVGElement>(null);
-//   console.log("pinkKart: " + pinkKart);
-//   useEffect(() => {
-//     if (svgRef.current) {
-//       const bbox = svgRef.current.getBBox();
-//       console.log(bbox); 
-//     }
-//   }, []);
+  const svgRef = useRef<SVGSVGElement>(null);
+  console.log("pinkKart: " + pinkKart);
+  useEffect(() => {
+    if (svgRef.current) {
+      const bbox = svgRef.current.getBBox();
+      console.log(bbox); 
+    }
+  }, []);
 
-//   const svgElement = document.getElementById('pinkKart') as SVGGraphicsElement | null;
-//   //   const svgElement = document.getElementById('pinkKart');
-//   console.log("svgElement " + svgElement);
-// if (svgElement) {
-//   let bBox = svgElement.getBBox(); 
-//   console.log("bBox: top: " + bBox.top)
-//   console.log("bBox: left: " + bBox.left)
-//   console.log("bBox: width: " + bBox.width)
-//   console.log("bBox: height: " + bBox.height)
-// }
-// if (svgElement) {
-//   let clonedSvgElement = svgElement.cloneNode(true) as SVGElement;
-//   let outerHTML = clonedSvgElement.outerHTML
-//   let blob = new Blob([outerHTML],{type:'image/svg+xml;charset=utf-8'});
-//   let URL = window.URL || window.webkitURL || window;
-//   let blobURL = URL.createObjectURL(blob);
-//   console.log(blobURL);
-// }
+  const svgElement = document.getElementById('pinkKart') as SVGGraphicsElement | null;
+  //   const svgElement = document.getElementById('pinkKart');
+  console.log("svgElement " + svgElement);
+if (svgElement) {
+  let bBox = svgElement.getBBox(); 
+  console.log("bBox: top: " + bBox.top)
+  console.log("bBox: left: " + bBox.left)
+  console.log("bBox: width: " + bBox.width)
+  console.log("bBox: height: " + bBox.height)
+}
+if (svgElement) {
+  let clonedSvgElement = svgElement.cloneNode(true) as SVGElement;
+  let outerHTML = clonedSvgElement.outerHTML
+  let blob = new Blob([outerHTML],{type:'image/svg+xml;charset=utf-8'});
+  let URL = window.URL || window.webkitURL || window;
+  let blobURL = URL.createObjectURL(blob);
+  console.log(blobURL);
+}
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
@@ -244,10 +244,10 @@ const Lobby = (props: Props) => {
             height="100%"
             alt="Relaxing app background"
           />
-          {/* SVG render test */}
-          {/* <img src="./../../src/assets/karts/pinkKart.svg" alt="SVG" style={{backgroundColor: "transparent", width: "50px", height: "50px"}}></img> */}
+          
+          <img src="./../../src/assets/karts/pinkKart.svg" alt="SVG" style={{backgroundColor: "transparent", width: "50px", height: "50px"}}></img>
           <div>
-          {/* <svg ref={svgRef} style={{backgroundColor: "transparent", width: "50px", height: "50px"}} xmlns="http://www.w3.org/2000/svg" width="147" height="151" viewBox="0 0 147 151" fill="none" id="pinkKart">
+          <svg ref={svgRef} style={{backgroundColor: "transparent", width: "50px", height: "50px"}} xmlns="http://www.w3.org/2000/svg" width="147" height="151" viewBox="0 0 147 151" fill="none" id="pinkKart">
     <rect x="26" y="20" width="93" height="3" fill="#303030"/>
 <rect x="23" y="130" width="110" height="3" fill="#303030"/>
 <rect x="138" y="151" width="40" height="5" rx="2.5" transform="rotate(-90 138 151)" fill="#303030"/>
@@ -279,7 +279,7 @@ const Lobby = (props: Props) => {
 <path fill-rule="evenodd" clip-rule="evenodd" d="M63.4175 66.2H59.8C58.2536 66.2 57 67.4536 57 69C57 70.5464 58.2536 71.8 59.8 71.8H63.4175C62.3374 74.2723 59.8704 76 57 76C53.134 76 50 72.866 50 69C50 65.134 53.134 62 57 62C59.8704 62 62.3374 63.7277 63.4175 66.2Z" fill="#CDAD5C"/>
 <path fill-rule="evenodd" clip-rule="evenodd" d="M82 66.2H85.6175C87.1639 66.2 88.4175 67.4536 88.4175 69C88.4175 70.5464 87.1639 71.8 85.6175 71.8H82C83.0802 74.2723 85.5471 76 88.4175 76C92.2835 76 95.4175 72.866 95.4175 69C95.4175 65.134 92.2835 62 88.4175 62C85.5471 62 83.0802 63.7277 82 66.2Z" fill="#CDAD5C"/>
     </svg>
-    <img src={pinkKart} alt="My SVG file" style={{backgroundColor: "transparent", width: "50px", height: "50px"}} /> */}
+    <img src={pinkKart} alt="My SVG file" style={{backgroundColor: "transparent", width: "50px", height: "50px"}} /> 
           </div>
 
           <Text

@@ -19,7 +19,6 @@ const svgRef = useRef<SVGSVGElement>(null);
 //   let {width, height} = svgElement.getBBox();
 // }
 // style={{backgroundColor: "transparent", width: "50px", height: "50px"}}
- 
 
   return (
     <>

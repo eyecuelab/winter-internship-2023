@@ -1,5 +1,6 @@
 import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
-import pinkKart from "./../../src/assets/karts/pinkKart.svg";
+import pinkKart from "./../../assets/karts/pinkKart.svg";
+import Konva from 'konva';
 
 function frameRenderer(
   this: any,
@@ -11,10 +12,10 @@ function frameRenderer(
   boundaries: Boundary[],
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
-  blobUrl: string
+  svg: SVGElement | null
 ) {
   this.clearRect(0, 0, size.width, size.height);
-  // console.log(blobUrl);
+// console.log(pinkKart);
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
@@ -72,10 +73,10 @@ function frameRenderer(
     );
   };
 
-  const image = new Image();
-  image.src = "http://localhost:3000/69bfcb7c-6021-4307-9468-450bf2335eed";
+  // const image = new Image();
+  // image.src = "blob:http://localhost:3000/69bfcb7c-6021-4307-9468-450bf2335eed";
+
  
-  if (image.onload) {
     const drawKart = (
       x: number,
       y: number,
@@ -85,7 +86,7 @@ function frameRenderer(
       height: number,
       color: string,
       angle: number,
-      image: HTMLImageElement
+      // image: HTMLImageElement
     ) => {
       this.save();
       this.translate(x, y);
@@ -97,11 +98,39 @@ function frameRenderer(
       this.closePath();
       this.fillStyle = color;
       this.fill();
-  
-      this.drawImage(image, 0, 0);
       this.restore();
+
+      
+      // var stage = new Konva.Stage({
+      //   container: 'container',
+      //   width: width,
+      //   height: height,
+      // });
+    
+      // stage.add(layer);
+    
+      var imageObj = new Image();
+      imageObj.onload = function () {
+        var kart = new Konva.Image({
+          x: 50,
+          y: 50,
+          image: imageObj,
+          width: 106,
+          height: 118,
+        });
+        const layer = new Konva.Layer();
+
+        Konva.Image.fromURL(pinkKart, (imageObj: any) => {
+          layer.add(imageObj);
+        });
+      //   layer.add(kart);
+
+      //   imageObj.src = pinkKart;
+
+  
+      // this.drawImage(image, 0, 0);
+    
     };
-  } 
   
   boundaries.forEach((boundary) => {
     drawBoundary(boundary);
@@ -140,9 +169,9 @@ function frameRenderer(
       30,
       entry.color,
       entry.kart.angle,
-      createImage(blobUrl)
+      // createImage(blobUrl)
     );
   });
 }
-
+}
 export default frameRenderer;
