@@ -646,9 +646,17 @@ function Canvas(props: any) {
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
-    socket.on("client_disconnect", () => {
-      console.log("client side disconnect");
-      });
+    socket.on("client_disconnect", (data) => {
+      console.log(data.disconnectedClientId + " has disconnected");
+      console.log(myGameRef.current.userList);
+      myGameRef.current.userList.forEach((user) => 
+     {
+        if (data.disconnectedClientId === user) {
+          roomGameRef.current.isGameOver = true;
+          toggleGameOver(); 
+        }
+     })
+    });
 
     return () => {
       socket.removeAllListeners();
