@@ -122,7 +122,8 @@ const Lobby = (props: Props) => {
         startAGame();
       } else {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
-          if (gameUsers.length !== 0 && gameUsers.length < 4) {
+          if (gameUsers.length !== 0 && gameUsers.length < 4 && lastPost.isActive === true) {
+            console.log(lastPost.isActive);
             joinAGame(gameUsers);
           } else if ((gameUsers.length = 0 || 4)) {
             startAGame();

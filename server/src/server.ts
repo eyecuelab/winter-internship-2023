@@ -2,7 +2,7 @@ import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
 import { getGameById } from "./Models/game";
-import { PrismaClient } from "@prisma/client";
+import { Game, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const server = http.createServer(app);
@@ -113,12 +113,51 @@ io.on("connection", (socket) => {
     console.count("db_update");
   });
 
+  socket.on("game_over", (data) => {
+    const { gameId } = data;
+    const gameOverUpdate = async () => {
+      await prisma.game.update({
+      where: { id: parseInt(gameId) },
+      data: {
+        isActive: false,
+      }
+    })
+  }
+  gameOverUpdate();
+});
+
   socket.on("disconnect", (reason) => {
     console.log(socket.id + "disconnected");
     const disconnectedClientId = socket.id;
     socket.broadcast.emit("client_disconnect", {disconnectedClientId});
+
+    const gameOverUpdate = async () => {
+    let lastGame = await prisma.game.findFirst({
+      orderBy: {
+        id: "desc",
+      },
+    });
+    if (lastGame) {
+      let gameUsers = await prisma.gameUser.findMany({
+        where: {
+            gameId: lastGame.id,
+        },
+      });
+      if (gameUsers.length === 1) {
+        await prisma.game.update({
+          where: {
+            id: lastGame.id,
+          },
+          data: {
+            isActive: false,
+          },
+        });
+      }
+    }
+  }
+  gameOverUpdate();
   });
-});
+})
 
 server.listen(3001, () =>
   console.log("Server ready at: http://localhost:3001")
@@ -126,5 +165,6 @@ server.listen(3001, () =>
 // server.listen(8080, () =>
 //   console.log("Server ready at: 8080")
 // );
+
 
 export default io;

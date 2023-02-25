@@ -326,6 +326,8 @@ function Canvas(props: any) {
               tempScore,
               gameId,
             });
+            roomGameRef.current.isGameOver = true;
+            socket.emit("game_over", {gameId});
             toggleGameOver();
           }
           socket.emit("remove_pellet", { gameId, i, isGameOver });
@@ -653,6 +655,7 @@ function Canvas(props: any) {
      {
         if (data.disconnectedClientId === user) {
           roomGameRef.current.isGameOver = true;
+          socket.emit("game_over", {gameId});
           toggleGameOver(); 
         }
      })
