@@ -5,13 +5,12 @@ import { Kart, Team } from "./gameClasses";
 interface WaitingForStartType {
   children?: ReactNode;
   isWaitingForGameModalOpen: boolean;
-  setWaitingForGameModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   karts: Map<string, Kart>;
   myTeam: Team;
 }
 
 export function WaitingForStart(props: WaitingForStartType) {
-  const { karts, myTeam, setWaitingForGameModalOpen, isWaitingForGameModalOpen } = props;
+  const { karts, myTeam, isWaitingForGameModalOpen } = props;
 
   useEffect(() => {
     displayTeam();

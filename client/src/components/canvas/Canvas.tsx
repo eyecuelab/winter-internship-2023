@@ -26,7 +26,7 @@ import {pelletSvgString} from "../../assets/pelletSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "orange"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -58,9 +58,13 @@ function Canvas(props: any) {
 
   const teamId = useRef<number | null>(null);
 
-  const toggleGameStart = () => {
-    setWaitingForGameModalOpen(!isWaitingForGameModalOpen);
-  };
+  useEffect(() => {
+    let numberOfUsers = myGameRef.current.userList.length;
+    console.log(numberOfUsers);
+      // if (numberOfUsers === 4) {
+      //   toggleGameStart();
+      // }
+    }, [myGameRef])
 
   //GAME OVER FUNCTIONS:
 
@@ -556,6 +560,9 @@ function Canvas(props: any) {
 
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
+      while (numberOfUsers >= 4) {
+        setWaitingForGameModalOpen(false);
+      } 
       if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
@@ -755,7 +762,7 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} setWaitingForGameModalOpen={setWaitingForGameModalOpen} karts={roomGameRef.current.karts} myTeam={myGameRef.current.myTeam}></WaitingForStart>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} karts={roomGameRef.current.karts} myTeam={myGameRef.current.myTeam}></WaitingForStart>
         </div>
         <div>
           <GameOver
