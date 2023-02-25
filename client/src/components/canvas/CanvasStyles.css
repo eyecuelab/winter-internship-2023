@@ -36,7 +36,7 @@
 
 .waitingforstart-box {
   display: block;
-  background: rgb(255, 255, 59, .7);
+  background: rgba(34, 240, 247, 0.7);
   width: 70%;
   height: 70%;
   padding: 1rem;

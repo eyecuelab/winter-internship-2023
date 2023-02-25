@@ -560,9 +560,7 @@ function Canvas(props: any) {
 
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
-      while (numberOfUsers >= 4) {
-        setWaitingForGameModalOpen(false);
-      } 
+    
       if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
@@ -624,6 +622,9 @@ function Canvas(props: any) {
             });
         }
       }
+      if (numberOfUsers === 4) {
+        setWaitingForGameModalOpen(false);
+      } 
     });
 
     socket.on("receive_team_added", (data) => {
@@ -743,6 +744,8 @@ function Canvas(props: any) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  console.log(roomGameRef.current.karts);
 
   return (
     <>

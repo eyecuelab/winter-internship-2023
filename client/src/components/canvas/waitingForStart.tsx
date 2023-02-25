@@ -12,15 +12,24 @@ interface WaitingForStartType {
 export function WaitingForStart(props: WaitingForStartType) {
   const { karts, myTeam, isWaitingForGameModalOpen } = props;
 
+
   useEffect(() => {
+    console.log(karts);
+  console.log(myTeam.color)
     displayTeam();
   }, [isWaitingForGameModalOpen]);
 
+  // if (isWaitingForGameModalOpen) {
+  //   displayTeam();
+  // }
+
   const displayTeam = () => {
     const myKart = karts.get(myTeam.color);
+    console.log(myKart);
     const teamInfo = document.getElementById("teamInfo");
 
     if (myKart) {
+      
       const li = document.createElement("li");
           li.appendChild(
             document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving the (vvertical(W/S)/horizontal(A/D)) direction.`)
@@ -35,7 +44,6 @@ export function WaitingForStart(props: WaitingForStartType) {
        }
   };
 
-  displayTeam();
   return (
     <>
       {isWaitingForGameModalOpen && (
