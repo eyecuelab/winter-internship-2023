@@ -13,6 +13,7 @@ import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
 import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
+import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
 import { myGameType, roomGameType, kartType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
@@ -25,6 +26,7 @@ import {pelletSvgString} from "../../assets/pelletSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "orange"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -56,7 +58,12 @@ function Canvas(props: any) {
 
   const teamId = useRef<number | null>(null);
 
+  const toggleGameStart = () => {
+    setWaitingForGameModalOpen(!isWaitingForGameModalOpen);
+  };
+
   //GAME OVER FUNCTIONS:
+
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
   };
@@ -640,6 +647,7 @@ function Canvas(props: any) {
       const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
       if (isGameOver) {
+        roomGameRef.current.isGameOver = true;
         toggleGameOver();
       }
     });
@@ -746,6 +754,9 @@ function Canvas(props: any) {
           <span id="playerControlDisplay"></span>
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        <div>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} setWaitingForGameModalOpen={setWaitingForGameModalOpen} karts={roomGameRef.current.karts} myTeam={myGameRef.current.myTeam}></WaitingForStart>
+        </div>
         <div>
           <GameOver
             isGameOverModalOpen={isGameOverModalOpen}
