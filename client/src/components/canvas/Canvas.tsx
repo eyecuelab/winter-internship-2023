@@ -41,6 +41,7 @@ function Canvas(props: any) {
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const lastKeyRef = useRef("");
+  const [updateWaitingForStart, setUpdateWaitingForStart] = useState(true);
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -58,13 +59,13 @@ function Canvas(props: any) {
 
   const teamId = useRef<number | null>(null);
 
-  useEffect(() => {
-    let numberOfUsers = myGameRef.current.userList.length;
-    console.log(numberOfUsers);
-      // if (numberOfUsers === 4) {
-      //   toggleGameStart();
-      // }
-    }, [myGameRef])
+  // useEffect(() => {
+  //   let numberOfUsers = myGameRef.current.userList.length;
+  //   console.log(numberOfUsers);
+  //     // if (numberOfUsers === 4) {
+  //     //   toggleGameStart();
+  //     // }
+  //   }, [myGameRef])
 
   //GAME OVER FUNCTIONS:
 
@@ -589,6 +590,8 @@ function Canvas(props: any) {
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
+          setUpdateWaitingForStart(!updateWaitingForStart);
+          console.log(myGameRef.current);
 
           const tempTeamMate = myGameRef.current.myTeamMate;
           const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
@@ -640,6 +643,8 @@ function Canvas(props: any) {
       }
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
+      console.log(roomGameRef);
+      setUpdateWaitingForStart(!updateWaitingForStart);
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -745,8 +750,6 @@ function Canvas(props: any) {
     };
   }, []);
 
-  console.log(roomGameRef.current.karts);
-
   return (
     <>
       <div
@@ -765,7 +768,7 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} karts={roomGameRef.current.karts} myTeam={myGameRef.current.myTeam}></WaitingForStart>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameRef={roomGameRef} myGameRef={myGameRef} updateWaitingForStart={updateWaitingForStart}></WaitingForStart>
         </div>
         <div>
           <GameOver
