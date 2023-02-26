@@ -6,15 +6,17 @@ import { myGameType, roomGameType } from "./../../types/Types"
 interface WaitingForStartType {
   children?: ReactNode;
   isWaitingForGameModalOpen: boolean;
-  roomGameRef: React.MutableRefObject<roomGameType | null>;
-  myGameRef: React.MutableRefObject<myGameType | null>;
+  roomGameState: roomGameType;
+  myGameState: myGameType;
   updateWaitingForStart: boolean;
 }
 
 export function WaitingForStart(props: WaitingForStartType) {
-  const { roomGameRef, myGameRef, isWaitingForGameModalOpen, updateWaitingForStart } = props;
+  const { roomGameState, myGameState, isWaitingForGameModalOpen, updateWaitingForStart } = props;
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
+
+  const 
 
   useEffect(() => {
     if (myGameRef.current?.myTeam.color && roomGameRef.current?.karts) {
@@ -30,7 +32,7 @@ export function WaitingForStart(props: WaitingForStartType) {
   console.log(myKart);
   console.log(myTeam);
   displayTeam();
-  }, [updateWaitingForStart]);
+  }, [myKart, myTeam]);
   
 
   // roomGameRef.current?.addEventListener('change', handleChange);

@@ -57,15 +57,32 @@ function Canvas(props: any) {
     myKart: new Kart(), // deprecated
   });
 
+  const [roomGameState, setRoomGameState] = useState<roomGameType>({
+    karts: new Map(),
+    scores: new Map(),
+    isGameOver: false,
+  });
+
+  const [myGameState, setMyGameState] = useState<myGameType>({
+    userList: [],
+    myTeamMate: "",
+    myControl: "",
+    myTeam: new Team(),
+    myKart: new Kart(), // deprecated
+  });
+
   const teamId = useRef<number | null>(null);
 
   // useEffect(() => {
-  //   let numberOfUsers = myGameRef.current.userList.length;
-  //   console.log(numberOfUsers);
-  //     // if (numberOfUsers === 4) {
-  //     //   toggleGameStart();
-  //     // }
-  //   }, [myGameRef])
+  //     if (isWaitingForGameModalOpen) {
+  //       if (roomGameRef.current) {
+  //         setRoomGameState(roomGameRef.current);
+  //       }
+  //       if (myGameRef.current) {
+  //         setMyGameState(myGameRef.current);
+  //       }
+  //       }
+  //   })
 
   //GAME OVER FUNCTIONS:
 
@@ -682,6 +699,15 @@ function Canvas(props: any) {
      })
     });
 
+    if (isWaitingForGameModalOpen) {
+      if (roomGameRef.current) {
+        setRoomGameState(roomGameRef.current);
+      }
+      if (myGameRef.current) {
+        setMyGameState(myGameRef.current);
+      }
+      }
+
     return () => {
       socket.removeAllListeners();
     };
@@ -768,7 +794,7 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameRef={roomGameRef} myGameRef={myGameRef} updateWaitingForStart={updateWaitingForStart}></WaitingForStart>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} updateWaitingForStart={updateWaitingForStart}></WaitingForStart>
         </div>
         <div>
           <GameOver
