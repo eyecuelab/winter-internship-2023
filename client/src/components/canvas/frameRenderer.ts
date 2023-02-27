@@ -11,7 +11,15 @@ function frameRenderer(
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
   mapBrickSvg: HTMLImageElement | undefined,
-  pelletSvg: HTMLImageElement | undefined
+  pelletSvg: HTMLImageElement | undefined,
+  redKartSvg: HTMLImageElement | undefined,
+  orangeKartSvg: HTMLImageElement | undefined,
+  blueKartSvg: HTMLImageElement | undefined,
+  pinkKartSvg: HTMLImageElement | undefined,
+  redGhostSvg: HTMLImageElement | undefined,
+  orangeGhostSvg: HTMLImageElement | undefined,
+  pinkGhostSvg: HTMLImageElement | undefined,
+  blueGhostSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
@@ -39,14 +47,14 @@ function frameRenderer(
       grd.addColorStop(0, "#fa06f9");
       grd.addColorStop(1, "white");
 
-      this.beginPath();
-      this.arc(
-        pellet.position.x,
-        pellet.position.y,
-        pellet.radius,
-        0,
-        Math.PI * 2
-      );
+      // this.beginPath();
+      // this.arc(
+      //   pellet.position.x,
+      //   pellet.position.y,
+      //   pellet.radius,
+      //   0,
+      //   Math.PI * 2
+      // );
       this.fillStyle = grd;
       this.fill();
       this.drawImage(pelletSvg, pellet.position.x - 5,
@@ -85,20 +93,45 @@ function frameRenderer(
     height: number,
     color: string,
     angle: number,
-    image: HTMLImageElement
+    isGhost: boolean
   ) => {
+    let img;
+    if (color === "red"){
+      if(isGhost){
+        img = redGhostSvg;
+      }else {
+        img = redKartSvg;
+      }
+    } else if(color === "orange"){
+      if(isGhost){
+        img = orangeGhostSvg;
+      }else {
+        img = orangeKartSvg;
+      }
+    }else if (color === "pink"){
+      if(isGhost){
+        img = pinkGhostSvg;
+      }else {
+        img = pinkKartSvg;
+      }
+    }else if (color === "blue"){
+      if(isGhost){
+        img = blueGhostSvg;
+      }else {
+        img = blueKartSvg;
+      }
+    }
     this.save();
     this.translate(x, y);
     this.rotate(angle);
-    this.beginPath();
-    this.moveTo(-width / 2, height / 2); //start at the bottom left corner
-    this.lineTo(width / 2, height / 2); //draw to bottom right
-    this.lineTo(0, -height / 2); //to top center
-    this.closePath();
-    this.fillStyle = color;
+    // this.beginPath();
+    // this.moveTo(-width / 2, height / 2); //start at the bottom left corner
+    // this.lineTo(width / 2, height / 2); //draw to bottom right
+    // this.lineTo(0, -height / 2); //to top center
+    // this.closePath();
+    // this.fillStyle = color;
+    this.drawImage(img, -width / 2, -height / 2, 35, 35)
     this.fill();
-
-    // this.drawImage(image, x, y, height, width);
     this.restore();
   };
 
@@ -114,12 +147,6 @@ function frameRenderer(
     drawSpawnPoint(spawnPoint);
   });
 
-  function createImage(src: string) {
-    const image = new Image();
-    image.src = src;
-    return image;
-  }
-
   //notes for rotating kart:
   //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
   //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
@@ -134,7 +161,7 @@ function frameRenderer(
       30,
       entry.color,
       entry.kart.angle,
-      createImage(entry.kart.imgSrc)
+      entry.kart.isGhost
     );
   });
 }

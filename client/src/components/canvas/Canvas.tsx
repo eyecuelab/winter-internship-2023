@@ -17,20 +17,38 @@ import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
 import { myGameType, roomGameType, kartType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
-import mapSwitchCase from "./mapSwitchCase";
-import { generateMapQuadrants, quadrants } from "./quadrants";
+import { generateMapQuadrants } from "./quadrants";
 import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
 import { postData } from "../../apiHelper";
-import {mapBrickSvgString} from "../../assets/mapBrickSvg";
-import {pelletSvgString} from "../../assets/pelletSvg";
+import { mapBrickSvgString } from "../../assets/mapBrickSvg";
+import { pelletSvgString } from "../../assets/pelletSvg";
+import { redKartSvgString } from "../../assets/redKartSvg";
+import { blueKartSvgString } from "../../assets/blueKartSvg";
+import { orangeKartSvgString } from "../../assets/orangeKartSvg";
+import { pinkKartSvgString } from "../../assets/pinkKartSvg";
+import { redGhostSvgString } from "../../assets/redGhostSvg";
+import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
+import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
+import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
   const { gameId } = props;
-  const colors = ["yellow", "white", "teal", "blue", "orange"];
+  const colors = ["yellow", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
+
+  const redKartSvgRef = useRef<HTMLImageElement | undefined>();
+  const pinkKartSvgRef = useRef<HTMLImageElement | undefined>();
+  const orangeKartSvgRef = useRef<HTMLImageElement | undefined>();
+  const blueKartSvgRef = useRef<HTMLImageElement | undefined>();
+
+  const pinkGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const redGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
+
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -519,7 +537,15 @@ function Canvas(props: any) {
       pelletsRef.current,
       spawnPointsRef.current,
       mapBrickSvgRef.current,
-      pelletSvgRef.current
+      pelletSvgRef.current,
+      redKartSvgRef.current,
+      orangeKartSvgRef.current,
+      blueKartSvgRef.current,
+      pinkKartSvgRef.current,
+      redGhostSvgRef.current,
+      orangeGhostSvgRef.current,
+      blueGhostSvgRef.current,
+      pinkGhostSvgRef.current,
     );
   };
 
@@ -576,7 +602,9 @@ function Canvas(props: any) {
     }
 
     const mapBrickImg = new Image();
-    mapBrickImg.src = `data:image/svg+xml;base64,${window.btoa(mapBrickSvgString)}`;
+    mapBrickImg.src = `data:image/svg+xml;base64,${window.btoa(
+      mapBrickSvgString
+    )}`;
     mapBrickImg.addEventListener("load", () => {
       mapBrickSvgRef.current = mapBrickImg;
     });
@@ -585,6 +613,54 @@ function Canvas(props: any) {
     pelletImg.src = `data:image/svg+xml;base64,${window.btoa(pelletSvgString)}`;
     pelletImg.addEventListener("load", () => {
       pelletSvgRef.current = pelletImg;
+    });
+
+    const redKartImg = new Image();
+    redKartImg.src = `data:image/svg+xml;base64,${window.btoa(redKartSvgString)}`;
+    redKartImg.addEventListener("load", () => {
+      redKartSvgRef.current = redKartImg;
+    });
+
+    const orangeKartImg = new Image();
+    orangeKartImg.src = `data:image/svg+xml;base64,${window.btoa(orangeKartSvgString)}`;
+    orangeKartImg.addEventListener("load", () => {
+      orangeKartSvgRef.current = orangeKartImg;
+    });
+
+    const blueKartImg = new Image();
+    blueKartImg.src = `data:image/svg+xml;base64,${window.btoa(blueKartSvgString)}`;
+    blueKartImg.addEventListener("load", () => {
+      blueKartSvgRef.current = blueKartImg;
+    });
+
+    const pinkKartImg = new Image();
+    pinkKartImg.src = `data:image/svg+xml;base64,${window.btoa(pinkKartSvgString)}`;
+    pinkKartImg.addEventListener("load", () => {
+      pinkKartSvgRef.current = pinkKartImg;
+    });
+
+    const redGhostImg = new Image();
+    redGhostImg.src = `data:image/svg+xml;base64,${window.btoa(redGhostSvgString)}`;
+    redGhostImg.addEventListener("load", () => {
+      redGhostSvgRef.current = redGhostImg;
+    });
+
+    const orangeGhostImg = new Image();
+    orangeGhostImg.src = `data:image/svg+xml;base64,${window.btoa(orangeGhostSvgString)}`;
+    orangeGhostImg.addEventListener("load", () => {
+      orangeGhostSvgRef.current = orangeGhostImg;
+    });
+
+    const pinkGhostImg = new Image();
+    pinkGhostImg.src = `data:image/svg+xml;base64,${window.btoa(pinkGhostSvgString)}`;
+    pinkGhostImg.addEventListener("load", () => {
+      pinkGhostSvgRef.current = pinkGhostImg;
+    });
+
+    const blueGhostImg = new Image();
+    blueGhostImg.src = `data:image/svg+xml;base64,${window.btoa(blueGhostSvgString)}`;
+    blueGhostImg.addEventListener("load", () => {
+      blueGhostSvgRef.current = blueGhostImg;
     });
 
     requestIdRef.current = requestAnimationFrame(tick);
@@ -816,7 +892,7 @@ function Canvas(props: any) {
       <div
         style={{
           color: "white",
-          backgroundColor: "black",
+          backgroundColor: "rgb(93,93,126)",
           alignItems: "center",
         }}
       >
