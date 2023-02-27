@@ -130,7 +130,7 @@ function frameRenderer(
     // this.lineTo(0, -height / 2); //to top center
     // this.closePath();
     // this.fillStyle = color;
-    this.drawImage(img, -width / 2, -height / 2, 40, 40)
+    this.drawImage(img, -width / 2, -height / 2, 35, 35)
     this.fill();
     this.restore();
   };
