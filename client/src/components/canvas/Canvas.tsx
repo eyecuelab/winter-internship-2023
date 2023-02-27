@@ -58,7 +58,6 @@ function Canvas(props: any) {
   });
 
   //WAITING FOR GAME START STATE:
-
   const [roomGameState, setRoomGameState] = useState<roomGameType>({
     karts: new Map(),
     scores: new Map(),
