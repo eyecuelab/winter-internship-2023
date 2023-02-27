@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import React, { ReactNode } from "react";
 import { Kart, Team } from "./gameClasses";
 import { myGameType, roomGameType } from "./../../types/Types"
+import { verticalDirSvgString } from "../../assets/verticalDirSvg";
+import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
 
 interface WaitingForStartType {
   children?: ReactNode;
@@ -16,8 +18,22 @@ export function WaitingForStart(props: WaitingForStartType) {
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
   const teamInfo = document.getElementById("teamInfo");
+  const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
+  const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
 
   useEffect(() => {
+    const verticalDirImg = new Image();
+    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirSvgString)}`;
+    verticalDirImg.addEventListener("load", () => {
+      verticalDirSvgRef.current = verticalDirImg;
+    });
+
+    const horizontalDirImg = new Image();
+    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirSvgString)}`;
+    horizontalDirImg.addEventListener("load", () => {
+      horizontalDirSvgRef.current = horizontalDirImg;
+    });
+
     if (myGameState.myTeam && roomGameState.karts) {
       const myCurrentTeam = myGameState.myTeam;
       const myCurrentKart = roomGameState.karts.get(myCurrentTeam.color);
