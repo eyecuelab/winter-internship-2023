@@ -15,7 +15,7 @@ import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
-import { myGameType, roomGameType, kartType } from "../../types/Types";
+import { myGameType, roomGameType, kartType, userType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import { generateMapQuadrants } from "./quadrants";
 import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
@@ -31,11 +31,19 @@ import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
 import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
 import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 
-function Canvas(props: any) {
+interface Props {
+  gameId: string | undefined;
+  userData: userType | undefined;
+}
+
+function Canvas(props: Props) {
+  console.log(props);
+  const { gameId, userData } = props;
+  console.log(userData);
+
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
     useState(true);
-  const { gameId } = props;
   const colors = ["yellow", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
@@ -777,7 +785,7 @@ function Canvas(props: any) {
         myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
         postData(`/teamUser`, {
           teamId: parseInt(tempTeam.teamId),
-          userId: parseInt(userId),
+          userId: 1,
           axisControl: "y",
         });
       }

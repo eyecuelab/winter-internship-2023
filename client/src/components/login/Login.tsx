@@ -7,19 +7,13 @@ import CoverImage from '../../assets/cover.png';
 
 interface Props {
   userData: userType | undefined;
-  setUserData: Dispatch<SetStateAction<userType | undefined>>;
+  setUserData: React.Dispatch<React.SetStateAction<userType | undefined>>;
   logout: () => void;
 }
-// import { IconGitHub, IconGoogle } from "../../assets/icons"
 
-// const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID
 const Login = () => {
   const navigate = useNavigate();
-  //  const loginToGithub = () => {
-  //   localStorage.setItem("loginWith", "GitHub")
-  //   window.location.assign(`https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}`)
-  //  }
-  //   } )}
+
   const loginToGoogle = useGoogleLogin({
     onSuccess: (response) => {
       localStorage.clear();
@@ -62,20 +56,13 @@ const Login = () => {
             Login with
           </Text>
           <Spacer y={1} />
-          {/* <Button color='gradient' auto ghost onClick={() => loginToGithub()}>
-            <IconGitHub />
-            <Spacer x={0.5} />
-            GitHub
-          </Button> */}
 
           <Button color="gradient" onClick={() => loginToGoogle()}>
-            {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Google
           </Button>
           <Spacer y={1} />
           <Button color="gradient" onClick={() => loginAsGuest()}>
-            {/* <IconGoogle /> */}
             <Spacer x={0.5} />
             Continue as Guest
           </Button>
