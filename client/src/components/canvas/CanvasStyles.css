@@ -47,12 +47,16 @@
 
 .waitingforstart-box ul {
 list-style: none;
-font-family: Arial;
+font-family: 'Roboto';
 color: white;
 font-size: 2rem;
 }
 
-.waitingforstart-box span {
+/* .waitingforstart-box ul li span {
+ margin: 2em;
+  } */
+
+.waitingforstart-box #my-team, .waitingforstart-box #my-direction  {
   list-style: none;
   font-family: arial;
   font-size: 2rem;
@@ -62,6 +66,7 @@ font-size: 2rem;
   text-shadow: 2px 2px white;
   line-height: 4rem;
   letter-spacing: .2rem;
+  margin-bottom: 1em;
   }
 
 .waitingforstart-box #heading {

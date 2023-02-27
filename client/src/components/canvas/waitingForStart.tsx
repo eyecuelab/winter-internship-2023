@@ -69,17 +69,24 @@ export function WaitingForStart(props: WaitingForStartType) {
       } 
       const li = document.createElement("li");
         li.appendChild(
-          document.createTextNode(`You are on Team:`)
+          document.createTextNode(`Team:`)
         );
         teamInfo?.appendChild(li);
-        const span = document.createElement("span");
-        span.textContent =`${myTeam.color}`;
-        teamInfo?.appendChild(span);
-        const li2 = document.createElement("li");
-        li2.appendChild(
-          document.createTextNode(`You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving in the (vertical(W/S)/horizontal(A/D)) direction.`)
+        const liTwo = document.createElement("li");
+        liTwo.setAttribute('id', 'my-team');
+        liTwo.textContent =`${myTeam.color}`;
+        teamInfo?.appendChild(liTwo);
+        const liThree= document.createElement("li");
+        liThree.appendChild(
+          document.createTextNode(`Direction:`)
         );
-        teamInfo?.appendChild(li2);
+        teamInfo?.appendChild(liThree);
+        const liFour= document.createElement("li");
+        liFour.setAttribute('id', 'my-direction');
+        liFour.appendChild(
+          document.createTextNode(`horizontal`)
+        );
+        teamInfo?.appendChild(liFour);
       } else {
         if (teamInfo) {        
           teamInfo.innerHTML = "";
