@@ -95,9 +95,6 @@ function Canvas(props: any) {
     console.log("I was killed!")
     const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
 
-  
-
-
     // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
     if (kart) {
       kart.isGhost = true;
@@ -114,6 +111,8 @@ function Canvas(props: any) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    
+    if (isGameOverModalOpen === false) {
     const previousXVelocity = kart.velocity.x;
 
     if (lastKeyRef.current === "w" && (kart.position.x - 20) % 40 === 0) {
@@ -174,9 +173,7 @@ function Canvas(props: any) {
     }
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
-
     //
-
     if (kart.isGhost === true) {
       const kartsArr = Array.from(roomGameRef.current.karts, function (entry) {
         return { color: entry[0], pacmanKart: entry[1] };
@@ -230,7 +227,6 @@ function Canvas(props: any) {
       });
     }
     //
-
     boundariesRef.current.forEach((boundary) => {
       if (
         circleCollidesWithRectangle({
@@ -242,12 +238,15 @@ function Canvas(props: any) {
         kart.velocity.x = 0;
       }
     });
+    }
     return kart;
   };
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+
+    if (isGameOverModalOpen === false) {
 
     const previousYVelocity = kart.velocity.y;
 
@@ -354,7 +353,7 @@ function Canvas(props: any) {
         kart.velocity.y = 0;
       }
     });
-
+    }
     return kart;
   };
 
