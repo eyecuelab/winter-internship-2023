@@ -11,7 +11,6 @@ import {
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
-import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
@@ -616,7 +615,7 @@ function Canvas(props: any) {
           const tempMyKart = new Kart({
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
-            imgSrc: kartTest.kartTest,
+            imgSrc: pelletSvgString,
             radius: 15,
             angle: 0,
             isGhost: numberOfUsers > 3 ? true : false,

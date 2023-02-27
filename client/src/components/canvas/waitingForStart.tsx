@@ -85,7 +85,7 @@ export function WaitingForStart(props: WaitingForStartType) {
       } 
       const li = document.createElement("li");
         li.appendChild(
-          document.createTextNode(`Team:`)
+          document.createTextNode(`My Team:`)
         );
         teamInfo?.appendChild(li);
         const liTwo = document.createElement("li");
@@ -94,7 +94,7 @@ export function WaitingForStart(props: WaitingForStartType) {
         teamInfo?.appendChild(liTwo);
         const liThree= document.createElement("li");
         liThree.appendChild(
-          document.createTextNode(`Direction:`)
+          document.createTextNode(`My Direction:`)
         );
         teamInfo?.appendChild(liThree);
         const liFour= document.createElement("li");
@@ -102,6 +102,14 @@ export function WaitingForStart(props: WaitingForStartType) {
         liFour.appendChild(
           document.createTextNode(`horizontal`)
         );
+
+        const horizontalImg = document.createElement("img");
+        horizontalImg.setAttribute('src', `${horizontalDirSvgRef.current?.src}`);
+    
+        const divElement = document.createElement('div');
+        divElement.style.display = 'block';
+        divElement.appendChild(horizontalImg);
+        liFour?.appendChild(divElement);
         teamInfo?.appendChild(liFour);
       } else {
         if (teamInfo) {        
