@@ -47,10 +47,22 @@
 
 .waitingforstart-box ul {
 list-style: none;
-font-family: arial;
+font-family: Arial;
 color: white;
 font-size: 2rem;
 }
+
+.waitingforstart-box span {
+  list-style: none;
+  font-family: arial;
+  font-size: 2rem;
+  border-radius: 1rem;
+  font-family: 'namco regular';
+  color: #005487;
+  text-shadow: 2px 2px white;
+  line-height: 4rem;
+  letter-spacing: .2rem;
+  }
 
 .waitingforstart-box #heading {
   font-size: 1.5rem;

@@ -69,9 +69,17 @@ export function WaitingForStart(props: WaitingForStartType) {
       } 
       const li = document.createElement("li");
         li.appendChild(
-          document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving in the (vertical(W/S)/horizontal(A/D)) direction.`)
+          document.createTextNode(`You are on Team:`)
         );
         teamInfo?.appendChild(li);
+        const span = document.createElement("span");
+        span.textContent =`${myTeam.color}`;
+        teamInfo?.appendChild(span);
+        const li2 = document.createElement("li");
+        li2.appendChild(
+          document.createTextNode(`You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving in the (vertical(W/S)/horizontal(A/D)) direction.`)
+        );
+        teamInfo?.appendChild(li2);
       } else {
         if (teamInfo) {        
           teamInfo.innerHTML = "";
