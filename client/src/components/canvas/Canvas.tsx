@@ -639,7 +639,7 @@ function Canvas(props: any) {
       if (numberOfUsers === 4 && isTimerReady) {
         setInterval(async () => {
           setIsCountingDown(true);
-        }, 5000);
+        }, 3000);
         setInterval(async () => {
           setWaitingForGameModalOpen(false);
         }, 10000);

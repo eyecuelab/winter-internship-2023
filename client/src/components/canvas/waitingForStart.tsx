@@ -38,7 +38,7 @@ export function WaitingForStart(props: WaitingForStartType) {
     console.log(isCountingDown);
     if (isCountingDown) {
       console.log(isCountingDown);
-      countDown(5);
+      countDown(7);
     }
   }, [isCountingDown])
   
@@ -47,37 +47,57 @@ export function WaitingForStart(props: WaitingForStartType) {
     let counter = seconds;
     const interval = setInterval(() => {
       console.count();
-      const li = document.createElement("li");
+      if (counter >= 2) {
+        if (teamInfo) {        
+          teamInfo.innerHTML = "";
+        } 
+        const li = document.createElement("li");
         li.appendChild(
-          document.createTextNode(`${counter}`)
+          document.createTextNode(`Count:${(counter-2).toString()}`)
         );
+      teamInfo?.appendChild(li);
       counter--;
+      }
+      // if (counter === 2) {
+      //   if (teamInfo) {        
+      //     teamInfo.innerHTML = "";
+      //   } 
+      //   counter--;
+      // }
       if (counter === 1) {
-        clearInterval(interval);
+        if (teamInfo) {        
+          teamInfo.innerHTML = "";
+        } 
         const li = document.createElement("li");
         li.appendChild(
           document.createTextNode(`Go!`)
         );
+        teamInfo?.appendChild(li);
+        clearInterval(interval);
       }
     }, 1000);
-    return interval;
   }
 
   const displayTeam = () => { 
 
     if (myKart && myTeam) {
-      
+      if (teamInfo) {        
+        teamInfo.innerHTML = "";
+      } 
       const li = document.createElement("li");
         li.appendChild(
           document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving the (vertical(W/S)/horizontal(A/D)) direction.`)
         );
         teamInfo?.appendChild(li);
       } else {
-           const li = document.createElement("li");
-            li.appendChild(
-            document.createTextNode(`Waiting for your teammate to join...`)
+        if (teamInfo) {        
+          teamInfo.innerHTML = "";
+        } 
+        const li = document.createElement("li");
+        li.appendChild(
+        document.createTextNode(`Waiting for your teammate to join...`)
           );
-            teamInfo?.appendChild(li);
+        teamInfo?.appendChild(li);
        }
     }
 
@@ -87,7 +107,7 @@ export function WaitingForStart(props: WaitingForStartType) {
         <div className="waitingforstart-overlay">
           <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
             <div>
-              <h1>Waiting for everyone to join...</h1>
+              <h1>Super Pacart</h1>
               <ul id="teamInfo"></ul>
             </div>
           </div>
