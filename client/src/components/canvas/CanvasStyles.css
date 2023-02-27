@@ -27,7 +27,7 @@
 
 .gameover-box {
   display: block;
-  background: rgb(255, 255, 59, .7);
+  background: rgba(50, 50, 64, .95);
   width: 70%;
   height: 70%;
   padding: 1rem;
@@ -36,9 +36,25 @@
 
 .waitingforstart-box {
   display: block;
-  background: rgba(34, 240, 247, 0.7);
+  background: rgba(50, 50, 64, .95);
   width: 70%;
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+  font-family: 'namco regular';
+  color: #5D5D7E;
 }
+
+.waitingforstart-box ul {
+list-style: none;
+font-family: arial;
+color: white;
+font-size: 2rem;
+}
+
+.waitingforstart-box #heading {
+  font-size: 1.5rem;
+  line-height: 4rem;
+  letter-spacing: .2rem;
+  text-shadow: 2px 2px white;
+  }

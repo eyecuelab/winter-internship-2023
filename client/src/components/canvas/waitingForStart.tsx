@@ -89,8 +89,10 @@ export function WaitingForStart(props: WaitingForStartType) {
       {isWaitingForGameModalOpen && (
         <div className="waitingforstart-overlay">
           <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
+            <div id="heading">
+              <h1>lobby room</h1>
+            </div>
             <div>
-              <h1>Lobby Room</h1>
               <ul id="teamInfo"></ul>
             </div>
           </div>
