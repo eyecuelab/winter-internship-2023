@@ -12,9 +12,31 @@
   color: rgb(28,32,32);
 }
 
+.waitingforstart-overlay {
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: rgb(28,32,32);
+}
+
 .gameover-box {
   display: block;
   background: rgb(255, 255, 59, .7);
+  width: 70%;
+  height: 70%;
+  padding: 1rem;
+  border-radius: 1rem;
+}
+
+.waitingforstart-box {
+  display: block;
+  background: rgba(34, 240, 247, 0.7);
   width: 70%;
   height: 70%;
   padding: 1rem;

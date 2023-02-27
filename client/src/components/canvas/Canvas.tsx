@@ -13,6 +13,7 @@ import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
 import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
+import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
 import { myGameType, roomGameType, kartType } from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
@@ -25,6 +26,7 @@ import {pelletSvgString} from "../../assets/pelletSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
   const { gameId } = props;
   const colors = ["yellow", "white", "teal", "blue", "orange"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -39,6 +41,7 @@ function Canvas(props: any) {
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const lastKeyRef = useRef("");
+  const teamId = useRef<number | null>(null);
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -54,9 +57,26 @@ function Canvas(props: any) {
     myKart: new Kart(), // deprecated
   });
 
-  const teamId = useRef<number | null>(null);
+  //WAITING FOR GAME START STATE:
+
+  const [roomGameState, setRoomGameState] = useState<roomGameType>({
+    karts: new Map(),
+    scores: new Map(),
+    isGameOver: false,
+  });
+
+  const [myGameState, setMyGameState] = useState<myGameType>({
+    userList: [],
+    myTeamMate: "",
+    myControl: "",
+    myTeam: new Team(),
+    myKart: new Kart(), // deprecated
+  });
+  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  const [isTimerReady, setIsTimerReady] = useState<boolean>(true);
 
   //GAME OVER FUNCTIONS:
+
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
   };
@@ -364,6 +384,8 @@ function Canvas(props: any) {
               tempScore,
               gameId,
             });
+            roomGameRef.current.isGameOver = true;
+            socket.emit("game_over", {gameId});
             toggleGameOver();
           }
           socket.emit("remove_pellet", { gameId, i, isGameOver });
@@ -586,6 +608,7 @@ function Canvas(props: any) {
 
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
+    
       if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
@@ -647,6 +670,19 @@ function Canvas(props: any) {
             });
         }
       }
+      if (isWaitingForGameModalOpen) {
+      setMyGameState(myGameRef.current);
+      if (numberOfUsers === 4 && isTimerReady) {
+        setInterval(async () => {
+          setIsCountingDown(true);
+        }, 3000);
+        setInterval(async () => {
+          setWaitingForGameModalOpen(false);
+        }, 10000);
+        setIsCountingDown(false);
+        setIsTimerReady(false);
+      } 
+      }
     });
 
     socket.on("receive_team_added", (data) => {
@@ -662,6 +698,9 @@ function Canvas(props: any) {
       }
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
+
+      setMyGameState(myGameRef.current);
+      setRoomGameState(roomGameRef.current);
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -688,12 +727,26 @@ function Canvas(props: any) {
       const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
       if (isGameOver) {
+        roomGameRef.current.isGameOver = true;
         toggleGameOver();
       }
     });
 
     socket.on("receive_toggle_player_control", (data) => {
       myGameRef.current.myTeam.updateTeamWithJson(data);
+    });
+
+    socket.on("client_disconnect", (data) => {
+      console.log(data.disconnectedClientId + " has disconnected");
+      console.log(myGameRef.current.userList);
+      myGameRef.current.userList.forEach((user) => 
+     {
+        if (data.disconnectedClientId === user) {
+          roomGameRef.current.isGameOver = true;
+          socket.emit("game_over", {gameId});
+          toggleGameOver(); 
+        }
+     })
     });
 
     return () => {
@@ -712,12 +765,6 @@ function Canvas(props: any) {
       const currentIsGameOver = roomGameRef.current.isGameOver;
       const currentPellets = pelletsRef.current;
       const currentTeamId = teamId.current;
-
-      // console.log("color:" + myGameRef.current.myTeam.color)
-      // console.log("currentScore" + currentScore);
-      // console.log("currentKart" + currentKart);
-      // console.log("teamId" + currentTeamId);
-      // console.log("currentIsGameOver" + currentIsGameOver);
 
       socket.emit("db_update", {
         gameId,
@@ -781,6 +828,9 @@ function Canvas(props: any) {
           <span id="playerControlDisplay"></span>
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        <div>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} isCountingDown={isCountingDown}></WaitingForStart>
+        </div>
         <div>
           <GameOver
             isGameOverModalOpen={isGameOverModalOpen}
