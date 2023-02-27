@@ -57,6 +57,8 @@ function Canvas(props: any) {
     myKart: new Kart(), // deprecated
   });
 
+  //WAITING FOR GAME START STATE:
+
   const [roomGameState, setRoomGameState] = useState<roomGameType>({
     karts: new Map(),
     scores: new Map(),
@@ -72,11 +74,6 @@ function Canvas(props: any) {
   });
   const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
   const [isTimerReady, setIsTimerReady] = useState<boolean>(true);
-
-  const toggleGameStart = () => {
-    setIsCountingDown(false);
-    setIsTimerReady(false);
-  }
 
   //GAME OVER FUNCTIONS:
 
@@ -782,7 +779,7 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} isCountingDown={isCountingDown} toggleGameStart={toggleGameStart}></WaitingForStart>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} isCountingDown={isCountingDown}></WaitingForStart>
         </div>
         <div>
           <GameOver

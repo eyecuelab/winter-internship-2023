@@ -9,44 +9,33 @@ interface WaitingForStartType {
   roomGameState: roomGameType;
   myGameState: myGameType;
   isCountingDown: boolean;
-  toggleGameStart:  () => void;
 }
 
 export function WaitingForStart(props: WaitingForStartType) {
-  const { roomGameState, myGameState, isWaitingForGameModalOpen, isCountingDown, toggleGameStart } = props;
+  const { roomGameState, myGameState, isWaitingForGameModalOpen, isCountingDown } = props;
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
   const teamInfo = document.getElementById("teamInfo");
 
   useEffect(() => {
     if (myGameState.myTeam && roomGameState.karts) {
-      console.log(myGameState.myTeam)
-      console.log(roomGameState.karts)
       const myCurrentTeam = myGameState.myTeam;
       const myCurrentKart = roomGameState.karts.get(myCurrentTeam.color);
       setMyTeam(myCurrentTeam);
       setMyKart(myCurrentKart);
-      console.log(myKart);
-      console.log(myTeam); 
     }
-    console.log(myKart);
-    console.log(myTeam);
     displayTeam();
   });
 
   useEffect(()=> {
-    console.log(isCountingDown);
     if (isCountingDown) {
-      console.log(isCountingDown);
       countDown(7);
     }
   }, [isCountingDown])
   
   const countDown = (seconds: number) => {
-    console.log("countDown!54321")
     let counter = seconds;
     const interval = setInterval(() => {
-      console.count();
       if (counter >= 2) {
         if (teamInfo) {        
           teamInfo.innerHTML = "";
@@ -58,12 +47,6 @@ export function WaitingForStart(props: WaitingForStartType) {
       teamInfo?.appendChild(li);
       counter--;
       }
-      // if (counter === 2) {
-      //   if (teamInfo) {        
-      //     teamInfo.innerHTML = "";
-      //   } 
-      //   counter--;
-      // }
       if (counter === 1) {
         if (teamInfo) {        
           teamInfo.innerHTML = "";
@@ -86,7 +69,7 @@ export function WaitingForStart(props: WaitingForStartType) {
       } 
       const li = document.createElement("li");
         li.appendChild(
-          document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving the (vertical(W/S)/horizontal(A/D)) direction.`)
+          document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving in the (vertical(W/S)/horizontal(A/D)) direction.`)
         );
         teamInfo?.appendChild(li);
       } else {
@@ -95,7 +78,7 @@ export function WaitingForStart(props: WaitingForStartType) {
         } 
         const li = document.createElement("li");
         li.appendChild(
-        document.createTextNode(`Waiting for your teammate to join...`)
+        document.createTextNode(`Waiting for Teammate...`)
           );
         teamInfo?.appendChild(li);
        }
@@ -107,7 +90,7 @@ export function WaitingForStart(props: WaitingForStartType) {
         <div className="waitingforstart-overlay">
           <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
             <div>
-              <h1>Super Pacart</h1>
+              <h1>Lobby Room</h1>
               <ul id="teamInfo"></ul>
             </div>
           </div>
