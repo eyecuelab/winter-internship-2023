@@ -12,8 +12,14 @@ function frameRenderer(
   spawnPoints: SpawnPoint[],
   mapBrickSvg: HTMLImageElement | undefined,
   pelletSvg: HTMLImageElement | undefined,
-  kartSvg: HTMLImageElement | undefined,
-  ghostKartSvg: HTMLImageElement | undefined
+  redKartSvg: HTMLImageElement | undefined,
+  orangeKartSvg: HTMLImageElement | undefined,
+  blueKartSvg: HTMLImageElement | undefined,
+  pinkKartSvg: HTMLImageElement | undefined,
+  redGhostSvg: HTMLImageElement | undefined,
+  orangeGhostSvg: HTMLImageElement | undefined,
+  pinkGhostSvg: HTMLImageElement | undefined,
+  blueGhostSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
@@ -89,6 +95,32 @@ function frameRenderer(
     angle: number,
     isGhost: boolean
   ) => {
+    let img;
+    if (color === "red"){
+      if(isGhost){
+        img = redGhostSvg;
+      }else {
+        img = redKartSvg;
+      }
+    } else if(color === "orange"){
+      if(isGhost){
+        img = orangeGhostSvg;
+      }else {
+        img = orangeKartSvg;
+      }
+    }else if (color === "pink"){
+      if(isGhost){
+        img = pinkGhostSvg;
+      }else {
+        img = pinkKartSvg;
+      }
+    }else if (color === "blue"){
+      if(isGhost){
+        img = blueGhostSvg;
+      }else {
+        img = blueKartSvg;
+      }
+    }
     this.save();
     this.translate(x, y);
     this.rotate(angle);
@@ -98,11 +130,7 @@ function frameRenderer(
     // this.lineTo(0, -height / 2); //to top center
     // this.closePath();
     // this.fillStyle = color;
-    if (isGhost){
-      this.drawImage(ghostKartSvg, -width / 2, -height / 2, 40, 40)
-    } else {
-      this.drawImage(kartSvg, -width / 2, -height / 2, 40, 40)
-    }
+    this.drawImage(img, -width / 2, -height / 2, 40, 40)
     this.fill();
     this.restore();
   };
