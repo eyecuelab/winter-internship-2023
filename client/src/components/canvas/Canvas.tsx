@@ -20,8 +20,10 @@ import mapSwitchCase from "./mapSwitchCase";
 import { generateMapQuadrants, quadrants } from "./quadrants";
 import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
 import { postData } from "../../apiHelper";
-import {mapBrickSvgString} from "../../assets/mapBrickSvg";
-import {pelletSvgString} from "../../assets/pelletSvg";
+import { mapBrickSvgString } from "../../assets/mapBrickSvg";
+import { pelletSvgString } from "../../assets/pelletSvg";
+import { kartSvgString } from "../../assets/kartSvg";
+import { ghostKartSvgString } from "../../assets/ghostKartSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
@@ -29,6 +31,8 @@ function Canvas(props: any) {
   const colors = ["yellow", "white", "teal", "blue", "orange"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
+  const kartSvgRef = useRef<HTMLImageElement | undefined>();
+  const ghostKartSvgRef = useRef<HTMLImageElement | undefined>();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -459,7 +463,9 @@ function Canvas(props: any) {
       pelletsRef.current,
       spawnPointsRef.current,
       mapBrickSvgRef.current,
-      pelletSvgRef.current
+      pelletSvgRef.current,
+      kartSvgRef.current,
+      ghostKartSvgRef.current
     );
   };
 
@@ -515,7 +521,9 @@ function Canvas(props: any) {
     }
 
     const mapBrickImg = new Image();
-    mapBrickImg.src = `data:image/svg+xml;base64,${window.btoa(mapBrickSvgString)}`;
+    mapBrickImg.src = `data:image/svg+xml;base64,${window.btoa(
+      mapBrickSvgString
+    )}`;
     mapBrickImg.addEventListener("load", () => {
       mapBrickSvgRef.current = mapBrickImg;
     });
@@ -524,6 +532,18 @@ function Canvas(props: any) {
     pelletImg.src = `data:image/svg+xml;base64,${window.btoa(pelletSvgString)}`;
     pelletImg.addEventListener("load", () => {
       pelletSvgRef.current = pelletImg;
+    });
+
+    const kartImg = new Image();
+    kartImg.src = `data:image/svg+xml;base64,${window.btoa(kartSvgString)}`;
+    kartImg.addEventListener("load", () => {
+      kartSvgRef.current = kartImg;
+    });
+
+    const ghostKartImg = new Image();
+    ghostKartImg.src = `data:image/svg+xml;base64,${window.btoa(ghostKartSvgString)}`;
+    ghostKartImg.addEventListener("load", () => {
+      ghostKartSvgRef.current = ghostKartImg;
     });
 
     requestIdRef.current = requestAnimationFrame(tick);
@@ -719,7 +739,7 @@ function Canvas(props: any) {
       <div
         style={{
           color: "white",
-          backgroundColor: "black",
+          backgroundColor: "rgb(93,93,126)",
           alignItems: "center",
         }}
       >
