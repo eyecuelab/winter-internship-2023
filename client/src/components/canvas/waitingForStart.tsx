@@ -8,13 +8,15 @@ interface WaitingForStartType {
   isWaitingForGameModalOpen: boolean;
   roomGameState: roomGameType;
   myGameState: myGameType;
-  updateWaitingForStart: boolean;
+  isCountingDown: boolean;
+  toggleGameStart:  () => void;
 }
 
 export function WaitingForStart(props: WaitingForStartType) {
-  const { roomGameState, myGameState, isWaitingForGameModalOpen, updateWaitingForStart } = props;
+  const { roomGameState, myGameState, isWaitingForGameModalOpen, isCountingDown, toggleGameStart } = props;
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
+  const teamInfo = document.getElementById("teamInfo");
 
   useEffect(() => {
     if (myGameState.myTeam && roomGameState.karts) {
@@ -27,28 +29,49 @@ export function WaitingForStart(props: WaitingForStartType) {
       console.log(myKart);
       console.log(myTeam); 
     }
-  console.log(myKart);
-  console.log(myTeam);
-  displayTeam();
+    console.log(myKart);
+    console.log(myTeam);
+    displayTeam();
   });
+
+  useEffect(()=> {
+    console.log(isCountingDown);
+    if (isCountingDown) {
+      console.log(isCountingDown);
+      countDown(5);
+    }
+  }, [isCountingDown])
   
-
-  // roomGameRef.current?.addEventListener('change', handleChange);
-
-  // if (isWaitingForGameModalOpen) {
-  //   displayTeam();
-  // }
+  const countDown = (seconds: number) => {
+    console.log("countDown!54321")
+    let counter = seconds;
+    const interval = setInterval(() => {
+      console.count();
+      const li = document.createElement("li");
+        li.appendChild(
+          document.createTextNode(`${counter}`)
+        );
+      counter--;
+      if (counter === 1) {
+        clearInterval(interval);
+        const li = document.createElement("li");
+        li.appendChild(
+          document.createTextNode(`Go!`)
+        );
+      }
+    }, 1000);
+    return interval;
+  }
 
   const displayTeam = () => { 
-    const teamInfo = document.getElementById("teamInfo");
 
     if (myKart && myTeam) {
       
       const li = document.createElement("li");
-          li.appendChild(
-            document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving the (vertical(W/S)/horizontal(A/D)) direction.`)
-          );
-          teamInfo?.appendChild(li);
+        li.appendChild(
+          document.createTextNode(`You are on Team ${myTeam.color}! You will be driving your kart in the (vertical(W/S)/horizontal(A/D)) direction while your teammate will be driving the (vertical(W/S)/horizontal(A/D)) direction.`)
+        );
+        teamInfo?.appendChild(li);
       } else {
            const li = document.createElement("li");
             li.appendChild(

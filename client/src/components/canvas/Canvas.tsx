@@ -41,7 +41,7 @@ function Canvas(props: any) {
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const lastKeyRef = useRef("");
-  const [updateWaitingForStart, setUpdateWaitingForStart] = useState(true);
+  const teamId = useRef<number | null>(null);
 
   const roomGameRef = useRef<roomGameType>({
     karts: new Map(),
@@ -70,19 +70,13 @@ function Canvas(props: any) {
     myTeam: new Team(),
     myKart: new Kart(), // deprecated
   });
+  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  const [isTimerReady, setIsTimerReady] = useState<boolean>(true);
 
-  const teamId = useRef<number | null>(null);
-
-  // useEffect(() => {
-  //     if (isWaitingForGameModalOpen) {
-  //       if (roomGameRef.current) {
-  //         setRoomGameState(roomGameRef.current);
-  //       }
-  //       if (myGameRef.current) {
-  //         setMyGameState(myGameRef.current);
-  //       }
-  //       }
-  //   })
+  const toggleGameStart = () => {
+    setIsCountingDown(false);
+    setIsTimerReady(false);
+  }
 
   //GAME OVER FUNCTIONS:
 
@@ -640,11 +634,19 @@ function Canvas(props: any) {
             });
         }
       }
+      if (isWaitingForGameModalOpen) {
       setMyGameState(myGameRef.current);
-      console.log(myGameState);
-      if (numberOfUsers === 4) {
-        setWaitingForGameModalOpen(false);
+      if (numberOfUsers === 4 && isTimerReady) {
+        setInterval(async () => {
+          setIsCountingDown(true);
+        }, 5000);
+        setInterval(async () => {
+          setWaitingForGameModalOpen(false);
+        }, 10000);
+        setIsCountingDown(false);
+        setIsTimerReady(false);
       } 
+      }
     });
 
     socket.on("receive_team_added", (data) => {
@@ -662,9 +664,7 @@ function Canvas(props: any) {
       roomGameRef.current.scores.set(tempTeam.color, 0);
 
       setMyGameState(myGameRef.current);
-      console.log(myGameState);
       setRoomGameState(roomGameRef.current);
-      console.log(roomGameState);
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -702,15 +702,6 @@ function Canvas(props: any) {
      })
     });
 
-    // if (isWaitingForGameModalOpen) {
-    //   if (roomGameRef.current) {
-    //     setRoomGameState(roomGameRef.current);
-    //   }
-    //   if (myGameRef.current) {
-    //     setMyGameState(myGameRef.current);
-    //   }
-    //   }
-
     return () => {
       socket.removeAllListeners();
     };
@@ -727,12 +718,6 @@ function Canvas(props: any) {
       const currentIsGameOver = roomGameRef.current.isGameOver;
       const currentPellets = pelletsRef.current;
       const currentTeamId = teamId.current;
-
-      // console.log("color:" + myGameRef.current.myTeam.color)
-      // console.log("currentScore" + currentScore);
-      // console.log("currentKart" + currentKart);
-      // console.log("teamId" + currentTeamId);
-      // console.log("currentIsGameOver" + currentIsGameOver);
 
       socket.emit("db_update", {
         gameId,
@@ -797,7 +782,7 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} updateWaitingForStart={updateWaitingForStart}></WaitingForStart>
+          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} isCountingDown={isCountingDown} toggleGameStart={toggleGameStart}></WaitingForStart>
         </div>
         <div>
           <GameOver
