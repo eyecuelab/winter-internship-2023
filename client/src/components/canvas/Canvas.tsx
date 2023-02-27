@@ -607,8 +607,6 @@ function Canvas(props: any) {
           myGameRef.current.myControl = "y";
           myGameRef.current.myTeam = tempMyTeam;
           myGameRef.current.myKart = tempMyKart;
-          setUpdateWaitingForStart(!updateWaitingForStart);
-          console.log(myGameRef.current);
 
           const tempTeamMate = myGameRef.current.myTeamMate;
           const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
@@ -642,6 +640,8 @@ function Canvas(props: any) {
             });
         }
       }
+      setMyGameState(myGameRef.current);
+      console.log(myGameState);
       if (numberOfUsers === 4) {
         setWaitingForGameModalOpen(false);
       } 
@@ -660,8 +660,11 @@ function Canvas(props: any) {
       }
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);
-      console.log(roomGameRef);
-      setUpdateWaitingForStart(!updateWaitingForStart);
+
+      setMyGameState(myGameRef.current);
+      console.log(myGameState);
+      setRoomGameState(roomGameRef.current);
+      console.log(roomGameState);
     });
 
     //pellet, scores, and power-up updates can live here eventually:
@@ -699,14 +702,14 @@ function Canvas(props: any) {
      })
     });
 
-    if (isWaitingForGameModalOpen) {
-      if (roomGameRef.current) {
-        setRoomGameState(roomGameRef.current);
-      }
-      if (myGameRef.current) {
-        setMyGameState(myGameRef.current);
-      }
-      }
+    // if (isWaitingForGameModalOpen) {
+    //   if (roomGameRef.current) {
+    //     setRoomGameState(roomGameRef.current);
+    //   }
+    //   if (myGameRef.current) {
+    //     setMyGameState(myGameRef.current);
+    //   }
+    //   }
 
     return () => {
       socket.removeAllListeners();
