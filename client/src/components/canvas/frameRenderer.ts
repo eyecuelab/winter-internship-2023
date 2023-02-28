@@ -18,8 +18,8 @@ function frameRenderer(
   pinkKartSvg: HTMLImageElement | undefined,
   redGhostSvg: HTMLImageElement | undefined,
   orangeGhostSvg: HTMLImageElement | undefined,
-  pinkGhostSvg: HTMLImageElement | undefined,
-  blueGhostSvg: HTMLImageElement | undefined
+  blueGhostSvg: HTMLImageElement | undefined,
+  pinkGhostSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 
