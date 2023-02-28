@@ -3,6 +3,7 @@ import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
 function frameRenderer(
   this: any,
   size: { width: any; height: any },
+  myKart: Kart,
   karts: {
     color: string;
     kart: Kart;
@@ -21,9 +22,30 @@ function frameRenderer(
   pinkGhostSvg: HTMLImageElement | undefined,
   blueGhostSvg: HTMLImageElement | undefined
 ) {
-  this.clearRect(0, 0, size.width, size.height);
+  const camera = {
+    x: 0,
+    y: 0,
+    width: size.width,
+    height: size.height
+  };
+  function clamp(value: number, min: number, max: number){
+      if(value < min) return min;
+      else if(value > max) return max;
+      return value;
+  }
+  function moveCamera() {
+      camera.x = clamp(myKart.position.x - (camera.width / 2), 0, size.width);
+      camera.y = clamp(myKart.position.y - (camera.height / 2), 0, size.height);
+  }
+  
+// once, we've moved the camera, we move it again if its outside the boundaries to be back in
 
+
+
+  this.clearRect(0, 0, size.width, size.height);
+  // MAYBE HERE
   // this.drawImage(mapBrick, 1, 100, 100, 100);
+
 
   const drawBoundary = (boundary: Boundary) => {
     this.fillStyle = "pink";
@@ -131,7 +153,8 @@ function frameRenderer(
     // this.closePath();
     // this.fillStyle = color;
     this.drawImage(img, -width / 2, -height / 2, 35, 35)
-    this.fill();
+    //moveCamera();
+    this.fill(); //we change this one to hold the camera parameters
     this.restore();
   };
 
@@ -164,5 +187,79 @@ function frameRenderer(
       entry.kart.isGhost
     );
   });
+  //final fill to be here
 }
 export default frameRenderer;
+
+ /* HERE WE WILL BEGIN THE VIEWPORTS */
+ 
+
+
+
+/*
+// Get a reference to the canvas element and its context
+const canvas = document.getElementById("canvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d")!;
+
+// Define the player's position and dimensions
+const player = {
+  x: 100,
+  y: 100,
+  width: 50,
+  height: 50
+};
+
+// Define the camera's position and dimensions
+const camera = {
+  x: 0,
+  y: 0,
+  width: canvas.width,
+  height: canvas.height
+};
+
+// Move the camera to follow the player
+function moveCamera() {
+  camera.x = player.x - (camera.width / 2);
+  camera.y = player.y - (camera.height / 2);
+}
+
+// Draw the player and other game objects relative to the camera
+function draw() {
+  // Clear the canvas
+
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+*/
+  // Move the camera
+  //moveCamera();
+
+  // Draw the player
+  //ctx.fillRect(player.x - camera.x, player.y - camera.y, player.width, player.height);
+
+  // Draw other game objects
+  // ...
+//}
+
+// Call the draw function repeatedly to update the screen
+//setInterval(draw, 16);
+
+
+
+
+/*
+// clamp(10, 20, 30) - output: 20
+// clamp(40, 20, 30) - output: 30
+// clamp(25, 20, 30) - output: 25
+function clamp(value, min, max){
+    if(value < min) return min;
+    else if(value > max) return max;
+    return value;
+}
+
+
+// center the camera aroud the player,
+// but clamp the camera position (top left corner) to the world bounds
+const camX = clamp(player.x - canvas.width/2, worldBounds.minX, worldBounds.maxX - canvas.width);
+const camY = clamp(player.y - canvas.height/2, worldBounds.minY, worldBounds.maxY - canvas.height);
+
+*/

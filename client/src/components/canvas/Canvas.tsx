@@ -499,6 +499,8 @@ function Canvas(props: any) {
       return;
     }
 
+    const myKartForCamera = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
+
     let updatedKart; //should this be referencing local state?
 
     if (myGameRef.current.myTeam.playerInControl === socketId) {
@@ -532,9 +534,11 @@ function Canvas(props: any) {
       return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(
+    if (myKartForCamera) {
+      frameRenderer.call(
       context,
       size,
+      myKartForCamera,
       kartsArr,
       boundariesRef.current,
       pelletsRef.current,
@@ -550,6 +554,8 @@ function Canvas(props: any) {
       blueGhostSvgRef.current,
       pinkGhostSvgRef.current,
     );
+    }
+    
   };
 
   const tick = () => {
