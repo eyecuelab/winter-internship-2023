@@ -124,6 +124,22 @@ function Canvas(props: any) {
   };
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
+
+  const checkCollisionsWithBoundaries = (kart: Kart, boundaries: Boundary[]) => {
+    for (let i = 0; i < boundaries.length; i++) {
+      const boundary = boundaries[i];
+      if (
+        circleCollidesWithRectangle({
+          circle: kart,
+          rectangle: boundary,
+        })
+      ) {
+        kart.velocity.y = 0;
+        kart.velocity.x = 0;
+      }
+    }
+  };
+
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
@@ -187,10 +203,9 @@ function Canvas(props: any) {
       }
     }
 
-    kart.updateKartAngle();
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
-
+    kart.updateKartAngle();
     //
 
     if (kart.isGhost === true) {
@@ -320,9 +335,10 @@ function Canvas(props: any) {
       }
     }
 
-    kart.updateKartAngle();
+
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+    kart.updateKartAngle();
 
 
     if (kart.isGhost === true) {
@@ -710,7 +726,7 @@ function Canvas(props: any) {
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             radius: 15,
-            angle: { currentAngle: 0, goalAngle: 0, step: 5 },
+            angle: { currentAngle: 0, goalAngle: 0 },
             isGhost: numberOfUsers > 3 ? true : false,
           });
 
@@ -744,7 +760,7 @@ function Canvas(props: any) {
             score: 0,
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
-            angle: { currentAngle: 0, goalAngle: 0, step: 5 },
+            angle: { currentAngle: 0, goalAngle: 0 },
             characterId: 1,
             gameId: parseInt(gameId),
             kartId: 1,

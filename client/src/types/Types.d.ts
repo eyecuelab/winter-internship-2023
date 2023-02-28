@@ -28,7 +28,7 @@ export type kartType = {
   velocity: { x: number; y: number };
   radius: number;
   imgSrc: string;
-  angle: { currentAngle: number; goalAngle: number; step: number };
+  angle: { currentAngle: number; goalAngle: number };
   isGhost: boolean;
 };
 

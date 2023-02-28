@@ -18,7 +18,7 @@ export class Kart {
   velocity: { x: number; y: number };
   radius: number;
   imgSrc: string;
-  angle: { currentAngle: number; goalAngle: number; step: number };
+  angle: { currentAngle: number; goalAngle: number };
   isGhost: boolean;
 
   constructor();
@@ -28,7 +28,7 @@ export class Kart {
     this.velocity = kartData?.velocity ?? { x: 0, y: 0 };
     this.radius = 15;
     this.imgSrc = kartData?.imgSrc ?? "";
-    this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0, step: .1 };
+    this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0};
     this.isGhost = kartData?.isGhost ?? false;
   }
 
@@ -42,10 +42,16 @@ export class Kart {
     this.isGhost = kartUpdate.isGhost;
   }
 
-  determineAngleStep() {
+  determineAngleDirection() {
     const currentAngle = this.angle.currentAngle;
     const goalAngle = this.angle.goalAngle;
-    const angleDiff = goalAngle - currentAngle;
+    let angleDiff = goalAngle - currentAngle;
+  
+    if (angleDiff > Math.PI) {
+      angleDiff -= 2 * Math.PI;
+    } else if (angleDiff < -Math.PI) {
+      angleDiff += 2 * Math.PI;
+    }
   
     if (angleDiff >= 0 && angleDiff <= Math.PI || angleDiff <= -Math.PI) {
       return 1;
@@ -55,20 +61,23 @@ export class Kart {
   }
   
   updateKartAngle() {
-    if (this.angle.currentAngle != this.angle.goalAngle) {
-      const direction = this.determineAngleStep();
-      this.angle.currentAngle += .2 * direction;
-  
-      if (Math.abs(this.angle.currentAngle - this.angle.goalAngle) < this.angle.step) {
-        // We've reached the goal angle within one step, so snap to it
-        this.angle.currentAngle = this.angle.goalAngle;
-        this.angle.step = 0;
+    if (this.angle.currentAngle !== this.angle.goalAngle) {
+      const direction = this.determineAngleDirection();
+      const angleDiff = this.angle.goalAngle - this.angle.currentAngle;
+      this.angle.currentAngle += direction * Math.min(Math.abs(angleDiff), 0.3);
+      
+      if (this.angle.currentAngle >= 2 * Math.PI) {
+        this.angle.currentAngle -= 2 * Math.PI;
+      } else if (this.angle.currentAngle < 0) {
+        this.angle.currentAngle += 2 * Math.PI;
       }
-    } else {
-      // We've already reached the goal angle, so reset step and goal angle
-      this.angle.step = 0;
+      
+      if (Math.abs(angleDiff) < 0.01) {
+        this.angle.currentAngle = this.angle.goalAngle;
+      }
     }
   }
+  
 }
 
 export class Team {
