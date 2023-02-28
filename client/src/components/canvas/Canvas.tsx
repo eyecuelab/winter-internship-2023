@@ -146,12 +146,15 @@ function Canvas(props: any) {
         ) {
           kart.velocity.y = 0;
           kart.velocity.x = previousXVelocity;
+          kart.angle.currentAngle += kart.angle.steps;
+
           break;
         } else {
           kart.velocity.y = -5;
           kart.velocity.x = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
+          kart.calculateStepsToGoal;
         }
       }
     } else if (
@@ -174,12 +177,14 @@ function Canvas(props: any) {
         ) {
           kart.velocity.y = 0;
           kart.velocity.x = previousXVelocity;
+          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.y = 5;
           kart.velocity.x = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
+          kart.calculateStepsToGoal;
         }
       }
     }
@@ -275,12 +280,14 @@ function Canvas(props: any) {
         ) {
           kart.velocity.x = 0;
           kart.velocity.y = previousYVelocity;
+          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.x = -5;
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
+          kart.calculateStepsToGoal;
         }
       }
     } else if (
@@ -303,12 +310,14 @@ function Canvas(props: any) {
         ) {
           kart.velocity.x = 0;
           kart.velocity.y = previousYVelocity;
+          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.x = 5;
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
+          kart.calculateStepsToGoal;
         }
       }
     }
@@ -700,14 +709,14 @@ function Canvas(props: any) {
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             radius: 15,
-            angle: {currentAngle:0, goalAngle:0, steps:5},
+            angle: { currentAngle: 0, goalAngle: 0, steps: 5 },
             isGhost: numberOfUsers > 3 ? true : false,
           });
 
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
-            playerInControl:socketIds[numberOfUsers - 2],
+            playerInControl: socketIds[numberOfUsers - 2],
             players: {
               x: socketIds[numberOfUsers - 2],
               y: socketIds[numberOfUsers - 1],
@@ -734,7 +743,7 @@ function Canvas(props: any) {
             score: 0,
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
-            angle: {currentAngle:0, goalAngle:0, steps:5},
+            angle: { currentAngle: 0, goalAngle: 0, steps: 5 },
             characterId: 1,
             gameId: parseInt(gameId),
             kartId: 1,

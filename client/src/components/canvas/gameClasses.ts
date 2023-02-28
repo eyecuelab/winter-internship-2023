@@ -1,4 +1,4 @@
-import { kartConstructorType, kartType, teamConstructorType, teamType } from "../../types/Types";
+import { kartType, teamType } from "../../types/Types";
 import mapSwitchCase from "./mapSwitchCase";
 import { quadrants } from "./quadrants";
 
@@ -41,6 +41,30 @@ export class Kart {
     this.angle = kartUpdate.angle;
     this.isGhost = kartUpdate.isGhost;
   }
+
+  calculateStepsToGoal() {
+    const angleDiff = this.angle.goalAngle - this.angle.currentAngle;
+    let direction = Math.sign(angleDiff);
+    const absAngleDiff = Math.abs(angleDiff);
+    const halfSteps = Math.floor(this.angle.steps / 2);
+    let steps = 0;
+  
+    if (absAngleDiff > Math.PI) {
+      // If the absolute difference is greater than PI, we should take the opposite direction.
+      direction *= -1;
+    }
+  
+    if (absAngleDiff > Math.PI / 2) {
+      // If the absolute difference is greater than PI/2, we need to turn more than half way around.
+      steps = Math.ceil(absAngleDiff / (Math.PI / 2)) * halfSteps;
+    } else {
+      // Otherwise, we can turn less than half way around.
+      steps = Math.ceil(absAngleDiff / (Math.PI / this.angle.steps));
+    }
+  
+    this.angle.steps= steps * direction;
+  }
+  
 }
 
 export class Team {
