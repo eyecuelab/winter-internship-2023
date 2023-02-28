@@ -15,7 +15,12 @@ import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
-import { myGameType, roomGameType, kartType, userType } from "../../types/Types";
+import {
+  myGameType,
+  roomGameType,
+  kartType,
+  userType,
+} from "../../types/Types";
 import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
 import { generateMapQuadrants } from "./quadrants";
 import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
@@ -37,9 +42,7 @@ interface Props {
 }
 
 function Canvas(props: Props) {
-  console.log(props);
   const { gameId, userData } = props;
-  console.log(userData);
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
@@ -697,65 +700,69 @@ function Canvas(props: Props) {
     });
 
     socket.on("receive_client_joined", async (data) => {
-      const { socketIds, userId } = data;
+      const { socketIds } = data;
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
 
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
-          const spawnPosition = spawnPointsRef.current[(numberOfUsers / 2) - 1];
+          const spawnPosition = spawnPointsRef.current[numberOfUsers / 2 - 1];
 
-          const newTeam = await postData(`/team`, {
-            color: colors[numberOfUsers],
-            score: 0,
-            position: spawnPosition.position,
-            velocity: { x: 0, y: 0 },
-            angle: 0,
-            characterId: numberOfUsers > 3 ? 2 : 1,
-            gameId: parseInt(gameId),
-            kartId: 1,
-          });
-
-          const tempMyKart = new Kart({
-            position: newTeam.position,
-            velocity: newTeam.velocity,
-            imgSrc: kartTest.kartTest,
-            radius: 15,
-            angle: newTeam.angle,
-            isGhost: newTeam.characterId === 1 ?? 2,
-          });
-
-          const tempMyTeam = new Team({
-            teamId: newTeam.Id,
-            color: newTeam.color,
-            players: {
-              x: socketIds[numberOfUsers - 2],
-              y: socketIds[numberOfUsers - 1],
-            },
-            score: newTeam.score,
-          });
-
-          myGameRef.current.myTeamMate = socketIds[numberOfUsers - 2];
-          myGameRef.current.myControl = "y";
-          myGameRef.current.myTeam = tempMyTeam;
-          myGameRef.current.myKart = tempMyKart;
-
-          const tempTeamMate = myGameRef.current.myTeamMate;
-          const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
-          const jsonKart = JSON.stringify(tempMyKart);
-
-          socket.emit("send_team", {
-            jsonTeam,
-            jsonKart,
-            gameId,
-            tempTeamMate,
-          });
-
-          postData(`/teamUser`, {
-            teamId: parseInt(newTeam.id),
-            userId: parseInt(userId),
-            axisControl: "y",
-          });
+          if (gameId) {
+            const newTeam = await postData(`/team`, {
+              color: colors[numberOfUsers],
+              score: 0,
+              position: spawnPosition.position,
+              velocity: { x: 0, y: 0 },
+              angle: 0,
+              characterId: numberOfUsers > 3 ? 2 : 1,
+              gameId: parseInt(gameId),
+              kartId: 1,
+            });
+  
+            const tempMyKart = new Kart({
+              position: newTeam.position,
+              velocity: newTeam.velocity,
+              imgSrc: kartTest.kartTest,
+              radius: 15,
+              angle: newTeam.angle,
+              isGhost: newTeam.characterId === 1 ?? 2,
+            });
+  
+            const tempMyTeam = new Team({
+              teamId: newTeam.id,
+              color: newTeam.color,
+              players: {
+                x: socketIds[numberOfUsers - 2],
+                y: socketIds[numberOfUsers - 1],
+              },
+              score: newTeam.score,
+            });
+  
+            myGameRef.current.myTeamMate = socketIds[numberOfUsers - 2];
+            myGameRef.current.myControl = "y";
+            myGameRef.current.myTeam = tempMyTeam;
+            myGameRef.current.myKart = tempMyKart;
+  
+            const tempTeamMate = myGameRef.current.myTeamMate;
+            const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
+            const jsonKart = JSON.stringify(tempMyKart);
+  
+            socket.emit("send_team", {
+              jsonTeam,
+              jsonKart,
+              gameId,
+              tempTeamMate,
+            });
+            
+            if (userData){
+              postData(`/teamUser`, {
+                teamId: parseInt(newTeam.id),
+                userId: userData.id,
+                axisControl: "y",
+              });
+            }
+          }
         }
       }
       if (isWaitingForGameModalOpen) {
@@ -783,11 +790,13 @@ function Canvas(props: Props) {
         myGameRef.current.myKart.updateKartWithJson(jsonKart);
         myGameRef.current.myControl = "x";
         myGameRef.current.myTeamMate = myGameRef.current.myTeam.players.y;
-        postData(`/teamUser`, {
-          teamId: parseInt(tempTeam.teamId),
-          userId: 1,
-          axisControl: "y",
-        });
+        if(userData){
+          postData(`/teamUser`, {
+            teamId: parseInt(tempTeam.teamId),
+            userId: userData.id,
+            axisControl: "x",
+          });
+        }
       }
       roomGameRef.current.karts.set(tempTeam.color, tempKart);
       roomGameRef.current.scores.set(tempTeam.color, 0);

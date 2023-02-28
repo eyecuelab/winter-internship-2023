@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
