@@ -7,7 +7,7 @@ export const createTeam = async (
   score: number,
   position: Prisma.JsonObject,
   velocity: Prisma.JsonObject,
-  angle: number,
+  angle: Prisma.JsonObject,
   characterId: number,
   gameId: number,
   kartId: number
