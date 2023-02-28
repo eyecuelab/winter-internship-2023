@@ -46,19 +46,19 @@
   text-align: center;
 }
 .waitingforstart-box img {
-  width: 15rem;
+  width: 10rem;
 }
 
 .waitingforstart-box ul {
 list-style: none;
 font-family: 'Roboto';
 color: white;
-font-size: 2rem;
+font-size: 1.5rem;
 }
 
-/* .waitingforstart-box ul li span {
- margin: 2em;
-  } */
+.waitingforstart-box ul li {
+ margin: .3em;
+  }
 
 .waitingforstart-box #my-team, .waitingforstart-box #my-direction  {
   list-style: none;
@@ -68,7 +68,7 @@ font-size: 2rem;
   font-family: 'namco regular';
   color: #005487;
   text-shadow: 2px 2px white;
-  line-height: 4rem;
+  line-height: 2rem;
   letter-spacing: .2rem;
   margin-bottom: 1.5em;
   }
@@ -79,4 +79,12 @@ font-size: 2rem;
   letter-spacing: .2rem;
   text-shadow: 2px 2px white;
   margin-bottom: 3rem;
+  }
+
+  .waitingforstart-box #team-img {
+    margin-top: 1rem;
+  }
+
+  .waitingforstart-box #horizontal-img {
+    margin-bottom: .3rem;
   }

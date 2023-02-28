@@ -4,6 +4,9 @@ import { Kart, Team } from "./gameClasses";
 import { myGameType, roomGameType } from "./../../types/Types"
 import { verticalDirSvgString } from "../../assets/verticalDirSvg";
 import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
+import { pinkGhostSvgString } from "../../assets/pinkGhostSvgString";
+import { redPacmanSvgString } from "../../assets/redPacmanSvg";
+import { bluePacmanSvgString } from "../../assets/bluePacmanSvg";
 
 interface WaitingForStartType {
   children?: ReactNode;
@@ -20,6 +23,7 @@ export function WaitingForStart(props: WaitingForStartType) {
   const teamInfo = document.getElementById("teamInfo");
   const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
   const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
+  const bluePacmanSvgRef = useRef<HTMLImageElement | undefined>();
 
   useEffect(() => {
     const verticalDirImg = new Image();
@@ -34,6 +38,14 @@ export function WaitingForStart(props: WaitingForStartType) {
       horizontalDirSvgRef.current = horizontalDirImg;
     });
 
+    const bluePacmanImg = new Image();
+    bluePacmanImg.src = `data:image/svg+xml;base64,${window.btoa(bluePacmanSvgString)}`;
+    bluePacmanImg.addEventListener("load", () => {
+      bluePacmanSvgRef.current = bluePacmanImg;
+    });
+  }, [])
+
+  useEffect(() => {
     if (myGameState.myTeam && roomGameState.karts) {
       const myCurrentTeam = myGameState.myTeam;
       const myCurrentKart = roomGameState.karts.get(myCurrentTeam.color);
@@ -87,7 +99,16 @@ export function WaitingForStart(props: WaitingForStartType) {
         li.appendChild(
           document.createTextNode(`My Team:`)
         );
+        const teamImg = document.createElement("img"); 
+        teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
+        teamImg.setAttribute('id', 'team-img');
+
+        const divElement = document.createElement('div');
+        divElement.style.display = 'block';
+        divElement.appendChild(teamImg);
+        li?.appendChild(divElement);
         teamInfo?.appendChild(li);
+
         const liTwo = document.createElement("li");
         liTwo.setAttribute('id', 'my-team');
         liTwo.textContent =`${myTeam.color}`;
@@ -99,18 +120,19 @@ export function WaitingForStart(props: WaitingForStartType) {
         teamInfo?.appendChild(liThree);
         const liFour= document.createElement("li");
         liFour.setAttribute('id', 'my-direction');
+        const horizontalImg = document.createElement("img");
+        horizontalImg.setAttribute('src', `${horizontalDirSvgRef.current?.src}`);
+        horizontalImg.setAttribute('id', 'horizontal-img');
+    
+        const divElementTwo = document.createElement('div');
+        divElementTwo.style.display = 'block';
+        divElementTwo.appendChild(horizontalImg);
+        liFour?.appendChild(divElementTwo);
+        teamInfo?.appendChild(liFour);
         liFour.appendChild(
           document.createTextNode(`horizontal`)
         );
 
-        const horizontalImg = document.createElement("img");
-        horizontalImg.setAttribute('src', `${horizontalDirSvgRef.current?.src}`);
-    
-        const divElement = document.createElement('div');
-        divElement.style.display = 'block';
-        divElement.appendChild(horizontalImg);
-        liFour?.appendChild(divElement);
-        teamInfo?.appendChild(liFour);
       } else {
         if (teamInfo) {        
           teamInfo.innerHTML = "";
