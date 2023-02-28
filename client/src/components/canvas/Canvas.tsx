@@ -166,7 +166,7 @@ function Canvas(props: Props) {
 
     if (
       lastKeyRef.current === "w" &&
-      (kart.position.x - Boundary.width / 2) % Boundary.width === 0
+      (kart.position.x - (Boundary.width / 2)) % Boundary.width === 0
     ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -326,7 +326,7 @@ function Canvas(props: Props) {
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          console.log(kart.angle);
+
         }
       }
     } else if (
@@ -732,7 +732,7 @@ function Canvas(props: Props) {
               score: 0,
               position: spawnPosition.position,
               velocity: { x: 0, y: 0 },
-              angle: 0,
+              angle: {currentAngle: 0, goalAngle: 0},
               characterId: numberOfUsers > 3 ? 2 : 1,
               gameId: parseInt(gameId),
               kartId: 1,
