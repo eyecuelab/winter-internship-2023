@@ -4,9 +4,9 @@ import { Kart, Team } from "./gameClasses";
 import { myGameType, roomGameType } from "./../../types/Types"
 import { verticalDirSvgString } from "../../assets/verticalDirSvg";
 import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
-import { pinkGhostSvgString } from "../../assets/pinkGhostSvgString";
-import { redPacmanSvgString } from "../../assets/redPacmanSvg";
-import { bluePacmanSvgString } from "../../assets/bluePacmanSvg";
+import { pinkGhostSvgString } from "../../assets/pinkGhostIconSvgString";
+import { redPacmanSvgString } from "../../assets/redPacmanIconSvg";
+import { bluePacmanSvgString } from "../../assets/bluePacmanIconSvg";
 
 interface WaitingForStartType {
   children?: ReactNode;
