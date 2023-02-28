@@ -108,7 +108,7 @@ function frameRenderer(
     // this.lineTo(0, -height / 2); //to top center
     // this.closePath();
     // this.fillStyle = color;
-    this.drawImage(img, -width / 2, -height / 2, 70, 70);
+    this.drawImage(img, -width / 2, -height / 2, 80, 80);
     this.fill();
     this.restore();
   };
@@ -131,8 +131,8 @@ function frameRenderer(
       entry.kart.position.y,
       entry.kart.velocity.x,
       entry.kart.velocity.y,
-      70,
-      70,
+      75,
+      75,
       entry.color,
       entry.kart.angle,
       entry.kart.isGhost

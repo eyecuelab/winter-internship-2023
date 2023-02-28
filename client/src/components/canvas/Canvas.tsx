@@ -141,7 +141,7 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: 0,
-                y: -5,
+                y: -10,
               },
             },
             rectangle: boundary,
@@ -152,7 +152,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.angle = -90;
-          kart.velocity.y = -5;
+          kart.velocity.y = -10;
           kart.velocity.x = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -160,7 +160,7 @@ function Canvas(props: any) {
       }
     } else if (
       lastKeyRef.current === "s" &&
-      (kart.position.x - Boundary.width / 2) % Boundary.width === 0
+      (kart.position.x - (Boundary.width / 2)) % Boundary.width === 0
     ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -170,7 +170,7 @@ function Canvas(props: any) {
               ...kart,
               velocity: {
                 x: kart.velocity.x,
-                y: 5,
+                y: 10,
               },
             },
             rectangle: boundary,
@@ -181,7 +181,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.angle = 90;
-          kart.velocity.y = 5;
+          kart.velocity.y = 10;
           kart.velocity.x = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -274,7 +274,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: -5,
+                x: -10,
                 y: 0,
               },
             },
@@ -286,7 +286,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.angle = 180;
-          kart.velocity.x = -5;
+          kart.velocity.x = -10;
           kart.velocity.y = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -303,7 +303,7 @@ function Canvas(props: any) {
             circle: {
               ...kart,
               velocity: {
-                x: 5,
+                x: 10,
                 y: 0,
               },
             },
@@ -315,7 +315,7 @@ function Canvas(props: any) {
           break;
         } else {
           kart.angle = 0;
-          kart.velocity.x = 5;
+          kart.velocity.x = 10;
           kart.velocity.y = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;

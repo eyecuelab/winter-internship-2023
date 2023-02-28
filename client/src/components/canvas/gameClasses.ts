@@ -26,7 +26,7 @@ export class Kart {
   constructor(kartConstructorData?: kartConstructorType) {
     this.position = kartConstructorData?.position ?? {x:0, y:0};
     this.velocity = kartConstructorData?.velocity ?? {x:0, y:0};;
-    this.radius = 15;
+    this.radius = 35;
     this.imgSrc = kartConstructorData?.imgSrc ?? '';
     this.angle = kartConstructorData?.angle ?? 0;
     this.isGhost = kartConstructorData?.isGhost ?? false;
