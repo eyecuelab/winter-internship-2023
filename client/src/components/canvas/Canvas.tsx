@@ -476,6 +476,12 @@ function Canvas(props: any) {
       return;
     }
 
+    let scale = 1;
+let originx = 0;
+let originy = 0;
+let visibleWidth = size.width;
+let visibleHeight = size.height;
+
     let updatedKart; //should this be referencing local state?
 
     if (myGameRef.current.myTeam.playerInControl === socketId) {
@@ -519,6 +525,81 @@ function Canvas(props: any) {
       mapBrickSvgRef.current,
       pelletSvgRef.current
     );
+
+  //     // canvas.onwheel = function (event){
+  //     // event.preventDefault();
+  //     // // Get mouse offset.
+  //     // const mousex = event.clientX - canvas.offsetLeft;
+  //     // const mousey = event.clientY - canvas.offsetTop;
+  //     // // Normalize mouse wheel movement to +1 or -1 to avoid unusual jumps.
+  //     // const wheel = event.deltaY < 0 ? 1 : -1;
+  
+  //     // Compute zoom factor.
+  //     const zoomIntensity = 0.2;
+  //     const zoom = Math.exp(zoomIntensity);
+      
+  //     // Translate so the visible origin is at the context's origin.
+  //     const kart = roomGameRef.current.karts.get(
+  //       myGameRef.current.myTeam.color
+  //     );
+  //     if (kart) {
+  //       context.translate(60, 60);
+  //     }
+    
+  //     // Compute the new visible origin. Originally the mouse is at a
+  //     // distance mouse/scale from the corner, we want the point under
+  //     // the mouse to remain in the same place after the zoom, but this
+  //     // is at mouse/new_scale away from the corner. Therefore we need to
+  //     // shift the origin (coordinates of the corner) to account for this.
+  //     if (kart) {
+  //       originx -= 60/(scale*zoom) - 60/scale;
+  //       originy -=60/(scale*zoom) -60/scale;
+  //     } 
+      
+  //     // Scale it (centered around the origin due to the translate above).
+  //     context.scale(zoom, zoom);
+  //     // Offset the visible origin to it's proper position.
+  //     context.translate(-originx, -originy);
+  
+  //     // Update scale and others.
+  //     // scale *= zoom;
+  //     visibleWidth = size.width / scale;
+  //     visibleHeight = size.height / scale;
+  // // }
+
+    canvas.onwheel = function (event){
+      event.preventDefault();
+      // Get mouse offset.
+      const mousex = event.clientX - canvas.offsetLeft;
+      const mousey = event.clientY - canvas.offsetTop;
+      // Normalize mouse wheel movement to +1 or -1 to avoid unusual jumps.
+      const wheel = event.deltaY < 0 ? 1 : -1;
+  
+      // Compute zoom factor.
+      const zoomIntensity = 0.2;
+      const zoom = Math.exp(wheel * zoomIntensity);
+      
+      // Translate so the visible origin is at the context's origin.
+      context.translate(originx, originy);
+    
+      // Compute the new visible origin. Originally the mouse is at a
+      // distance mouse/scale from the corner, we want the point under
+      // the mouse to remain in the same place after the zoom, but this
+      // is at mouse/new_scale away from the corner. Therefore we need to
+      // shift the origin (coordinates of the corner) to account for this.
+      originx -= mousex/(scale*zoom) - mousex/scale;
+      originy -= mousey/(scale*zoom) - mousey/scale;
+      
+      // Scale it (centered around the origin due to the translate above).
+      context.scale(zoom, zoom);
+      // Offset the visible origin to it's proper position.
+      context.translate(-originx, -originy);
+  
+      // Update scale and others.
+      scale *= zoom;
+      visibleWidth = size.width / scale;
+      visibleHeight = size.height / scale;
+  }
   };
 
   const tick = () => {
