@@ -28,8 +28,8 @@ export type kartType = {
   velocity: { x: number; y: number };
   radius: number;
   imgSrc: string;
-  angle: {currentAngle: number, goalAngle: number, steps:number};
-  isGhost: boolean
+  angle: { currentAngle: number; goalAngle: number; step: number };
+  isGhost: boolean;
 };
 
 export type myGameType = {

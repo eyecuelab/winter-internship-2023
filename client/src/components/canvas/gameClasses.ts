@@ -18,17 +18,17 @@ export class Kart {
   velocity: { x: number; y: number };
   radius: number;
   imgSrc: string;
-  angle: {currentAngle: number, goalAngle: number, steps:number};
-  isGhost: boolean
+  angle: { currentAngle: number; goalAngle: number; step: number };
+  isGhost: boolean;
 
   constructor();
   constructor(kartData: kartType);
   constructor(kartData?: kartType) {
-    this.position = kartData?.position ?? {x:0, y:0};
-    this.velocity = kartData?.velocity ?? {x:0, y:0};;
+    this.position = kartData?.position ?? { x: 0, y: 0 };
+    this.velocity = kartData?.velocity ?? { x: 0, y: 0 };
     this.radius = 15;
-    this.imgSrc = kartData?.imgSrc ?? '';
-    this.angle = kartData?.angle ?? {currentAngle: 0, goalAngle: 0, steps: 5};
+    this.imgSrc = kartData?.imgSrc ?? "";
+    this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0, step: .1 };
     this.isGhost = kartData?.isGhost ?? false;
   }
 
@@ -42,29 +42,33 @@ export class Kart {
     this.isGhost = kartUpdate.isGhost;
   }
 
-  calculateStepsToGoal() {
-    const angleDiff = this.angle.goalAngle - this.angle.currentAngle;
-    let direction = Math.sign(angleDiff);
-    const absAngleDiff = Math.abs(angleDiff);
-    const halfSteps = Math.floor(this.angle.steps / 2);
-    let steps = 0;
+  determineAngleStep() {
+    const currentAngle = this.angle.currentAngle;
+    const goalAngle = this.angle.goalAngle;
+    const angleDiff = goalAngle - currentAngle;
   
-    if (absAngleDiff > Math.PI) {
-      // If the absolute difference is greater than PI, we should take the opposite direction.
-      direction *= -1;
-    }
-  
-    if (absAngleDiff > Math.PI / 2) {
-      // If the absolute difference is greater than PI/2, we need to turn more than half way around.
-      steps = Math.ceil(absAngleDiff / (Math.PI / 2)) * halfSteps;
+    if (angleDiff >= 0 && angleDiff <= Math.PI || angleDiff <= -Math.PI) {
+      return 1;
     } else {
-      // Otherwise, we can turn less than half way around.
-      steps = Math.ceil(absAngleDiff / (Math.PI / this.angle.steps));
+      return -1;
     }
-  
-    this.angle.steps= steps * direction;
   }
   
+  updateKartAngle() {
+    if (this.angle.currentAngle != this.angle.goalAngle) {
+      const direction = this.determineAngleStep();
+      this.angle.currentAngle += .2 * direction;
+  
+      if (Math.abs(this.angle.currentAngle - this.angle.goalAngle) < this.angle.step) {
+        // We've reached the goal angle within one step, so snap to it
+        this.angle.currentAngle = this.angle.goalAngle;
+        this.angle.step = 0;
+      }
+    } else {
+      // We've already reached the goal angle, so reset step and goal angle
+      this.angle.step = 0;
+    }
+  }
 }
 
 export class Team {
@@ -73,14 +77,14 @@ export class Team {
   playerInControl: string;
   players: { x: string; y: string };
   score: number;
-  
+
   constructor();
   constructor(teamData: teamType);
   constructor(teamData?: teamType) {
     this.teamId = teamData?.teamId ?? "";
     this.color = teamData?.color ?? "";
     this.players = teamData?.players ?? { x: "", y: "string" };
-    this.playerInControl = teamData?.players ? teamData.players.x :  "";
+    this.playerInControl = teamData?.players ? teamData.players.x : "";
     this.score = teamData?.score ?? 0;
   }
 
@@ -128,10 +132,12 @@ export class GameMap {
   pellets: Pellet[];
   spawnPoints: SpawnPoint[];
 
-  constructor(
-    mapQuadrants
-  : {i: number; ii: number; iii: number; iv: number }
-  ) {
+  constructor(mapQuadrants: {
+    i: number;
+    ii: number;
+    iii: number;
+    iv: number;
+  }) {
     this.mapQuadrants = mapQuadrants;
     this.mapArr = [];
     this.boundaries = [];
@@ -140,37 +146,44 @@ export class GameMap {
   }
 
   generateMapArr() {
-    const tempQuads = quadrants.map((quad) => quad.slice().map(innerArr => innerArr.slice()));
-  
+    const tempQuads = quadrants.map((quad) =>
+      quad.slice().map((innerArr) => innerArr.slice())
+    );
+
     function reverseArrs(arr: any[]) {
       //reverses each arrays elements w/in a 2d array
-      const reversedArr = arr.map((innerArr: any[]) => innerArr.slice().reverse());
+      const reversedArr = arr.map((innerArr: any[]) =>
+        innerArr.slice().reverse()
+      );
       return reversedArr;
     }
-  
+
     function reverseOrderOfArrs(arr: any[]) {
       //reverses order of arrays w/in a 2d array
-      const reversedArr = arr.slice().reverse().map((innerArr: any[]) => innerArr.slice());
+      const reversedArr = arr
+        .slice()
+        .reverse()
+        .map((innerArr: any[]) => innerArr.slice());
       return reversedArr;
     }
-  
+
     const quad1 = tempQuads[this.mapQuadrants.i];
     const quad2 = reverseArrs(tempQuads[this.mapQuadrants.ii]);
     const quad3 = reverseOrderOfArrs(tempQuads[this.mapQuadrants.iii]);
-    const quad4 = reverseArrs(reverseOrderOfArrs(tempQuads[this.mapQuadrants.iv]));
-  
+    const quad4 = reverseArrs(
+      reverseOrderOfArrs(tempQuads[this.mapQuadrants.iv])
+    );
+
     const combinedTop = quad1.map((arr, i) => arr.concat(quad2[i]));
     const combinedBottom = quad3.map((arr, i) => arr.concat(quad4[i]));
     this.mapArr = [...combinedTop, ...combinedBottom];
   }
-  
 
-  generateMapPropertiesArrs(){
-    const {boundaries, pellets, spawnPoints} = mapSwitchCase(this.mapArr);
+  generateMapPropertiesArrs() {
+    const { boundaries, pellets, spawnPoints } = mapSwitchCase(this.mapArr);
 
     this.boundaries = boundaries;
     this.pellets = pellets;
     this.spawnPoints = spawnPoints;
   }
 }
-

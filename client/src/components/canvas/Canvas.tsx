@@ -146,7 +146,6 @@ function Canvas(props: any) {
         ) {
           kart.velocity.y = 0;
           kart.velocity.x = previousXVelocity;
-          kart.angle.currentAngle += kart.angle.steps;
 
           break;
         } else {
@@ -154,7 +153,7 @@ function Canvas(props: any) {
           kart.velocity.x = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          kart.calculateStepsToGoal;
+          console.log(kart.angle);
         }
       }
     } else if (
@@ -177,17 +176,18 @@ function Canvas(props: any) {
         ) {
           kart.velocity.y = 0;
           kart.velocity.x = previousXVelocity;
-          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.y = 5;
           kart.velocity.x = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          kart.calculateStepsToGoal;
+          console.log(kart.angle);
         }
       }
     }
+
+    kart.updateKartAngle();
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
 
@@ -280,14 +280,13 @@ function Canvas(props: any) {
         ) {
           kart.velocity.x = 0;
           kart.velocity.y = previousYVelocity;
-          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.x = -5;
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          kart.calculateStepsToGoal;
+          console.log(kart.angle);
         }
       }
     } else if (
@@ -310,20 +309,22 @@ function Canvas(props: any) {
         ) {
           kart.velocity.x = 0;
           kart.velocity.y = previousYVelocity;
-          kart.angle.currentAngle += kart.angle.steps;
           break;
         } else {
           kart.velocity.x = 5;
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          kart.calculateStepsToGoal;
+          console.log(kart.angle);
         }
       }
     }
 
+    kart.updateKartAngle();
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
+
+
     if (kart.isGhost === true) {
       const aliveKartsArr = Array.from(
         roomGameRef.current.karts,
@@ -709,7 +710,7 @@ function Canvas(props: any) {
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             radius: 15,
-            angle: { currentAngle: 0, goalAngle: 0, steps: 5 },
+            angle: { currentAngle: 0, goalAngle: 0, step: 5 },
             isGhost: numberOfUsers > 3 ? true : false,
           });
 
@@ -743,7 +744,7 @@ function Canvas(props: any) {
             score: 0,
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
-            angle: { currentAngle: 0, goalAngle: 0, steps: 5 },
+            angle: { currentAngle: 0, goalAngle: 0, step: 5 },
             characterId: 1,
             gameId: parseInt(gameId),
             kartId: 1,
