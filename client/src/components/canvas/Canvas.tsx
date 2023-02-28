@@ -33,8 +33,7 @@ import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(true);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["yellow", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
