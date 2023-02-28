@@ -160,7 +160,7 @@ function frameRenderer(
       30,
       30,
       entry.color,
-      entry.kart.angle,
+      entry.kart.angle.currentAngle,
       entry.kart.isGhost
     );
   });

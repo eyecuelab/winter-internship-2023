@@ -33,7 +33,8 @@ import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
+    useState(true);
   const { gameId } = props;
   const colors = ["yellow", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -48,7 +49,6 @@ function Canvas(props: any) {
   const redGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
-
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -108,25 +108,20 @@ function Canvas(props: any) {
     return true;
   };
 
-  const kill = (/*victimsColor: string, */spawnNum: number) => {
-
-    console.log("I was killed!")
-    const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
-
-  
-
+  const kill = (/*victimsColor: string, */ spawnNum: number) => {
+    console.log("I was killed!");
+    const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color);
 
     // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
     if (kart) {
       kart.isGhost = true;
-      kart.position = spawnPointsRef.current[spawnNum].position
-      kart.velocity = { x: 0, y: 0}
-    //   roomGameRef.current.karts.set(victimsColor, kart)
-      
+      kart.position = spawnPointsRef.current[spawnNum].position;
+      kart.velocity = { x: 0, y: 0 };
+      //   roomGameRef.current.karts.set(victimsColor, kart)
 
       /*this technically works but the other users send out the information that their isGhost is false still */
     }
-  }
+  };
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
   const updateKartYMovements = () => {
@@ -153,10 +148,9 @@ function Canvas(props: any) {
           kart.velocity.x = previousXVelocity;
           break;
         } else {
-          kart.angle = -90;
           kart.velocity.y = -5;
           kart.velocity.x = 0;
-          kart.angle =
+          kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
@@ -182,10 +176,9 @@ function Canvas(props: any) {
           kart.velocity.x = previousXVelocity;
           break;
         } else {
-          kart.angle = 90;
           kart.velocity.y = 5;
           kart.velocity.x = 0;
-          kart.angle =
+          kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
@@ -209,16 +202,17 @@ function Canvas(props: any) {
       });
 
       aliveKartsArr.forEach((item) => {
-        if(item){
-         
-            if (circleCollidesWithCircle({ghost: kart, paCart: item.pacmanKart})){
-              const spawnNum = Math.floor(Math.random() * 4)
-              
-              //kill(item.color, spawnNum)
-              kart.isGhost = false;
-              const victim = item.color
-              socket.emit("player_killed", { victim, spawnNum, gameId })
-              /*
+        if (item) {
+          if (
+            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
+          ) {
+            const spawnNum = Math.floor(Math.random() * 4);
+
+            //kill(item.color, spawnNum)
+            kart.isGhost = false;
+            const victim = item.color;
+            socket.emit("player_killed", { victim, spawnNum, gameId });
+            /*
               todo: 
               this function sets own .isGhost to false
               maybe done
@@ -235,15 +229,10 @@ function Canvas(props: any) {
 
               */
 
-
-
-
-
-
-              //myGameRef.current.myTeam.ghost = false
-              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-              // make the server and receiver for this emit
-            }
+            //myGameRef.current.myTeam.ghost = false
+            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+            // make the server and receiver for this emit
+          }
         }
       });
     }
@@ -288,10 +277,9 @@ function Canvas(props: any) {
           kart.velocity.y = previousYVelocity;
           break;
         } else {
-          kart.angle = 180;
           kart.velocity.x = -5;
           kart.velocity.y = 0;
-          kart.angle =
+          kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
@@ -317,10 +305,9 @@ function Canvas(props: any) {
           kart.velocity.y = previousYVelocity;
           break;
         } else {
-          kart.angle = 0;
           kart.velocity.x = 5;
           kart.velocity.y = 0;
-          kart.angle =
+          kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
         }
       }
@@ -341,20 +328,22 @@ function Canvas(props: any) {
       //console.log(aliveKartsArr);
 
       aliveKartsArr.forEach((item) => {
-        if(item){
-            if (circleCollidesWithCircle({ghost:kart, paCart: item.pacmanKart})){
-              const spawnNum = Math.floor(Math.random() * 4)
-              
-              //kill(item.color, spawnNum)
-              console.log("pacman killed! on the x axis controlled person");
-              kart.isGhost = false;
-              console.log(item);
-              const victim = item.color //{"orange", kart} item.kart jsonified
-              socket.emit("player_killed", { victim, spawnNum, gameId })
-              //myGameRef.current.myTeam.ghost = false
-              //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-              // make the server and receiver for this emit
-            }
+        if (item) {
+          if (
+            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
+          ) {
+            const spawnNum = Math.floor(Math.random() * 4);
+
+            //kill(item.color, spawnNum)
+            console.log("pacman killed! on the x axis controlled person");
+            kart.isGhost = false;
+            console.log(item);
+            const victim = item.color; //{"orange", kart} item.kart jsonified
+            socket.emit("player_killed", { victim, spawnNum, gameId });
+            //myGameRef.current.myTeam.ghost = false
+            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
+            // make the server and receiver for this emit
+          }
         }
       });
     }
@@ -403,7 +392,7 @@ function Canvas(props: any) {
               gameId,
             });
             roomGameRef.current.isGameOver = true;
-            socket.emit("game_over", {gameId});
+            socket.emit("game_over", { gameId });
             toggleGameOver();
           }
           socket.emit("remove_pellet", { gameId, i, isGameOver });
@@ -545,7 +534,7 @@ function Canvas(props: any) {
       redGhostSvgRef.current,
       orangeGhostSvgRef.current,
       blueGhostSvgRef.current,
-      pinkGhostSvgRef.current,
+      pinkGhostSvgRef.current
     );
   };
 
@@ -587,7 +576,7 @@ function Canvas(props: any) {
     } catch (e) {
       throw e;
     }
-    
+
     requestIdRef.current = requestAnimationFrame(tick);
   };
 
@@ -616,49 +605,65 @@ function Canvas(props: any) {
     });
 
     const redKartImg = new Image();
-    redKartImg.src = `data:image/svg+xml;base64,${window.btoa(redKartSvgString)}`;
+    redKartImg.src = `data:image/svg+xml;base64,${window.btoa(
+      redKartSvgString
+    )}`;
     redKartImg.addEventListener("load", () => {
       redKartSvgRef.current = redKartImg;
     });
 
     const orangeKartImg = new Image();
-    orangeKartImg.src = `data:image/svg+xml;base64,${window.btoa(orangeKartSvgString)}`;
+    orangeKartImg.src = `data:image/svg+xml;base64,${window.btoa(
+      orangeKartSvgString
+    )}`;
     orangeKartImg.addEventListener("load", () => {
       orangeKartSvgRef.current = orangeKartImg;
     });
 
     const blueKartImg = new Image();
-    blueKartImg.src = `data:image/svg+xml;base64,${window.btoa(blueKartSvgString)}`;
+    blueKartImg.src = `data:image/svg+xml;base64,${window.btoa(
+      blueKartSvgString
+    )}`;
     blueKartImg.addEventListener("load", () => {
       blueKartSvgRef.current = blueKartImg;
     });
 
     const pinkKartImg = new Image();
-    pinkKartImg.src = `data:image/svg+xml;base64,${window.btoa(pinkKartSvgString)}`;
+    pinkKartImg.src = `data:image/svg+xml;base64,${window.btoa(
+      pinkKartSvgString
+    )}`;
     pinkKartImg.addEventListener("load", () => {
       pinkKartSvgRef.current = pinkKartImg;
     });
 
     const redGhostImg = new Image();
-    redGhostImg.src = `data:image/svg+xml;base64,${window.btoa(redGhostSvgString)}`;
+    redGhostImg.src = `data:image/svg+xml;base64,${window.btoa(
+      redGhostSvgString
+    )}`;
     redGhostImg.addEventListener("load", () => {
       redGhostSvgRef.current = redGhostImg;
     });
 
     const orangeGhostImg = new Image();
-    orangeGhostImg.src = `data:image/svg+xml;base64,${window.btoa(orangeGhostSvgString)}`;
+    orangeGhostImg.src = `data:image/svg+xml;base64,${window.btoa(
+      orangeGhostSvgString
+    )}`;
     orangeGhostImg.addEventListener("load", () => {
       orangeGhostSvgRef.current = orangeGhostImg;
     });
 
     const pinkGhostImg = new Image();
-    pinkGhostImg.src = `data:image/svg+xml;base64,${window.btoa(pinkGhostSvgString)}`;
+    pinkGhostImg.src = `data:image/svg+xml;base64,${window.btoa(
+      pinkGhostSvgString
+    )}`;
     pinkGhostImg.addEventListener("load", () => {
       pinkGhostSvgRef.current = pinkGhostImg;
     });
 
     const blueGhostImg = new Image();
-    blueGhostImg.src = `data:image/svg+xml;base64,${window.btoa(blueGhostSvgString)}`;
+    blueGhostImg.src = `data:image/svg+xml;base64,${window.btoa(
+      blueGhostSvgString
+    )}`;
     blueGhostImg.addEventListener("load", () => {
       blueGhostSvgRef.current = blueGhostImg;
     });
@@ -684,7 +689,7 @@ function Canvas(props: any) {
 
       myGameRef.current.userList = socketIds;
       const numberOfUsers = socketIds.length;
-    
+
       if (socketId === socketIds[numberOfUsers - 1]) {
         //set the map properties
         if (numberOfUsers % 2 === 0) {
@@ -695,13 +700,14 @@ function Canvas(props: any) {
             velocity: { x: 0, y: 0 },
             imgSrc: kartTest.kartTest,
             radius: 15,
-            angle: 0,
+            angle: {currentAngle:0, goalAngle:0, steps:5},
             isGhost: numberOfUsers > 3 ? true : false,
           });
 
           const tempMyTeam = new Team({
             teamId: numberOfUsers.toString(),
             color: colors[numberOfUsers],
+            playerInControl:socketIds[numberOfUsers - 2],
             players: {
               x: socketIds[numberOfUsers - 2],
               y: socketIds[numberOfUsers - 1],
@@ -728,7 +734,7 @@ function Canvas(props: any) {
             score: 0,
             position: spawnPosition.position,
             velocity: { x: 0, y: 0 },
-            angle: 0,
+            angle: {currentAngle:0, goalAngle:0, steps:5},
             characterId: 1,
             gameId: parseInt(gameId),
             kartId: 1,
@@ -747,17 +753,17 @@ function Canvas(props: any) {
         }
       }
       if (isWaitingForGameModalOpen) {
-      setMyGameState(myGameRef.current);
-      if (numberOfUsers === 4 && isTimerReady) {
-        setInterval(async () => {
-          setIsCountingDown(true);
-        }, 3000);
-        setInterval(async () => {
-          setWaitingForGameModalOpen(false);
-        }, 10000);
-        setIsCountingDown(false);
-        setIsTimerReady(false);
-      } 
+        setMyGameState(myGameRef.current);
+        if (numberOfUsers === 4 && isTimerReady) {
+          setInterval(async () => {
+            setIsCountingDown(true);
+          }, 3000);
+          setInterval(async () => {
+            setWaitingForGameModalOpen(false);
+          }, 10000);
+          setIsCountingDown(false);
+          setIsTimerReady(false);
+        }
       }
     });
 
@@ -790,14 +796,16 @@ function Canvas(props: any) {
 
     socket.on("receive_kill", (data) => {
       const { victim, spawnNum } = data;
-      console.log(data)
+      console.log(data);
       //JSON.parse(ghost) and victim
       //if (my team is the victims color AND I'm the player in control)
-      if (myGameRef.current.myTeam.playerInControl === socket.id && myGameRef.current.myTeam.color === victim) {
+      if (
+        myGameRef.current.myTeam.playerInControl === socket.id &&
+        myGameRef.current.myTeam.color === victim
+      ) {
         kill(spawnNum);
       }
-      
-    })
+    });
 
     socket.on("pellet_gone", (data) => {
       const { i, isGameOver } = data;
@@ -815,14 +823,13 @@ function Canvas(props: any) {
     socket.on("client_disconnect", (data) => {
       console.log(data.disconnectedClientId + " has disconnected");
       console.log(myGameRef.current.userList);
-      myGameRef.current.userList.forEach((user) => 
-     {
+      myGameRef.current.userList.forEach((user) => {
         if (data.disconnectedClientId === user) {
           roomGameRef.current.isGameOver = true;
-          socket.emit("game_over", {gameId});
-          toggleGameOver(); 
+          socket.emit("game_over", { gameId });
+          toggleGameOver();
         }
-     })
+      });
     });
 
     return () => {
@@ -905,7 +912,12 @@ function Canvas(props: any) {
         </div>
         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
         <div>
-          <WaitingForStart isWaitingForGameModalOpen={isWaitingForGameModalOpen} roomGameState={roomGameState} myGameState={myGameState} isCountingDown={isCountingDown}></WaitingForStart>
+          <WaitingForStart
+            isWaitingForGameModalOpen={isWaitingForGameModalOpen}
+            roomGameState={roomGameState}
+            myGameState={myGameState}
+            isCountingDown={isCountingDown}
+          ></WaitingForStart>
         </div>
         <div>
           <GameOver
