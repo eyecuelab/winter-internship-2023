@@ -88,3 +88,23 @@ font-size: 1.5rem;
   .waitingforstart-box #horizontal-img {
     margin-bottom: .3rem;
   }
+
+  .waitingforstart-box #countdown {
+    font-family: 'namco regular';
+    font-size: 5rem;
+    line-height: 4rem;
+    letter-spacing: .2rem;
+    text-shadow: 2px 2px white;
+    color: #5D5D7E;
+    margin-bottom: 3rem;
+  }
+
+  .waitingforstart-box #go {
+    font-family: 'namco regular';
+    font-size: 5rem;
+    line-height: 4rem;
+    letter-spacing: .2rem;
+    text-shadow: 2px 2px white;
+    color: #5D5D7E;
+    margin-bottom: 3rem;
+  }

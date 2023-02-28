@@ -69,8 +69,9 @@ export function WaitingForStart(props: WaitingForStartType) {
           teamInfo.innerHTML = "";
         } 
         const li = document.createElement("li");
+        li.setAttribute(`id`, `countdown`);
         li.appendChild(
-          document.createTextNode(`Count:${(counter-2).toString()}`)
+          document.createTextNode(`${(counter-2).toString()}`)
         );
       teamInfo?.appendChild(li);
       counter--;
@@ -80,8 +81,9 @@ export function WaitingForStart(props: WaitingForStartType) {
           teamInfo.innerHTML = "";
         } 
         const li = document.createElement("li");
+        li.setAttribute(`id`, `go`);
         li.appendChild(
-          document.createTextNode(`Go!`)
+          document.createTextNode(`go!`)
         );
         teamInfo?.appendChild(li);
         clearInterval(interval);
