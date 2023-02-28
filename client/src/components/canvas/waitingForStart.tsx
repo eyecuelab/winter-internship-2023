@@ -153,7 +153,7 @@ export function WaitingForStart(props: WaitingForStartType) {
         <div className="waitingforstart-overlay">
           <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
             <div id="heading">
-              <h1>lobby room</h1>
+              <h1>lobby</h1>
             </div>
             <div>
               <ul id="teamInfo"></ul>
