@@ -3,13 +3,13 @@ import mapSwitchCase from "./mapSwitchCase";
 import { quadrants } from "./quadrants";
 
 export class Boundary {
-  static width = 40;
-  static height = 40;
+  static width = 80;
+  static height = 80;
   position: { x: number; y: number };
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
-    Boundary.width = 40;
-    Boundary.height = 40;
+    Boundary.width = 80;
+    Boundary.height = 80;
   }
 }
 
@@ -26,7 +26,7 @@ export class Kart {
   constructor(kartConstructorData?: kartConstructorType) {
     this.position = kartConstructorData?.position ?? {x:0, y:0};
     this.velocity = kartConstructorData?.velocity ?? {x:0, y:0};;
-    this.radius = 15;
+    this.radius = 35;
     this.imgSrc = kartConstructorData?.imgSrc ?? '';
     this.angle = kartConstructorData?.angle ?? 0;
     this.isGhost = kartConstructorData?.isGhost ?? false;
@@ -85,7 +85,7 @@ export class Pellet {
   isVisible: boolean;
   constructor({ position }: { position: { x: number; y: number } }) {
     this.position = position;
-    this.radius = 5;
+    this.radius = 10;
     Pellet.scoreValue = 10;
     this.isVisible = true;
   }

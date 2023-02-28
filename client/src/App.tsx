@@ -13,7 +13,6 @@ function App() {
   const [userData, setUserData] = useState<userType | undefined>();
 
   useEffect(()=>{
-    console.log(userData);
   }, [userData])
   const handleLogout = () => {
     setUserData(undefined);

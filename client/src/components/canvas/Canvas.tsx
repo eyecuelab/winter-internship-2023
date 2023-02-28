@@ -63,7 +63,7 @@ function Canvas(props: Props) {
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const requestIdRef = useRef<any>(null);
-  const size = { width: 1120, height: 1240 };
+  const size = { width: 2000, height: 2000 };
   const canvasBorderRef = useRef<object>({});
 
   const boundariesRef = useRef<Boundary[]>([]);
@@ -120,7 +120,6 @@ function Canvas(props: Props) {
   };
 
   const kill = (/*victimsColor: string, */ spawnNum: number) => {
-    console.log("I was killed!");
     const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color);
 
     // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
@@ -140,7 +139,10 @@ function Canvas(props: Props) {
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
     const previousXVelocity = kart.velocity.x;
 
-    if (lastKeyRef.current === "w" && (kart.position.x - 20) % 40 === 0) {
+    if (
+      lastKeyRef.current === "w" &&
+      (kart.position.x - Boundary.width / 2) % Boundary.width === 0
+    ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -149,7 +151,7 @@ function Canvas(props: Props) {
               ...kart,
               velocity: {
                 x: 0,
-                y: -5,
+                y: -10,
               },
             },
             rectangle: boundary,
@@ -160,7 +162,7 @@ function Canvas(props: Props) {
           break;
         } else {
           kart.angle = -90;
-          kart.velocity.y = -5;
+          kart.velocity.y = -10;
           kart.velocity.x = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -168,7 +170,7 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "s" &&
-      (kart.position.x - 20) % 40 === 0
+      (kart.position.x - (Boundary.width / 2)) % Boundary.width === 0
     ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -178,7 +180,7 @@ function Canvas(props: Props) {
               ...kart,
               velocity: {
                 x: kart.velocity.x,
-                y: 5,
+                y: 10,
               },
             },
             rectangle: boundary,
@@ -189,7 +191,7 @@ function Canvas(props: Props) {
           break;
         } else {
           kart.angle = 90;
-          kart.velocity.y = 5;
+          kart.velocity.y = 10;
           kart.velocity.x = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -271,7 +273,10 @@ function Canvas(props: Props) {
 
     const previousYVelocity = kart.velocity.y;
 
-    if (lastKeyRef.current === "a" && (kart.position.y - 20) % 40 === 0) {
+    if (
+      lastKeyRef.current === "a" &&
+      (kart.position.y - (Boundary.width / 2)) % Boundary.width === 0
+    ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -279,7 +284,7 @@ function Canvas(props: Props) {
             circle: {
               ...kart,
               velocity: {
-                x: -5,
+                x: -10,
                 y: 0,
               },
             },
@@ -291,7 +296,7 @@ function Canvas(props: Props) {
           break;
         } else {
           kart.angle = 180;
-          kart.velocity.x = -5;
+          kart.velocity.x = -10;
           kart.velocity.y = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -299,7 +304,7 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "d" &&
-      (kart.position.y - 20) % 40 === 0
+      (kart.position.y - (Boundary.width/2)) % Boundary.width === 0
     ) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
@@ -308,7 +313,7 @@ function Canvas(props: Props) {
             circle: {
               ...kart,
               velocity: {
-                x: 5,
+                x: 10,
                 y: 0,
               },
             },
@@ -320,7 +325,7 @@ function Canvas(props: Props) {
           break;
         } else {
           kart.angle = 0;
-          kart.velocity.x = 5;
+          kart.velocity.x = 10;
           kart.velocity.y = 0;
           kart.angle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -816,7 +821,6 @@ function Canvas(props: Props) {
 
     socket.on("receive_kill", (data) => {
       const { victim, spawnNum } = data;
-      console.log(data);
       //JSON.parse(ghost) and victim
       //if (my team is the victims color AND I'm the player in control)
       if (
