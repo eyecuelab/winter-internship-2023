@@ -18,18 +18,18 @@ export class Kart {
   velocity: { x: number; y: number };
   radius: number;
   imgSrc: string;
-  angle: number;
+  angle: {currentAngle: number, goalAngle: number, steps:number};
   isGhost: boolean
 
   constructor();
-  constructor(kartConstructorData: kartConstructorType);
-  constructor(kartConstructorData?: kartConstructorType) {
-    this.position = kartConstructorData?.position ?? {x:0, y:0};
-    this.velocity = kartConstructorData?.velocity ?? {x:0, y:0};;
+  constructor(kartData: kartType);
+  constructor(kartData?: kartType) {
+    this.position = kartData?.position ?? {x:0, y:0};
+    this.velocity = kartData?.velocity ?? {x:0, y:0};;
     this.radius = 15;
-    this.imgSrc = kartConstructorData?.imgSrc ?? '';
-    this.angle = kartConstructorData?.angle ?? 0;
-    this.isGhost = kartConstructorData?.isGhost ?? false;
+    this.imgSrc = kartData?.imgSrc ?? '';
+    this.angle = kartData?.angle ?? {currentAngle: 0, goalAngle: 0, steps: 0};
+    this.isGhost = kartData?.isGhost ?? false;
   }
 
   updateKartWithJson(jsonString: string) {
@@ -51,8 +51,8 @@ export class Team {
   score: number;
   
   constructor();
-  constructor(teamData: teamConstructorType);
-  constructor(teamData?: teamConstructorType) {
+  constructor(teamData: teamType);
+  constructor(teamData?: teamType) {
     this.teamId = teamData?.teamId ?? "";
     this.color = teamData?.color ?? "";
     this.players = teamData?.players ?? { x: "", y: "string" };
