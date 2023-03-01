@@ -541,7 +541,7 @@ function Canvas(props: Props) {
       );
       const cxt = contextRef.current;
       console.log(cxt);
-      cxt.scale(1.75, 1.75);
+      cxt.scale(1.5, 1.5);
   
   }}
   }, []);
@@ -1011,7 +1011,9 @@ function Canvas(props: Props) {
         <div>
           <span id="playerControlDisplay"></span>
         </div>
-        <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        <div id="canvas-container">
+         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        </div>
         <div>
           <WaitingForStart
             isWaitingForGameModalOpen={isWaitingForGameModalOpen}

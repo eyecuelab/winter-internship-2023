@@ -24,7 +24,8 @@ function frameRenderer(
 ) {
   const transform = this.getTransform();
   this.translate(-transform.e, -transform.f);
-  this.translate(-myKart.position.x+60, -myKart.position.y+60)
+  this.translate(-myKart.position.x+120, -myKart.position.y+120)
+  this.clearRect(0, 0, size.width, size.height);
   
   const drawBoundary = (boundary: Boundary) => {
    
@@ -105,10 +106,6 @@ function frameRenderer(
     drawPellet(pellet);
   });
 
-  //notes for rotating kart:
-  //if positive x velocity and y 0-- rotation faces 90 degrees... etc.
-  //to animate: store rotation as var. in Kart -- ie: takes 30 frames to move 90 degrees. an easing function. take current rotation and velocity and what rotation should be based on velocity and find out what the difference is and determine how much movement happens each tick-- adjust
-
   karts.forEach((entry) => {
     drawKart(
       entry.kart.position.x,
@@ -122,8 +119,5 @@ function frameRenderer(
       entry.kart.isGhost
     );
   });
-
-  //this.translate(myKart.position.x - size.width/2, myKart.position.y - size.height/2)
-  //final fill to be here
 }
 export default frameRenderer;

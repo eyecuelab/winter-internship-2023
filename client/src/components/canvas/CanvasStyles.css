@@ -1,4 +1,7 @@
-
+#canvas-container {
+  margin-top: 15px;
+  margin-left: 250px;
+}
 .gameover-overlay {
   z-index: 9999;
   width: 100vw;
