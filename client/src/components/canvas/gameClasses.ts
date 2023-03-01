@@ -17,7 +17,6 @@ export class Kart {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
-  imgSrc: string;
   angle: { currentAngle: number; goalAngle: number };
   isGhost: boolean;
 
@@ -27,7 +26,6 @@ export class Kart {
     this.position = kartData?.position ?? { x: 0, y: 0 };
     this.velocity = kartData?.velocity ?? { x: 0, y: 0 };
     this.radius = 35;
-    this.imgSrc = kartData?.imgSrc ?? "";
     this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0};
     this.isGhost = kartData?.isGhost ?? false;
   }
@@ -37,7 +35,6 @@ export class Kart {
     this.position = kartUpdate.position;
     this.velocity = kartUpdate.velocity;
     this.radius = kartUpdate.radius;
-    this.imgSrc = kartUpdate.imgSrc;
     this.angle = kartUpdate.angle;
     this.isGhost = kartUpdate.isGhost;
   }

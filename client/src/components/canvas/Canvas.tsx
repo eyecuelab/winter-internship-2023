@@ -44,11 +44,9 @@ function Canvas(props: Props) {
   const { gameId, userData } = props;
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(false);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
 
-  const colors = ["yellow", "blue", "red", "orange", "pink"];
-
+  const colors = ["pink", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
 
@@ -518,15 +516,15 @@ function Canvas(props: Props) {
       playerControlDisplay.innerText = isInControl
         ? `YOU ARE IN CONTROL`
         : `your are NOT in control`;
-      if (isInControl) {
-        canvasBorderRef.current = {
-          borderStyle: "solid",
-          borderColor: "red",
-          borderWidth: 10,
-        };
-      } else {
-        canvasBorderRef.current = { borderStyle: "none" };
-      }
+      // if (isInControl) {
+      //   canvasBorderRef.current = {
+      //     borderStyle: "solid",
+      //     borderColor: "red",
+      //     borderWidth: 10,
+      //   };
+      // } else {
+      //   canvasBorderRef.current = { borderStyle: "none" };
+      // }
     }
   };
 
@@ -543,7 +541,7 @@ function Canvas(props: Props) {
       );
       const cxt = contextRef.current;
       console.log(cxt);
-      cxt.scale(1.75, 1.75);
+      cxt.scale(1.5, 1.5);
   
   }}
   }, []);
@@ -807,7 +805,6 @@ function Canvas(props: Props) {
             const tempMyKart = new Kart({
               position: newTeam.position,
               velocity: newTeam.velocity,
-              imgSrc: kartTest.kartTest,
               radius: 15,
               angle: newTeam.angle,
               isGhost: newTeam.characterId === 1 ? false : true,
@@ -1014,7 +1011,9 @@ function Canvas(props: Props) {
         <div>
           <span id="playerControlDisplay"></span>
         </div>
-        <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        <div id="canvas-container">
+         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        </div>
         <div>
           <WaitingForStart
             isWaitingForGameModalOpen={isWaitingForGameModalOpen}

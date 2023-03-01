@@ -33,7 +33,7 @@ export const updateTeam = async (
   score: number,
   position: Prisma.JsonObject,
   velocity: Prisma.JsonObject,
-  angle: number
+  angle: Prisma.JsonObject
 ) => {
   return await prisma.team.update({
     where: { id: Number(id) },
