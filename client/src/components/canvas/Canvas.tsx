@@ -123,38 +123,48 @@ function Canvas(props: Props) {
     console.log("I was killed!");
     const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color);
 
-    // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
     if (kart) {
       kart.isGhost = true;
       kart.position = spawnPointsRef.current[spawnNum].position;
       kart.velocity = { x: 0, y: 0 };
-      //   roomGameRef.current.karts.set(victimsColor, kart)
 
       kart.position = spawnPointsRef.current[spawnNum].position;
       kart.velocity = { x: 0, y: 0 };
-      //   roomGameRef.current.karts.set(victimsColor, kart)
-
-      /*this technically works but the other users send out the information that their isGhost is false still */
     }
   };
+
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
-
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
     const previousDirection = Math.sign(kart.velocity.x);
-    if (Math.abs(kart.velocity.x) < kart.stats.topSpeed){
-      kart.velocity.x += (kart.stats.acceleration * previousDirection)
+    if (
+      kart.velocity.x != 0 &&
+      Math.abs(kart.velocity.x) < kart.stats.topSpeed
+    ) {
+      kart.velocity.x += kart.stats.acceleration * previousDirection;
     }
-    const nextXVelocity = kart.velocity.x
-    //if the absolute value of prev dir != top speed then previousVel += acceleration * prevdirection
-    const nextYVelocity = Math.abs(kart.velocity.x) <= kart.stats.handling ? Math.abs(kart.velocity.x) : kart.stats.handling;
+    const nextXVelocity = kart.velocity.x;
 
+    const nextYVelocity =
+      kart.velocity.x === 0
+        ? kart.stats.acceleration
+        : Math.abs(kart.velocity.x) < kart.stats.handling
+        ? Math.abs(kart.velocity.x)
+        : kart.stats.handling;
+
+    console.log("y movements next dir x, y:", nextXVelocity, nextYVelocity);
     if (
       lastKeyRef.current === "w" &&
-      (kart.position.x - Boundary.width / 2) % Boundary.width === 0
+      Math.abs(kart.position.x - Boundary.width / 2) % Boundary.width <= 8
     ) {
+      const remainder = (kart.position.x - Boundary.width / 2) % Boundary.width;
+      if (remainder <= Boundary.width / 2) {
+        kart.position.x -= remainder;
+      } else {
+        kart.position.x += Boundary.width - remainder;
+      }
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -162,7 +172,7 @@ function Canvas(props: Props) {
             circle: {
               ...kart,
               velocity: {
-                x: 0,
+                x: nextXVelocity,
                 y: -nextYVelocity,
               },
             },
@@ -171,7 +181,7 @@ function Canvas(props: Props) {
         ) {
           kart.velocity.y = 0;
 
-          kart.velocity.x = nextXVelocity
+          kart.velocity.x = nextXVelocity;
 
           break;
         } else {
@@ -184,8 +194,15 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "s" &&
-      (kart.position.x - Boundary.width / 2) % Boundary.width === 0
+      Math.abs(kart.position.x - Boundary.width / 2) % Boundary.width <= 8
     ) {
+      const remainder = (kart.position.x - Boundary.width / 2) % Boundary.width;
+      if (remainder <= Boundary.width / 2) {
+        console.log(remainder);
+        kart.position.x -= remainder;
+      } else {
+        kart.position.x += Boundary.width - remainder;
+      }
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -193,7 +210,7 @@ function Canvas(props: Props) {
             circle: {
               ...kart,
               velocity: {
-                x: 0,
+                x: nextYVelocity,
                 y: nextYVelocity,
               },
             },
@@ -216,37 +233,6 @@ function Canvas(props: Props) {
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
     kart.updateKartAngle();
-    //
-
-    if (kart.isGhost === true) {
-      const kartsArr = Array.from(roomGameRef.current.karts, function (entry) {
-        return { color: entry[0], pacmanKart: entry[1] };
-      }); //[{color: "teal", pacmanKart: {}}, {color: "orange", pacmanKart: {}}]
-
-      const aliveKartsArr: any[] = [];
-
-      kartsArr.forEach((mapargument) => {
-        if (mapargument.pacmanKart.isGhost === false) {
-          aliveKartsArr.push(mapargument);
-        }
-      });
-
-      aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            const spawnNum = Math.floor(Math.random() * 4);
-
-            //kill(item.color, spawnNum)
-            kart.isGhost = false;
-            const victim = item.color;
-            socket.emit("player_killed", { victim, spawnNum, gameId });
-          }
-        }
-      });
-    }
-    //
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -263,20 +249,37 @@ function Canvas(props: Props) {
   };
 
   const updateKartXMovements = () => {
-    const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const teamColor = myGameRef.current.myTeam.color;
+    const kart: Kart = roomGameRef.current.karts.get(teamColor) ?? new Kart(); //not sure about this..
 
     const previousDirection = Math.sign(kart.velocity.y);
-    if (Math.abs(kart.velocity.y) < kart.stats.topSpeed){
-      kart.velocity.y += (kart.stats.acceleration * previousDirection)
+    if (
+      kart.velocity.y != 0 &&
+      Math.abs(kart.velocity.y) < kart.stats.topSpeed
+    ) {
+      kart.velocity.y += kart.stats.acceleration * previousDirection;
     }
-    const nextYVelocity = kart.velocity.y
-    const nextXVelocity = Math.abs(kart.velocity.y) <= kart.stats.handling ? Math.abs(kart.velocity.y) : kart.stats.handling;
-    console.log("next movements:", nextYVelocity, nextXVelocity);
+    const nextYVelocity = kart.velocity.y;
+
+    const nextXVelocity =
+      kart.velocity.y === 0
+        ? kart.stats.acceleration
+        : Math.abs(kart.velocity.y) < kart.stats.handling
+        ? Math.abs(kart.velocity.y)
+        : kart.stats.handling;
+    console.log("x movements next dir x, y:", nextXVelocity, nextYVelocity);
+
     if (
       lastKeyRef.current === "a" &&
-      (kart.position.y - Boundary.width / 2) % Boundary.width === 0
+      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 8
     ) {
+      const remainder = (kart.position.y - Boundary.width / 2) % Boundary.width;
+      if (remainder <= Boundary.width / 2) {
+        console.log(remainder);
+        kart.position.y -= remainder;
+      } else {
+        kart.position.y += Boundary.width - remainder;
+      }
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -285,7 +288,7 @@ function Canvas(props: Props) {
               ...kart,
               velocity: {
                 x: -nextXVelocity,
-                y: 0,
+                y: nextYVelocity,
               },
             },
             rectangle: boundary,
@@ -303,8 +306,15 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "d" &&
-      (kart.position.y - Boundary.width / 2) % Boundary.width === 0
+      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 8
     ) {
+      const remainder = (kart.position.y - Boundary.width / 2) % Boundary.width;
+      if (remainder <= Boundary.width / 2) {
+        console.log(remainder);
+        kart.position.y -= remainder;
+      } else {
+        kart.position.y += Boundary.width - remainder;
+      }
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
@@ -313,7 +323,7 @@ function Canvas(props: Props) {
               ...kart,
               velocity: {
                 x: nextXVelocity,
-                y: 0,
+                y: nextYVelocity,
               },
             },
             rectangle: boundary,
@@ -327,7 +337,6 @@ function Canvas(props: Props) {
           kart.velocity.y = 0;
           kart.angle.goalAngle =
             Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-          console.log(kart.angle);
         }
       }
     }
@@ -335,41 +344,6 @@ function Canvas(props: Props) {
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
     kart.updateKartAngle();
-
-    if (kart.isGhost === true) {
-      const aliveKartsArr = Array.from(
-        roomGameRef.current.karts,
-        function (entry) {
-          if (entry[1].isGhost === false) {
-            // return [ entry[0], entry[1] ];
-            return { color: entry[0], pacmanKart: entry[1] }; //[{color: "teal", kart: kart}, {"orange", kart}]
-          }
-        }
-      );
-      //console.log(aliveKartsArr);
-
-      aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            const spawnNum = Math.floor(Math.random() * 4);
-
-            //kill(item.color, spawnNum)
-            console.log("pacman killed! on the x axis controlled person");
-            kart.isGhost = false;
-            console.log(item);
-            const victim = item.color; //{"orange", kart} item.kart jsonified
-            socket.emit("player_killed", { victim, spawnNum, gameId });
-            //myGameRef.current.myTeam.ghost = false
-            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-            // make the server and receiver for this emit
-          }
-        }
-      });
-    }
-    //run circle collides with circle here for each player
-    //ghosts will only check for each instance of a player
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -384,6 +358,33 @@ function Canvas(props: Props) {
     });
 
     return kart;
+  };
+
+  const checkForGhostCollisions = () => {
+    const teamColor = myGameRef.current.myTeam.color;
+    const kart: Kart = roomGameRef.current.karts.get(teamColor) ?? new Kart();
+
+    const aliveKartsArr = Array.from(
+      roomGameRef.current.karts,
+      function (entry) {
+        if (entry[1].isGhost === false) {
+          return { color: entry[0], pacmanKart: entry[1] };
+        }
+      }
+    );
+
+    aliveKartsArr.forEach((item) => {
+      if (item) {
+        if (
+          circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
+        ) {
+          const spawnNum = Math.floor(Math.random() * 4);
+          kart.isGhost = false;
+          const victim = item.color;
+          socket.emit("player_killed", { victim, spawnNum, gameId });
+        }
+      }
+    });
   };
 
   const removePellets = (pelletsRef: Pellet[], kartRef: Kart | undefined) => {
@@ -514,13 +515,15 @@ function Canvas(props: Props) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-      //maybe only call removePellets if you're not a ghost?
+      
       const kart = roomGameRef.current.karts.get(
         myGameRef.current.myTeam.color
       );
       if (kart) {
         if (kart.isGhost === false) {
           removePellets(pelletsRef.current, updatedKart);
+        } else {
+          checkForGhostCollisions();
         }
       }
 
@@ -733,7 +736,7 @@ function Canvas(props: Props) {
               radius: 15,
               angle: newTeam.angle,
               stats: { topSpeed: 10, acceleration: 1, handling: 5 },
-              isGhost: newTeam.characterId === 1 ?? 2,
+              isGhost: newTeam.characterId === 2 ? true : false,
             });
 
             const tempMyTeam = new Team({
