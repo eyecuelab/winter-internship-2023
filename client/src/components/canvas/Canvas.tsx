@@ -40,11 +40,12 @@ import { poofSvgString } from "../../assets/poofSvg";
 interface Props {
   gameId: string | undefined;
   userData: userType | undefined;
+  roomGameRef: React.RefObject<roomGameType>
 }
 
 function Canvas(props: Props) {
-  const { gameId, userData } = props;
-
+  const { gameId, userData, roomGameRef } = props;
+console.log(roomGameRef)
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
 
@@ -75,11 +76,11 @@ function Canvas(props: Props) {
   const lastKeyRef = useRef("");
   const teamId = useRef<number | null>(null);
 
-  const roomGameRef = useRef<roomGameType>({
-    karts: new Map(),
-    scores: new Map(),
-    isGameOver: false,
-  });
+  // const roomGameRef = useRef<roomGameType>({
+  //   karts: new Map(),
+  //   scores: new Map(),
+  //   isGameOver: false,
+  // });
 
   const myGameRef = useRef<myGameType>({
     userList: [],
@@ -127,7 +128,7 @@ function Canvas(props: Props) {
 
   const kill = (/*victimsColor: string, */ spawnNum: number) => {
     console.log("I was killed!");
-    const kart = roomGameRef.current.karts.get(myGameRef.current.myTeam.color);
+    const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
 
     // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
     if (kart) {
@@ -166,7 +167,7 @@ function Canvas(props: Props) {
 
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
     
     if (isGameOverModalOpen === false) {
     const previousXVelocity = kart.velocity.x;
@@ -254,7 +255,7 @@ function Canvas(props: Props) {
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
 
     if (isGameOverModalOpen === false) {
 
@@ -342,9 +343,9 @@ function Canvas(props: Props) {
   const checkForGhostCollisions = () => {
     const teamColor = myGameRef.current.myTeam.color;
     const currentKart: Kart =
-      roomGameRef.current.karts.get(teamColor) ?? new Kart();
+      roomGameRef.current?.karts.get(teamColor) ?? new Kart();
 
-    if (currentKart.isGhost === true) {
+    if (currentKart.isGhost === true && roomGameRef.current) {
       const targetKartsArr = Array.from(
         roomGameRef.current.karts,
         function (entry) {
@@ -379,7 +380,7 @@ function Canvas(props: Props) {
 
   const initiatePoofAnimation = (spawnNumber: number, ghostColor: string) => {
     const tempPoofsRef = [...poofsRef.current];
-    const ghostKart = roomGameRef.current.karts.get(ghostColor);
+    const ghostKart = roomGameRef.current?.karts.get(ghostColor);
     const ghostPosition = ghostKart?.position;
     const paCartPosition = spawnPointsRef.current[spawnNumber].position;
 
@@ -427,7 +428,7 @@ function Canvas(props: Props) {
           if (isGameOver) {
             const tempColor = myGameRef.current.myTeam.color;
             const jsonKart = JSON.stringify(kartRef);
-            const tempScore = roomGameRef.current.scores.get(tempColor);
+            const tempScore = roomGameRef.current?.scores.get(tempColor);
 
             socket.emit("game_update", {
               jsonKart,
@@ -435,7 +436,9 @@ function Canvas(props: Props) {
               tempScore,
               gameId,
             });
-            roomGameRef.current.isGameOver = true;
+            if (roomGameRef.current){
+              roomGameRef.current.isGameOver = true;
+            }
             socket.emit("game_over", { gameId });
             toggleGameOver();
           }
@@ -447,9 +450,9 @@ function Canvas(props: Props) {
 
   const updateScore = (pointValue: number) => {
     let updatedScore: number =
-      roomGameRef.current.scores.get(myGameRef.current.myTeam.color) ?? 0;
+      roomGameRef.current?.scores.get(myGameRef.current.myTeam.color) ?? 0;
     updatedScore += pointValue;
-    roomGameRef.current.scores.set(
+    roomGameRef.current?.scores.set(
       myGameRef.current.myTeam.color,
       updatedScore
     );
@@ -457,7 +460,7 @@ function Canvas(props: Props) {
 
   const updatePlayerControl = () => {
     if (myGameRef.current.myTeam.playerInControl === socketId) {
-      const kart = roomGameRef.current.karts.get(
+      const kart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
       );
       if (myGameRef.current.myControl === "x") {
@@ -482,39 +485,41 @@ function Canvas(props: Props) {
   };
 
   const displayScores = () => {
-    const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
-      return [score[0], score[1]];
-    });
-
-    const teamOne = document.getElementById("team1");
-    const teamTwo = document.getElementById("team2");
-
-    if (teamOne && scoresArr[0]) {
-      const teamScore = scoresArr[0][1] ?? 0;
-      teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
-    }
-    if (teamTwo && scoresArr[1]) {
-      const teamScore = scoresArr[1][1] ?? 0;
-      teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
-    }
-
-    const playerControlDisplay = document.getElementById(
-      "playerControlDisplay"
-    );
-    if (playerControlDisplay) {
-      const isInControl = myGameRef.current.myTeam.playerInControl === socketId;
-      playerControlDisplay.innerText = isInControl
-        ? `YOU ARE IN CONTROL`
-        : `your are NOT in control`;
-      // if (isInControl) {
-      //   canvasBorderRef.current = {
-      //     borderStyle: "solid",
-      //     borderColor: "red",
-      //     borderWidth: 10,
-      //   };
-      // } else {
-      //   canvasBorderRef.current = { borderStyle: "none" };
-      // }
+    if (roomGameRef.current){
+      const scoresArr = Array.from(roomGameRef.current.scores, function (score) {
+        return [score[0], score[1]];
+      });
+  
+      const teamOne = document.getElementById("team1");
+      const teamTwo = document.getElementById("team2");
+  
+      if (teamOne && scoresArr[0]) {
+        const teamScore = scoresArr[0][1] ?? 0;
+        teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
+      }
+      if (teamTwo && scoresArr[1]) {
+        const teamScore = scoresArr[1][1] ?? 0;
+        teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
+      }
+  
+      const playerControlDisplay = document.getElementById(
+        "playerControlDisplay"
+      );
+      if (playerControlDisplay) {
+        const isInControl = myGameRef.current.myTeam.playerInControl === socketId;
+        playerControlDisplay.innerText = isInControl
+          ? `YOU ARE IN CONTROL`
+          : `your are NOT in control`;
+        // if (isInControl) {
+        //   canvasBorderRef.current = {
+        //     borderStyle: "solid",
+        //     borderColor: "red",
+        //     borderWidth: 10,
+        //   };
+        // } else {
+        //   canvasBorderRef.current = { borderStyle: "none" };
+        // }
+      }
     }
   };
 
@@ -526,7 +531,7 @@ function Canvas(props: Props) {
         contextRef.current = context;
       }
     if (context) {
-      const kart = roomGameRef.current.karts.get(
+      const kart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
       );
       const cxt = contextRef.current;
@@ -548,7 +553,7 @@ function Canvas(props: Props) {
     // }
 
 
-    const myKartForCamera = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
+    const myKartForCamera = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color)
 
     let updatedKart; //should this be referencing local state?
 
@@ -559,7 +564,7 @@ function Canvas(props: Props) {
         updatedKart = new Kart(updateKartYMovements());
       }
       //maybe only call removePellets if you're not a ghost?
-      const kart = roomGameRef.current.karts.get(
+      const kart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
       );
       if (kart) {
@@ -573,7 +578,7 @@ function Canvas(props: Props) {
       //consolidate this emit with game_update
       const tempColor = myGameRef.current.myTeam.color;
       const jsonKart = JSON.stringify(updatedKart);
-      const tempScore = roomGameRef.current.scores.get(tempColor);
+      const tempScore = roomGameRef.current?.scores.get(tempColor);
 
       socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
     }
@@ -582,11 +587,13 @@ function Canvas(props: Props) {
     updatePlayerControl();
     updatePoofs();
 
-    const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
-      return { color: kart[0], kart: kart[1] };
-    });
+    
 
-    if (myKartForCamera) {
+    if (myKartForCamera && roomGameRef.current) {
+      const kartsArr = Array.from(roomGameRef.current.karts, function (kart) {
+        return { color: kart[0], kart: kart[1] };
+      });
+
       frameRenderer.call(
       contextRef.current,
       size,
@@ -610,7 +617,7 @@ function Canvas(props: Props) {
     );
     }
 
-    const kart = roomGameRef.current.karts.get(
+    const kart = roomGameRef.current?.karts.get(
       myGameRef.current.myTeam.color);
 
     // if (kart) {
@@ -881,19 +888,21 @@ function Canvas(props: Props) {
           });
         }
       }
-      roomGameRef.current.karts.set(tempTeam.color, tempKart);
-      roomGameRef.current.scores.set(tempTeam.color, 0);
+      roomGameRef.current?.karts.set(tempTeam.color, tempKart);
+      roomGameRef.current?.scores.set(tempTeam.color, 0);
 
       setMyGameState(myGameRef.current);
-      setRoomGameState(roomGameRef.current);
+      if (roomGameRef.current){
+        setRoomGameState(roomGameRef.current);
+      }
     });
 
     //pellet, scores, and power-up updates can live here eventually:
     socket.on("receive_game_update", (data) => {
       const { tempColor, jsonKart, tempScore } = data;
       const tempKart = new Kart(JSON.parse(jsonKart));
-      roomGameRef.current.karts.set(tempColor, tempKart);
-      roomGameRef.current.scores.set(tempColor, tempScore);
+      roomGameRef.current?.karts.set(tempColor, tempKart);
+      roomGameRef.current?.scores.set(tempColor, tempScore);
       displayScores();
     });
 
@@ -911,7 +920,7 @@ function Canvas(props: Props) {
     socket.on("pellet_gone", (data) => {
       const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
-      if (isGameOver) {
+      if (isGameOver && roomGameRef.current) {
         roomGameRef.current.isGameOver = true;
         toggleGameOver();
       }
@@ -925,7 +934,7 @@ function Canvas(props: Props) {
       console.log(data.disconnectedClientId + " has disconnected");
       console.log(myGameRef.current.userList);
       myGameRef.current.userList.forEach((user) => {
-        if (data.disconnectedClientId === user) {
+        if (roomGameRef.current && data.disconnectedClientId === user) {
           roomGameRef.current.isGameOver = true;
           socket.emit("game_over", { gameId });
           toggleGameOver();
@@ -940,13 +949,13 @@ function Canvas(props: Props) {
 
   setInterval(async () => {
     if (teamId.current) {
-      const currentScore = roomGameRef.current.scores.get(
+      const currentScore = roomGameRef.current?.scores.get(
         myGameRef.current.myTeam.color
       );
-      const currentKart = roomGameRef.current.karts.get(
+      const currentKart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
       );
-      const currentIsGameOver = roomGameRef.current.isGameOver;
+      const currentIsGameOver = roomGameRef.current?.isGameOver;
       const currentPellets = pelletsRef.current;
       const currentTeamId = teamId.current;
 
@@ -1017,7 +1026,7 @@ function Canvas(props: Props) {
             isGameOverModalOpen={isGameOverModalOpen}
             setIsGameOverModalOpen={setIsGameOverModalOpen}
             toggleGameOver={toggleGameOver}
-            scores={roomGameRef.current.scores}
+            scores={roomGameRef.current?.scores}
           ></GameOver>
         </div>
       </div>
