@@ -34,7 +34,6 @@ import { redGhostSvgString } from "../../assets/redGhostSvg";
 import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
 import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
 import { blueGhostSvgString } from "../../assets/blueGhostSvg";
-
 interface Props {
   gameId: string | undefined;
   userData: userType | undefined;
