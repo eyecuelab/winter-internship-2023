@@ -25,7 +25,7 @@ import {pelletSvgString} from "../../assets/pelletSvg";
 
 function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
   const { gameId } = props;
   const colors = ["pink", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
