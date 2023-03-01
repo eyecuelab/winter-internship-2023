@@ -44,7 +44,7 @@ function Canvas(props: Props) {
   const { gameId, userData } = props;
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
 
   const colors = ["pink", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -805,7 +805,6 @@ function Canvas(props: Props) {
             const tempMyKart = new Kart({
               position: newTeam.position,
               velocity: newTeam.velocity,
-              imgSrc: kartTest.kartTest,
               radius: 15,
               angle: newTeam.angle,
               isGhost: newTeam.characterId === 1 ? false : true,
