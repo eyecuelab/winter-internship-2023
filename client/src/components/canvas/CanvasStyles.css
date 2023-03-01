@@ -32,6 +32,32 @@
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+  font-family: 'namco regular';
+  color: #5D5D7E;
+  text-align: center;
+}
+
+.gameover-box #team-score {
+  color: white;
+}
+
+.gameover-box #game-over-heading {
+  margin: 5rem 2rem 4rem 2rem;
+  text-shadow: 2px 2px white;
+  font-size: 3em;
+  line-height: 4rem;
+  letter-spacing: .2rem;
+}
+
+.gameover-box #final-score-heading {
+  color: white;
+  font-size: .75em;
+}
+
+.gameover-box #scores-list {
+  list-style: none;
+  color: white;
+  font-size: 1.5rem;
 }
 
 .waitingforstart-box {
