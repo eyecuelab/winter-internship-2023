@@ -3,6 +3,7 @@ import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
 function frameRenderer(
   this: any,
   size: { width: any; height: any },
+  myKart: Kart,
   karts: {
     color: string;
     kart: Kart;
@@ -21,16 +22,12 @@ function frameRenderer(
   blueGhostSvg: HTMLImageElement | undefined,
   pinkGhostSvg: HTMLImageElement | undefined
 ) {
-  this.clearRect(0, 0, size.width, size.height);
-
+  const transform = this.getTransform();
+  this.translate(-transform.e, -transform.f);
+  this.translate(-myKart.position.x+60, -myKart.position.y+60)
+  
   const drawBoundary = (boundary: Boundary) => {
-    // this.fillStyle = "pink";
-    // this.fillRect(
-    //   boundary.position.x,
-    //   boundary.position.y,
-    //   Boundary.width,
-    //   Boundary.height
-    // );
+   
     this.drawImage(
       mapBrickSvg,
       boundary.position.x,
@@ -42,15 +39,8 @@ function frameRenderer(
 
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
-      // this.beginPath();
-      // this.arc(
-      //   pellet.position.x,
-      //   pellet.position.y,
-      //   pellet.radius,
-      //   0,
-      //   Math.PI * 2
-      // );
-      // this.fill();
+      this.drawImage(pelletSvg, pellet.position.x - 5,
+        pellet.position.y - 5, 11, 11)
       this.drawImage(
         pelletSvg,
         pellet.position.x - 10,
@@ -102,14 +92,8 @@ function frameRenderer(
     this.save();
     this.translate(x, y);
     this.rotate(angle);
-    // this.beginPath();
-    // this.moveTo(-width / 2, height / 2); //start at the bottom left corner
-    // this.lineTo(width / 2, height / 2); //draw to bottom right
-    // this.lineTo(0, -height / 2); //to top center
-    // this.closePath();
-    // this.fillStyle = color;
+   
     this.drawImage(img, -width / 2, -height / 2, 80, 80);
-    // this.fill();
     this.restore();
   };
 
@@ -138,5 +122,8 @@ function frameRenderer(
       entry.kart.isGhost
     );
   });
+
+  //this.translate(myKart.position.x - size.width/2, myKart.position.y - size.height/2)
+  //final fill to be here
 }
 export default frameRenderer;

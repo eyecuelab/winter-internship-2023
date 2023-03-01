@@ -44,9 +44,9 @@ function Canvas(props: Props) {
   const { gameId, userData } = props;
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
     useState(false);
+
   const colors = ["yellow", "blue", "red", "orange", "pink"];
 
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -86,6 +86,8 @@ function Canvas(props: Props) {
     myTeam: new Team(),
     myKart: new Kart(), // deprecated
   });
+
+  const contextRef = useRef<any | null>(null);
 
   //WAITING FOR GAME START STATE:
 
@@ -528,16 +530,37 @@ function Canvas(props: Props) {
     }
   };
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const context = canvas.getContext('2d');
+      if (context) {
+        contextRef.current = context;
+      }
+    if (context) {
+       const kart = roomGameRef.current.karts.get(
+        myGameRef.current.myTeam.color
+      );
+      const cxt = contextRef.current;
+      console.log(cxt);
+      cxt.scale(1.75, 1.75);
+  
+  }}
+  }, []);
+
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
     const canvas = canvasRef.current;
     if (!canvas) {
       return;
     }
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
+    // const context = canvas.getContext("2d");
+    // if (!context) {
+    //   return;
+    // }
+
+
+    const myKartForCamera = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
 
     let updatedKart; //should this be referencing local state?
 
@@ -572,9 +595,11 @@ function Canvas(props: Props) {
       return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(
-      context,
+    if (myKartForCamera) {
+      frameRenderer.call(
+      contextRef.current,
       size,
+      myKartForCamera,
       kartsArr,
       boundariesRef.current,
       pelletsRef.current,
@@ -590,7 +615,26 @@ function Canvas(props: Props) {
       blueGhostSvgRef.current,
       pinkGhostSvgRef.current
     );
-  };
+    }
+
+    const kart = roomGameRef.current.karts.get(
+      myGameRef.current.myTeam.color);
+
+    // if (kart) {
+    //   context.translate(kart.position.x, kart.position.y);
+    // }
+  
+  }; 
+
+  // useEffect(()=> {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) {
+  //     return;
+  //   }
+  //   const cxt = context.current
+  //   console.log(cxt);
+  //   cxt.scale(1.5, 1.5);
+  // }, []);
 
   const tick = () => {
     if (!canvasRef.current) return;
