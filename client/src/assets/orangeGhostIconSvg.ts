@@ -1,4 +1,4 @@
-export const orangeGhostSvgString = `<svg width="508" height="289" viewBox="0 0 508 289" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const orangeGhostIconSvgString = `<svg width="508" height="289" viewBox="0 0 508 289" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M53.7823 151.972C58.0805 227.6 120.79 285.542 193.848 281.39C266.905 277.238 322.646 212.564 318.348 136.936C312.568 35.2311 251.341 3.36592 178.283 7.51799C105.225 11.6701 49.4842 76.3443 53.7823 151.972Z" fill="#FFB851"/>
 <path d="M144.053 119.476C137.381 144.684 120.629 199.737 107.004 218.282C93.379 236.827 85.9702 243.616 83.969 244.693" stroke="#FFB851" stroke-width="61" stroke-linecap="round"/>
 <path d="M91.1789 104C84.5063 129.208 67.7548 184.261 54.1298 202.806C40.5048 221.351 33.096 228.14 31.0947 229.216" stroke="#FFB851" stroke-width="61" stroke-linecap="round"/>

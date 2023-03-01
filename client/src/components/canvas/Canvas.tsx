@@ -27,7 +27,7 @@ function Canvas(props: any) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(true);
   const { gameId } = props;
-  const colors = ["yellow", "white", "teal", "blue", "orange"];
+  const colors = ["pink", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
 

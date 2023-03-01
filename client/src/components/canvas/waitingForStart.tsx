@@ -4,9 +4,14 @@ import { Kart, Team } from "./gameClasses";
 import { myGameType, roomGameType } from "./../../types/Types"
 import { verticalDirSvgString } from "../../assets/verticalDirSvg";
 import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
-import { pinkGhostSvgString } from "../../assets/pinkGhostIconSvgString";
-import { redPacmanSvgString } from "../../assets/redPacmanIconSvg";
-import { bluePacmanSvgString } from "../../assets/bluePacmanIconSvg";
+import { redGhostIconSvgString } from "../../assets/redGhostIconSvg";
+import { pinkGhostIconSvgString } from "../../assets/pinkGhostIconSvg";
+import { blueGhostIconSvgString } from "../../assets/blueGhostIconSvg";
+import { orangeGhostIconSvgString } from "../../assets/orangeGhostIconSvg";
+import { redPacmanIconSvgString } from "../../assets/redPacmanIconSvg";
+import { bluePacmanIconSvgString } from "../../assets/bluePacmanIconSvg";
+import { orangePacmanIconSvgString } from "../../assets/orangePacmanIconSvg";
+import { pinkPacmanIconSvgString } from "../../assets/pinkPacmanIconSvg";
 
 interface WaitingForStartType {
   children?: ReactNode;
@@ -21,9 +26,17 @@ export function WaitingForStart(props: WaitingForStartType) {
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
   const teamInfo = document.getElementById("teamInfo");
+
   const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
   const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
   const bluePacmanSvgRef = useRef<HTMLImageElement | undefined>();
+  const orangePacmanSvgRef = useRef<HTMLImageElement | undefined>();
+  const redPacmanSvgRef = useRef<HTMLImageElement | undefined>();
+  const pinkPacmanSvgRef = useRef<HTMLImageElement | undefined>();
+  const pinkGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const redGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
+  const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
 
   useEffect(() => {
     const verticalDirImg = new Image();
@@ -39,10 +52,53 @@ export function WaitingForStart(props: WaitingForStartType) {
     });
 
     const bluePacmanImg = new Image();
-    bluePacmanImg.src = `data:image/svg+xml;base64,${window.btoa(bluePacmanSvgString)}`;
+    bluePacmanImg.src = `data:image/svg+xml;base64,${window.btoa(bluePacmanIconSvgString)}`;
     bluePacmanImg.addEventListener("load", () => {
       bluePacmanSvgRef.current = bluePacmanImg;
     });
+
+    const orangePacmanImg = new Image();
+    orangePacmanImg.src = `data:image/svg+xml;base64,${window.btoa(orangePacmanIconSvgString)}`;
+    orangePacmanImg.addEventListener("load", () => {
+      orangePacmanSvgRef.current = orangePacmanImg;
+    });
+
+    const redPacmanImg = new Image();
+    redPacmanImg.src = `data:image/svg+xml;base64,${window.btoa(redPacmanIconSvgString)}`;
+    redPacmanImg.addEventListener("load", () => {
+      redPacmanSvgRef.current = redPacmanImg;
+    });
+
+    const pinkPacmanImg = new Image();
+    pinkPacmanImg.src = `data:image/svg+xml;base64,${window.btoa(pinkPacmanIconSvgString)}`;
+    pinkPacmanImg.addEventListener("load", () => {
+      pinkPacmanSvgRef.current = pinkPacmanImg;
+    });
+
+    const pinkGhostImg = new Image();
+    pinkGhostImg.src = `data:image/svg+xml;base64,${window.btoa(pinkGhostIconSvgString)}`;
+    pinkGhostImg.addEventListener("load", () => {
+      pinkGhostSvgRef.current = pinkGhostImg;
+    });
+
+    const redGhostImg = new Image();
+    redGhostImg.src = `data:image/svg+xml;base64,${window.btoa(redGhostIconSvgString)}`;
+    redGhostImg.addEventListener("load", () => {
+      redGhostSvgRef.current = redGhostImg;
+    });
+
+    const orangeGhostImg = new Image();
+    orangeGhostImg.src = `data:image/svg+xml;base64,${window.btoa(orangeGhostIconSvgString)}`;
+    orangeGhostImg.addEventListener("load", () => {
+      orangeGhostSvgRef.current = orangeGhostImg;
+    });
+
+    const blueGhostImg = new Image();
+    blueGhostImg.src = `data:image/svg+xml;base64,${window.btoa(blueGhostIconSvgString)}`;
+    blueGhostImg.addEventListener("load", () => {
+      blueGhostSvgRef.current = blueGhostImg;
+    });
+
   }, [])
 
   useEffect(() => {
@@ -52,6 +108,7 @@ export function WaitingForStart(props: WaitingForStartType) {
       setMyTeam(myCurrentTeam);
       setMyKart(myCurrentKart);
     }
+
     displayTeam();
   });
 
@@ -102,9 +159,41 @@ export function WaitingForStart(props: WaitingForStartType) {
           document.createTextNode(`My Team:`)
         );
         const teamImg = document.createElement("img"); 
-        teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
         teamImg.setAttribute('id', 'team-img');
+        if (myKart.isGhost === false) {
+          if (myTeam.color === "blue") {
+            teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "orange") {
+            teamImg.setAttribute('src', `${orangePacmanSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "red") {
+            teamImg.setAttribute('src', `${redPacmanSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "pink") {
+            teamImg.setAttribute('src', `${pinkPacmanSvgRef.current?.src}`);
+          } else {
+            teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
+          }
+        }
 
+        if (myKart.isGhost === true) {
+          if (myTeam.color === "blue") {
+            teamImg.setAttribute('src', `${blueGhostSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "orange") {
+            teamImg.setAttribute('src', `${orangeGhostSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "red") {
+            teamImg.setAttribute('src', `${redGhostSvgRef.current?.src}`);
+          } 
+          else if (myTeam.color === "pink") {
+            teamImg.setAttribute('src', `${pinkGhostSvgRef.current?.src}`);
+          } else {
+            teamImg.setAttribute('src', `${blueGhostSvgRef.current?.src}`);
+          }
+        }
+  
         const divElement = document.createElement('div');
         divElement.style.display = 'block';
         divElement.appendChild(teamImg);
@@ -113,27 +202,48 @@ export function WaitingForStart(props: WaitingForStartType) {
 
         const liTwo = document.createElement("li");
         liTwo.setAttribute('id', 'my-team');
-        liTwo.textContent =`${myTeam.color}`;
+        if (myKart.isGhost) {
+          liTwo.textContent =`${myTeam.color} ghost`;
+        } else {
+          liTwo.textContent =`${myTeam.color} pacman`;
+        }
         teamInfo?.appendChild(liTwo);
+
         const liThree= document.createElement("li");
         liThree.appendChild(
           document.createTextNode(`My Direction:`)
         );
         teamInfo?.appendChild(liThree);
+
         const liFour= document.createElement("li");
         liFour.setAttribute('id', 'my-direction');
-        const horizontalImg = document.createElement("img");
-        horizontalImg.setAttribute('src', `${horizontalDirSvgRef.current?.src}`);
-        horizontalImg.setAttribute('id', 'horizontal-img');
-    
-        const divElementTwo = document.createElement('div');
-        divElementTwo.style.display = 'block';
-        divElementTwo.appendChild(horizontalImg);
-        liFour?.appendChild(divElementTwo);
-        teamInfo?.appendChild(liFour);
-        liFour.appendChild(
-          document.createTextNode(`horizontal`)
-        );
+
+        const directionImg = document.createElement("img");
+        if (myGameState.myControl === 'y') {
+          directionImg.setAttribute('src', `${verticalDirSvgRef.current?.src}`);
+          directionImg.setAttribute('id', 'vertical-img');
+          const divElementTwo = document.createElement('div');
+          divElementTwo.style.display = 'block';
+          divElementTwo.appendChild(directionImg);
+          liFour?.appendChild(divElementTwo);
+          teamInfo?.appendChild(liFour);
+          liFour.appendChild(
+            document.createTextNode(`vertical`)
+          )
+        }
+        if (myGameState.myControl === 'x') {
+          directionImg.setAttribute('src', `${horizontalDirSvgRef.current?.src}`);
+          directionImg.setAttribute('id', 'horizontal-img');
+          const divElementTwo = document.createElement('div');
+          divElementTwo.style.display = 'block';
+          divElementTwo.appendChild(directionImg);
+          liFour?.appendChild(divElementTwo);
+          teamInfo?.appendChild(liFour);
+          liFour.appendChild(
+            document.createTextNode(`horizontal`)
+          );
+        }
+
 
       } else {
         if (teamInfo) {        
@@ -145,6 +255,40 @@ export function WaitingForStart(props: WaitingForStartType) {
           );
         teamInfo?.appendChild(li);
        }
+
+       const liFour= document.getElementById("my-direction");
+       const liTwo= document.getElementById("my-team");
+
+       if (myTeam?.color === "blue") {
+        if (liFour) {
+          liFour.style.color = "#005487";
+        }
+        if (liTwo) {
+          liTwo.style.color = "#005487";
+        }
+       } else if (myTeam?.color === "orange") {
+          if (liFour) {
+          liFour.style.color = "#F69343";
+          }
+          if (liTwo) {
+            liTwo.style.color = "#F69343";
+          }
+        } else if (myTeam?.color === "pink") {
+          if (liFour) {
+            liFour.style.color = "#F06ACA";
+            }
+          if (liTwo) {
+            liTwo.style.color = "#F06ACA";
+          }
+        } else if (myTeam?.color === "red") {
+          if (liFour) {
+            liFour.style.color = "#D52527";
+            }
+            if (liTwo) {
+              liTwo.style.color = "#D52527";
+            }
+        }
+
     }
 
   return (

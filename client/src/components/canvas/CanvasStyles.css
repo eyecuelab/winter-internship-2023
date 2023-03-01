@@ -66,7 +66,7 @@ font-size: 1.5rem;
   font-size: 2rem;
   border-radius: 1rem;
   font-family: 'namco regular';
-  color: #005487;
+  /* color: #005487; */
   text-shadow: 2px 2px white;
   line-height: 2rem;
   letter-spacing: .2rem;
@@ -87,6 +87,11 @@ font-size: 1.5rem;
 
   .waitingforstart-box #horizontal-img {
     margin-bottom: .3rem;
+  }
+
+  .waitingforstart-box #vertical-img {
+    margin-bottom: .3rem;
+    height: 10rem;
   }
 
   .waitingforstart-box #countdown {

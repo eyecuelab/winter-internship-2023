@@ -1,4 +1,4 @@
-export const pinkGhostSvgString = `<svg width="508" height="289" viewBox="0 0 508 289" fill="none" xmlns="http://www.w3.org/2000/svg">
+export const pinkGhostIconSvgString = `<svg width="508" height="289" viewBox="0 0 508 289" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M53.6866 151.972C57.9848 227.6 120.694 285.542 193.752 281.39C266.81 277.238 322.551 212.564 318.252 136.936C312.472 35.2311 251.245 3.36592 178.187 7.51799C105.129 11.6701 49.3885 76.3443 53.6866 151.972Z" fill="#FFB8FF"/>
 <path d="M143.957 119.476C137.285 144.684 120.533 199.737 106.908 218.282C93.2833 236.827 85.8745 243.616 83.8733 244.693" stroke="#FFB8FF" stroke-width="61" stroke-linecap="round"/>
 <path d="M91.0832 104C84.4106 129.208 67.6591 184.261 54.0341 202.806C40.4091 221.351 33.0003 228.14 30.999 229.216" stroke="#FFB8FF" stroke-width="61" stroke-linecap="round"/>
