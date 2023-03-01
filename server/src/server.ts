@@ -38,14 +38,12 @@ io.on("connection", (socket) => {
     console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
-    //database fetch game boundaries/pellets/spawnpoints arrays
-    io.in(`${room}`).emit("receive_client_joined", { socketIds }); //send map properties from the database
+    io.in(`${room}`).emit("receive_client_joined", { socketIds });
   });
 
-  socket.on("player_killed", (data) => {
-    const { victim, spawnNum, gameId } = data;
-    io.in(data.gameId).emit("receive_kill", {victim, spawnNum})
-    // possibly change io.in to socket.to
+  socket.on("ghost_kart_toggle", (data) => {
+    const { kartColor, ghostColor, spawnNum, gameId } = data;
+    io.in(data.gameId).emit("receive_ghost_kart_toggle", {kartColor, ghostColor, spawnNum})
   })
 
   socket.on("send_team", (data) => {

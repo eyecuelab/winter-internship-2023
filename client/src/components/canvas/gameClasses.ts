@@ -1,4 +1,4 @@
-import { kartType, teamType } from "../../types/Types";
+import { kartType, poofType, teamType } from "../../types/Types";
 import mapSwitchCase from "./mapSwitchCase";
 import { quadrants } from "./quadrants";
 
@@ -136,24 +136,26 @@ export class SpawnPoint {
 
 export class Poof {
   position: { x: number; y: number };
-  radius: number;
+  size: number;
   opacity: number;
 
-  static readonly SHRINK_SPEED = 0.1;
-  static readonly FADE_SPEED = 0.05;
+  static readonly SHRINK_SPEED = 1;
+  static readonly FADE_SPEED = 1;
 
-  constructor({ position, radius, opacity }: { position: { x: number; y: number }, radius: number, opacity: number }) {
+  constructor(position: {x:number, y:number}) {
     this.position = position;
-    this.radius = radius;
-    this.opacity = opacity;
+    this.size = 85;
+    this.opacity = 100;
   }
 
   update() {
-    this.radius -= Poof.SHRINK_SPEED;
+    this.size -= Poof.SHRINK_SPEED;
     
     this.opacity -= Poof.FADE_SPEED;
 
-    this.radius = Math.max(0, this.radius);
+    this.size = Math.max(0, this.size);
+    this.opacity = Math.max(0, this.opacity);
+    this.size = Math.max(0, this.size);
     this.opacity = Math.max(0, this.opacity);
   }
 }

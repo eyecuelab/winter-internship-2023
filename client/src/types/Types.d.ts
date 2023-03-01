@@ -51,6 +51,6 @@ export type pelletType = {
 
 export type poofType = {
   position: { x: number; y: number };
-  radius: number;
+  size: number;
   opacity: number;
 }

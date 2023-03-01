@@ -1,4 +1,4 @@
-import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
+import { Boundary, Kart, Pellet, Poof, SpawnPoint } from "./gameClasses";
 
 function frameRenderer(
   this: any,
@@ -10,6 +10,7 @@ function frameRenderer(
   boundaries: Boundary[],
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
+  poofs: Poof[],
   mapBrickSvg: HTMLImageElement | undefined,
   pelletSvg: HTMLImageElement | undefined,
   redKartSvg: HTMLImageElement | undefined,
@@ -25,13 +26,6 @@ function frameRenderer(
   this.clearRect(0, 0, size.width, size.height);
 
   const drawBoundary = (boundary: Boundary) => {
-    // this.fillStyle = "pink";
-    // this.fillRect(
-    //   boundary.position.x,
-    //   boundary.position.y,
-    //   Boundary.width,
-    //   Boundary.height
-    // );
     this.drawImage(
       mapBrickSvg,
       boundary.position.x,
@@ -43,15 +37,6 @@ function frameRenderer(
 
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
-      // this.beginPath();
-      // this.arc(
-      //   pellet.position.x,
-      //   pellet.position.y,
-      //   pellet.radius,
-      //   0,
-      //   Math.PI * 2
-      // );
-      // this.fill();
       this.drawImage(
         pelletSvg,
         pellet.position.x - 10,
@@ -61,6 +46,22 @@ function frameRenderer(
       );
       this.closePath();
     }
+  };
+
+  const drawPoof = (poof: Poof) => {
+    console.log(poof);
+
+    this.globalAlpha = this.opacity;
+
+    this.beginPath();
+    this.drawImage(
+      poofSvg,
+      poof.position.x,
+      poof.position.y,
+      poof.size,
+      poof.size
+    );
+    this.closePath();
   };
 
   const drawKart = (
@@ -138,6 +139,10 @@ function frameRenderer(
       entry.kart.angle.currentAngle,
       entry.kart.isGhost
     );
+  });
+
+  poofs.forEach((poof) => {
+    drawPoof(poof);
   });
 }
 export default frameRenderer;
