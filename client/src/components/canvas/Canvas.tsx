@@ -337,6 +337,7 @@ function Canvas(props: Props) {
 
     return kart;
   };
+}
 
   const checkForGhostCollisions = () => {
     const teamColor = myGameRef.current.myTeam.color;
@@ -525,7 +526,7 @@ function Canvas(props: Props) {
         contextRef.current = context;
       }
     if (context) {
-       const kart = roomGameRef.current.karts.get(
+      const kart = roomGameRef.current.karts.get(
         myGameRef.current.myTeam.color
       );
       const cxt = contextRef.current;

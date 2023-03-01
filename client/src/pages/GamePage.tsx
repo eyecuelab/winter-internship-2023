@@ -18,7 +18,7 @@ const GamePage = (props: Props) => {
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
 
   useEffect(() => {
-    gameMusic.volume = 0.5;
+    gameMusic.volume = 0.1;
     gameMusic.loop = true;
     if (isMusicPlaying) {
       gameMusic.play();
