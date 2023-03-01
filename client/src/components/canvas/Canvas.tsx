@@ -381,8 +381,10 @@ function Canvas(props: Props) {
 
     positionsArr.forEach((position) => {
       if (position) {
-        const poof = new Poof(position);
-        tempPoofsRef.push(poof);
+        const bigPoof = new Poof(position, 100, 0);
+        const littlePoof = new Poof({x: position.x +20, y: position.y+20}, 30, 1);
+        const littlePoof2 = new Poof({x: position.x -30, y: position.y-30}, 25, 2);
+        tempPoofsRef.push(bigPoof, littlePoof, littlePoof2);
       }
     });
 

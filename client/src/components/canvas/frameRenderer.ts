@@ -52,16 +52,20 @@ function frameRenderer(
     console.log(poof);
 
     this.globalAlpha = this.opacity;
-
+    this.save();
+    this.translate( poof.position.x,
+      poof.position.y);
     this.beginPath();
+    this.rotate(poof.angle);
     this.drawImage(
       poofSvg,
-      poof.position.x,
-      poof.position.y,
+      -poof.size / 2,
+      -poof.size / 2,
       poof.size,
       poof.size
     );
     this.closePath();
+    this.restore();
   };
 
   const drawKart = (

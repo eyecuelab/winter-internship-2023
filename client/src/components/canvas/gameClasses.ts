@@ -138,14 +138,16 @@ export class Poof {
   position: { x: number; y: number };
   size: number;
   opacity: number;
+  angle: number;
 
-  static readonly SHRINK_SPEED = 1;
+  static readonly SHRINK_SPEED = 2;
   static readonly FADE_SPEED = 1;
 
-  constructor(position: {x:number, y:number}) {
+  constructor(position: {x:number, y:number}, size: number, angle: number) {
     this.position = position;
-    this.size = 85;
+    this.size = size;
     this.opacity = 100;
+    this.angle = angle;
   }
 
   update() {
