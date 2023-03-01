@@ -1,4 +1,7 @@
-
+#canvas-container {
+  margin-top: 15px;
+  margin-left: 250px;
+}
 .gameover-overlay {
   z-index: 9999;
   width: 100vw;
@@ -27,18 +30,129 @@
 
 .gameover-box {
   display: block;
-  background: rgb(255, 255, 59, .7);
+  background: rgba(50, 50, 64, .95);
   width: 70%;
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+  font-family: 'namco regular';
+  color: #5D5D7E;
+  text-align: center;
+}
+
+.gameover-box button {
+  background-color:  #5D5D7E;; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  box-shadow: 2px 2px white;
+  margin-top: 2rem;
+}
+
+.gameover-box #team-score {
+  color: white;
+}
+
+.gameover-box #game-over-heading {
+  margin: 5rem 2rem 4rem 2rem;
+  text-shadow: 2px 2px white;
+  font-size: 3em;
+  line-height: 4rem;
+  letter-spacing: .2rem;
+}
+
+.gameover-box #final-score-heading {
+  color: white;
+  font-size: .75em;
+}
+
+.gameover-box #scores-list {
+  list-style: none;
+  color: white;
+  font-size: 1.5rem;
+  line-height: 2.5rem;
 }
 
 .waitingforstart-box {
   display: block;
-  background: rgba(34, 240, 247, 0.7);
+  background: rgba(50, 50, 64, .95);
   width: 70%;
   height: 70%;
   padding: 1rem;
   border-radius: 1rem;
+  font-family: 'namco regular';
+  color: #5D5D7E;
+  text-align: center;
 }
+.waitingforstart-box img {
+  width: 10rem;
+}
+
+.waitingforstart-box ul {
+list-style: none;
+font-family: 'Roboto';
+color: white;
+font-size: 1.5rem;
+}
+
+.waitingforstart-box ul li {
+ margin: .3em;
+  }
+
+.waitingforstart-box #my-team, .waitingforstart-box #my-direction  {
+  list-style: none;
+  font-family: arial;
+  font-size: 2rem;
+  border-radius: 1rem;
+  font-family: 'namco regular';
+  /* color: #005487; */
+  text-shadow: 2px 2px white;
+  line-height: 2.5rem;
+  letter-spacing: .2rem;
+  margin-bottom: 1.5em;
+  }
+
+.waitingforstart-box #heading {
+  font-size: 1.5rem;
+  line-height: 4rem;
+  letter-spacing: .2rem;
+  text-shadow: 2px 2px white;
+  margin-bottom: 3rem;
+  }
+
+  .waitingforstart-box #team-img {
+    margin-top: 1rem;
+  }
+
+  .waitingforstart-box #horizontal-img {
+    margin-bottom: .3rem;
+  }
+
+  .waitingforstart-box #vertical-img {
+    margin-bottom: .3rem;
+    height: 10rem;
+  }
+
+  .waitingforstart-box #countdown {
+    font-family: 'namco regular';
+    font-size: 5rem;
+    line-height: 4rem;
+    letter-spacing: .2rem;
+    text-shadow: 2px 2px white;
+    color: #5D5D7E;
+    margin-bottom: 3rem;
+  }
+
+  .waitingforstart-box #go {
+    font-family: 'namco regular';
+    font-size: 5rem;
+    line-height: 4rem;
+    letter-spacing: .2rem;
+    text-shadow: 2px 2px white;
+    color: #5D5D7E;
+    margin-bottom: 3rem;
+  }

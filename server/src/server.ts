@@ -2,7 +2,7 @@ import app from "./app";
 import http from "http";
 import { Server } from "socket.io";
 import { getGameById } from "./Models/game";
-import { Game, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const server = http.createServer(app);
@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
             score: currentScore,
             position: currentKart["position"],
             velocity: currentKart["velocity"],
-            angle:(currentKart["angle"]),
+            angle: currentKart["angle"],
           },
         });
     };

@@ -12,7 +12,6 @@ import {
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
-import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
@@ -47,9 +46,9 @@ function Canvas(props: Props) {
   const { gameId, userData } = props;
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(false);
-  const colors = ["yellow", "blue", "red", "orange", "pink"];
+  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
+
+  const colors = ["pink", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
   const poofSvgRef = useRef<HTMLImageElement | undefined>();
@@ -90,6 +89,8 @@ function Canvas(props: Props) {
     myKart: new Kart(), // deprecated
   });
 
+  const contextRef = useRef<any | null>(null);
+
   //WAITING FOR GAME START STATE:
 
   const [roomGameState, setRoomGameState] = useState<roomGameType>({
@@ -112,6 +113,7 @@ function Canvas(props: Props) {
 
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
+    setWaitingForGameModalOpen(false);
   };
 
   const hasPellets = () => {
@@ -165,6 +167,8 @@ function Canvas(props: Props) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    
+    if (isGameOverModalOpen === false) {
     const previousXVelocity = kart.velocity.x;
 
     if (
@@ -230,10 +234,8 @@ function Canvas(props: Props) {
 
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
-    kart.updateKartAngle();
-    //
 
-    //
+    kart.updateKartAngle();
 
     boundariesRef.current.forEach((boundary) => {
       if (
@@ -246,12 +248,15 @@ function Canvas(props: Props) {
         kart.velocity.x = 0;
       }
     });
+    }
     return kart;
   };
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+
+    if (isGameOverModalOpen === false) {
 
     const previousYVelocity = kart.velocity.y;
 
@@ -400,6 +405,7 @@ function Canvas(props: Props) {
     const filteredPoofs = tempPoofsRef.filter((poof) => poof.opacity > 0);
 
     poofsRef.current = filteredPoofs;
+
   };
 
   const removePellets = (pelletsRef: Pellet[], kartRef: Kart | undefined) => {
@@ -499,17 +505,35 @@ function Canvas(props: Props) {
       playerControlDisplay.innerText = isInControl
         ? `YOU ARE IN CONTROL`
         : `your are NOT in control`;
-      if (isInControl) {
-        canvasBorderRef.current = {
-          borderStyle: "solid",
-          borderColor: "red",
-          borderWidth: 10,
-        };
-      } else {
-        canvasBorderRef.current = { borderStyle: "none" };
-      }
+      // if (isInControl) {
+      //   canvasBorderRef.current = {
+      //     borderStyle: "solid",
+      //     borderColor: "red",
+      //     borderWidth: 10,
+      //   };
+      // } else {
+      //   canvasBorderRef.current = { borderStyle: "none" };
+      // }
     }
   };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const context = canvas.getContext('2d');
+      if (context) {
+        contextRef.current = context;
+      }
+    if (context) {
+       const kart = roomGameRef.current.karts.get(
+        myGameRef.current.myTeam.color
+      );
+      const cxt = contextRef.current;
+      console.log(cxt);
+      cxt.scale(1.5, 1.5);
+  
+  }}
+  }, []);
 
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
@@ -517,10 +541,13 @@ function Canvas(props: Props) {
     if (!canvas) {
       return;
     }
-    const context = canvas.getContext("2d");
-    if (!context) {
-      return;
-    }
+    // const context = canvas.getContext("2d");
+    // if (!context) {
+    //   return;
+    // }
+
+
+    const myKartForCamera = roomGameRef.current.karts.get(myGameRef.current.myTeam.color)
 
     let updatedKart; //should this be referencing local state?
 
@@ -558,9 +585,11 @@ function Canvas(props: Props) {
       return { color: kart[0], kart: kart[1] };
     });
 
-    frameRenderer.call(
-      context,
+    if (myKartForCamera) {
+      frameRenderer.call(
+      contextRef.current,
       size,
+      myKartForCamera,
       kartsArr,
       boundariesRef.current,
       pelletsRef.current,
@@ -578,7 +607,26 @@ function Canvas(props: Props) {
       pinkGhostSvgRef.current,
       poofSvgRef.current
     );
-  };
+    }
+
+    const kart = roomGameRef.current.karts.get(
+      myGameRef.current.myTeam.color);
+
+    // if (kart) {
+    //   context.translate(kart.position.x, kart.position.y);
+    // }
+  
+  }; 
+
+  // useEffect(()=> {
+  //   const canvas = canvasRef.current;
+  //   if (!canvas) {
+  //     return;
+  //   }
+  //   const cxt = context.current
+  //   console.log(cxt);
+  //   cxt.scale(1.5, 1.5);
+  // }, []);
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -739,6 +787,7 @@ function Canvas(props: Props) {
 
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+
           const spawnPosition = spawnPointsRef.current[numberOfUsers / 2 - 1];
 
           if (gameId) {
@@ -756,7 +805,6 @@ function Canvas(props: Props) {
             const tempMyKart = new Kart({
               position: newTeam.position,
               velocity: newTeam.velocity,
-              imgSrc: kartTest.kartTest,
               radius: 15,
               angle: newTeam.angle,
               isGhost: newTeam.characterId === 1 ? false : true,
@@ -952,7 +1000,9 @@ function Canvas(props: Props) {
         <div>
           <span id="playerControlDisplay"></span>
         </div>
-        <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        <div id="canvas-container">
+         <canvas {...size} ref={canvasRef} style={canvasBorderRef.current} />
+        </div>
         <div>
           <WaitingForStart
             isWaitingForGameModalOpen={isWaitingForGameModalOpen}
