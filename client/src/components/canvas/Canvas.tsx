@@ -244,17 +244,18 @@ function Canvas(props: Props) {
       });
 
       aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            const spawnNum = Math.floor(Math.random() * 4);
 
-            //kill(item.color, spawnNum)
-            kart.isGhost = false;
-            const victim = item.color;
-            socket.emit("player_killed", { victim, spawnNum, gameId });
-            /*
+        if(item){
+         
+            if (circleCollidesWithCircle({ghost: kart, paCart: item.pacmanKart})){
+              const spawnNum = Math.floor(Math.random() * 4)
+              
+              //kill(item.color, spawnNum)
+              kart.isGhost = false;
+              const victim = item.color
+              socket.emit("player_killed", { victim, spawnNum, gameId })
+              updateScore(200)
+              
               todo: 
               this function sets own .isGhost to false
               maybe done
@@ -389,6 +390,7 @@ function Canvas(props: Props) {
               console.log(item);
               const victim = item.color //{"orange", kart} item.kart jsonified
               socket.emit("player_killed", { victim, spawnNum, gameId })
+              updateScore(200)
               //myGameRef.current.myTeam.ghost = false
               //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
               // make the server and receiver for this emit
