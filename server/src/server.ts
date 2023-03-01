@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
             score: currentScore,
             position: currentKart["position"],
             velocity: currentKart["velocity"],
-            angle: Math.round(currentKart["angle"]),
+            angle:(currentKart["angle"]),
           },
         });
     };

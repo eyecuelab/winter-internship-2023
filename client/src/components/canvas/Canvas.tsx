@@ -22,9 +22,9 @@ import {
   kartType,
   userType,
 } from "../../types/Types";
-import { circleCollidesWithRectangle } from "./circleCollidesWithRectangle";
+import { kartCollidesWithBoundary } from "./kartCollidesWithBoundary";
 import { generateMapQuadrants } from "./quadrants";
-import { circleCollidesWithCircle } from "./circleCollidesWithCircle";
+import { ghostCollidesWithKart } from "./ghostCollidesWithKart";
 import { postData } from "../../apiHelper";
 import { mapBrickSvgString } from "../../assets/mapBrickSvg";
 import { pelletSvgString } from "../../assets/pelletSvg";
@@ -151,7 +151,7 @@ function Canvas(props: Props) {
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i];
       if (
-        circleCollidesWithRectangle({
+        kartCollidesWithBoundary({
           circle: kart,
           rectangle: boundary,
         })
@@ -174,7 +174,7 @@ function Canvas(props: Props) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
-          circleCollidesWithRectangle({
+          kartCollidesWithBoundary({
             circle: {
               ...kart,
               velocity: {
@@ -204,7 +204,7 @@ function Canvas(props: Props) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
-          circleCollidesWithRectangle({
+          kartCollidesWithBoundary({
             circle: {
               ...kart,
               velocity: {
@@ -233,58 +233,11 @@ function Canvas(props: Props) {
     kart.updateKartAngle();
     //
 
-    if (kart.isGhost === true) {
-      const kartsArr = Array.from(roomGameRef.current.karts, function (entry) {
-        return { color: entry[0], pacmanKart: entry[1] };
-      }); //[{color: "teal", pacmanKart: {}}, {color: "orange", pacmanKart: {}}]
-
-      const aliveKartsArr: any[] = [];
-
-      kartsArr.forEach((mapargument) => {
-        if (mapargument.pacmanKart.isGhost === false) {
-          aliveKartsArr.push(mapargument);
-        }
-      });
-
-      aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            const spawnNum = Math.floor(Math.random() * 4);
-
-            //kill(item.color, spawnNum)
-            kart.isGhost = false;
-            const victim = item.color;
-            socket.emit("player_killed", { victim, spawnNum, gameId });
-            updateScore(200);
-
-            // todo:
-            // this function sets own .isGhost to false
-            // maybe done
-
-            // kill function moves victim location and velocity to a set point
-            // maybe done
-
-            // socket emit from here with the correct data (killer, victim, spawn number)
-
-            // make the socket receiver that takes in the above 3 things and also does the things
-            // (turns killer .isGhost to false, turns victim's .isGhost to true, moves victim to spawn point and changes their velocity to (0, 0))
-
-            // */
-
-            //myGameRef.current.myTeam.ghost = false
-            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-            // make the server and receiver for this emit
-          }
-        }
-      });
-    }
     //
 
     boundariesRef.current.forEach((boundary) => {
       if (
-        circleCollidesWithRectangle({
+        kartCollidesWithBoundary({
           circle: kart,
           rectangle: boundary,
         })
@@ -309,7 +262,7 @@ function Canvas(props: Props) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
-          circleCollidesWithRectangle({
+          kartCollidesWithBoundary({
             circle: {
               ...kart,
               velocity: {
@@ -337,7 +290,7 @@ function Canvas(props: Props) {
       for (let i = 0; i < boundariesRef.current.length; i++) {
         const boundary = boundariesRef.current[i];
         if (
-          circleCollidesWithRectangle({
+          kartCollidesWithBoundary({
             circle: {
               ...kart,
               velocity: {
@@ -365,45 +318,9 @@ function Canvas(props: Props) {
     kart.position.y += kart.velocity.y;
     kart.updateKartAngle();
 
-    if (kart.isGhost === true) {
-      const aliveKartsArr = Array.from(
-        roomGameRef.current.karts,
-        function (entry) {
-          if (entry[1].isGhost === false) {
-            // return [ entry[0], entry[1] ];
-            return { color: entry[0], pacmanKart: entry[1] }; //[{color: "teal", kart: kart}, {"orange", kart}]
-          }
-        }
-      );
-      //console.log(aliveKartsArr);
-
-      aliveKartsArr.forEach((item) => {
-        if (item) {
-          if (
-            circleCollidesWithCircle({ ghost: kart, paCart: item.pacmanKart })
-          ) {
-            const spawnNum = Math.floor(Math.random() * 4);
-
-            //kill(item.color, spawnNum)
-            console.log("pacman killed! on the x axis controlled person");
-            kart.isGhost = false;
-            console.log(item);
-            const victim = item.color; //{"orange", kart} item.kart jsonified
-            socket.emit("player_killed", { victim, spawnNum, gameId });
-            updateScore(200);
-            //myGameRef.current.myTeam.ghost = false
-            //socket.emit("consume", myGameRef.current.myTeam.color , paCart) //sends the 2 colors so that the other clients do the above 2 lines
-            // make the server and receiver for this emit
-          }
-        }
-      });
-    }
-    //run circle collides with circle here for each player
-    //ghosts will only check for each instance of a player
-
     boundariesRef.current.forEach((boundary) => {
       if (
-        circleCollidesWithRectangle({
+        kartCollidesWithBoundary({
           circle: kart,
           rectangle: boundary,
         })
@@ -414,6 +331,31 @@ function Canvas(props: Props) {
     });
 
     return kart;
+  };
+
+  const checkForGhostCollisions = () => {
+    const teamColor = myGameRef.current.myTeam.color;
+    const currentKart: Kart = roomGameRef.current.karts.get(teamColor) ?? new Kart();
+
+    if (currentKart.isGhost === true) {
+      const targetKartsArr = Array.from(roomGameRef.current.karts, function (entry) {
+        if (entry[1].isGhost === false){
+          return { color: entry[0], pacKart: entry[1] };
+        }
+      });
+
+      targetKartsArr.forEach((item) => {
+        if (item) {
+          if (ghostCollidesWithKart({ ghost: currentKart, paCart: item.pacKart })) {
+            const spawnNum = Math.floor(Math.random() * 4);
+            currentKart.isGhost = false;
+            const victim = item.color;
+            socket.emit("player_killed", { victim, spawnNum, gameId });
+            updateScore(200);
+          }
+        }
+      });
+    }
   };
 
   const removePellets = (pelletsRef: Pellet[], kartRef: Kart | undefined) => {
@@ -551,6 +493,8 @@ function Canvas(props: Props) {
       if (kart) {
         if (kart.isGhost === false) {
           removePellets(pelletsRef.current, updatedKart);
+        } else {
+          checkForGhostCollisions();
         }
       }
 
