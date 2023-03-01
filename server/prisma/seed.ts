@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+/*import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const roles = [{name: "Player"}, {name: "Moderator"}]
@@ -52,3 +52,4 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+*/
