@@ -19,8 +19,5 @@ circle.position.y + circle.radius + circle.velocity.y >=
 circle.position.x - circle.radius + circle.velocity.x <=
   rectangle.position.x + Boundary.width
 
-  if (willCollide){
-    console.log("CRASH!", circle.position, circle.velocity);
-  }
   return willCollide;
 }
