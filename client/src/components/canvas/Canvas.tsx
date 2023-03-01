@@ -157,7 +157,7 @@ function Canvas(props: Props) {
     console.log("y movements next dir x, y:", nextXVelocity, nextYVelocity);
     if (
       lastKeyRef.current === "w" &&
-      Math.abs(kart.position.x - Boundary.width / 2) % Boundary.width <= 8
+      Math.abs(kart.position.x - Boundary.width / 2) % Boundary.width <= 9
     ) {
       const remainder = (kart.position.x - Boundary.width / 2) % Boundary.width;
       if (remainder <= Boundary.width / 2) {
@@ -194,9 +194,9 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "s" &&
-      Math.abs(kart.position.x - Boundary.width / 2) % Boundary.width <= 8
+      Math.abs(kart.position.x - (Boundary.width / 2)) % Boundary.width <= 9
     ) {
-      const remainder = (kart.position.x - Boundary.width / 2) % Boundary.width;
+      const remainder = (kart.position.x - (Boundary.width / 2)) % Boundary.width;
       if (remainder <= Boundary.width / 2) {
         console.log(remainder);
         kart.position.x -= remainder;
@@ -271,7 +271,7 @@ function Canvas(props: Props) {
 
     if (
       lastKeyRef.current === "a" &&
-      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 8
+      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 9
     ) {
       const remainder = (kart.position.y - Boundary.width / 2) % Boundary.width;
       if (remainder <= Boundary.width / 2) {
@@ -306,7 +306,7 @@ function Canvas(props: Props) {
       }
     } else if (
       lastKeyRef.current === "d" &&
-      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 8
+      Math.abs(kart.position.y - Boundary.width / 2) % Boundary.width <= 9
     ) {
       const remainder = (kart.position.y - Boundary.width / 2) % Boundary.width;
       if (remainder <= Boundary.width / 2) {
@@ -356,6 +356,7 @@ function Canvas(props: Props) {
         kart.velocity.y = 0;
       }
     });
+    
 
     return kart;
   };
@@ -515,7 +516,7 @@ function Canvas(props: Props) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-      
+
       const kart = roomGameRef.current.karts.get(
         myGameRef.current.myTeam.color
       );
