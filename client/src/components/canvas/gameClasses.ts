@@ -28,7 +28,7 @@ export class Kart {
     this.velocity = kartData?.velocity ?? { x: 0, y: 0 };
     this.radius = 35;
     this.imgSrc = kartData?.imgSrc ?? "";
-    this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0};
+    this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0 };
     this.isGhost = kartData?.isGhost ?? false;
   }
 
@@ -46,38 +46,37 @@ export class Kart {
     const currentAngle = this.angle.currentAngle;
     const goalAngle = this.angle.goalAngle;
     let angleDiff = goalAngle - currentAngle;
-  
+
     if (angleDiff > Math.PI) {
       angleDiff -= 2 * Math.PI;
     } else if (angleDiff < -Math.PI) {
       angleDiff += 2 * Math.PI;
     }
-  
-    if (angleDiff >= 0 && angleDiff <= Math.PI || angleDiff <= -Math.PI) {
+
+    if ((angleDiff >= 0 && angleDiff <= Math.PI) || angleDiff <= -Math.PI) {
       return 1;
     } else {
       return -1;
     }
   }
-  
+
   updateKartAngle() {
     if (this.angle.currentAngle !== this.angle.goalAngle) {
       const direction = this.determineAngleDirection();
       const angleDiff = this.angle.goalAngle - this.angle.currentAngle;
       this.angle.currentAngle += direction * Math.min(Math.abs(angleDiff), 0.3);
-      
+
       if (this.angle.currentAngle >= 2 * Math.PI) {
         this.angle.currentAngle -= 2 * Math.PI;
       } else if (this.angle.currentAngle < 0) {
         this.angle.currentAngle += 2 * Math.PI;
       }
-      
+
       if (Math.abs(angleDiff) < 0.01) {
         this.angle.currentAngle = this.angle.goalAngle;
       }
     }
   }
-  
 }
 
 export class Team {
@@ -134,6 +133,31 @@ export class SpawnPoint {
     this.position = position;
   }
 }
+
+export class Poof {
+  position: { x: number; y: number };
+  radius: number;
+  opacity: number;
+
+  static readonly SHRINK_SPEED = 0.1;
+  static readonly FADE_SPEED = 0.05;
+
+  constructor({ position, radius, opacity }: { position: { x: number; y: number }, radius: number, opacity: number }) {
+    this.position = position;
+    this.radius = radius;
+    this.opacity = opacity;
+  }
+
+  update() {
+    this.radius -= Poof.SHRINK_SPEED;
+    
+    this.opacity -= Poof.FADE_SPEED;
+
+    this.radius = Math.max(0, this.radius);
+    this.opacity = Math.max(0, this.opacity);
+  }
+}
+
 export class GameMap {
   mapQuadrants: { i: number; ii: number; iii: number; iv: number };
   mapArr: any[];

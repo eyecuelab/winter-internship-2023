@@ -7,6 +7,7 @@ import {
   Pellet,
   SpawnPoint,
   GameMap,
+  Poof,
 } from "./gameClasses";
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
@@ -71,6 +72,7 @@ function Canvas(props: Props) {
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
+  const poofsRef = useRef<Poof[]>([]);
   const lastKeyRef = useRef("");
   const teamId = useRef<number | null>(null);
 
