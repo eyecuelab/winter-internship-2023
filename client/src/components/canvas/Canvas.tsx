@@ -758,7 +758,7 @@ function Canvas(props: Props) {
               imgSrc: kartTest.kartTest,
               radius: 15,
               angle: newTeam.angle,
-              isGhost: newTeam.characterId === 1 ?? false,
+              isGhost: newTeam.characterId === 1 ? false : true,
             });
 
             const tempMyTeam = new Team({
