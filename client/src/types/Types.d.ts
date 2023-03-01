@@ -27,6 +27,7 @@ export type kartType = {
   radius: number;
   imgSrc: string;
   angle: { currentAngle: number; goalAngle: number };
+  stats: { topSpeed: number; acceleration: number; handling: number };
   isGhost: boolean;
 };
 
