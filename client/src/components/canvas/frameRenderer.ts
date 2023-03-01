@@ -49,8 +49,6 @@ function frameRenderer(
   };
 
   const drawPoof = (poof: Poof) => {
-    console.log(poof);
-
     this.globalAlpha = this.opacity;
     this.save();
     this.translate( poof.position.x,

@@ -13,7 +13,11 @@ function App() {
   const [userData, setUserData] = useState<userType | undefined>();
 
   useEffect(()=>{
-  }, [userData])
+    return () => {
+      setUserData(undefined);
+    }
+  }, [])
+
   const handleLogout = () => {
     setUserData(undefined);
     localStorage.clear();
