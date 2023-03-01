@@ -78,6 +78,7 @@ function Canvas(props: any) {
 
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
+    setWaitingForGameModalOpen(false);
   };
 
   const hasPellets = () => {

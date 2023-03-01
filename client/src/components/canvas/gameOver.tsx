@@ -48,11 +48,11 @@ export function GameOver(props: GameOverType) {
         if (item[0] === "red") {
             li.style.color = "#D52527";
           } else if (item[0] === "orange") {
-            li.style.color = "#D52527";
+            li.style.color = "#F69343";
           } else if (item[0] === "blue") {
-            li.style.color = "#D52527";
+            li.style.color = "#005487";
           } else if (item[0] === "pink") {
-            li.style.color = "#D52527";
+            li.style.color = "#F06ACA";
           } else {
   
           }
