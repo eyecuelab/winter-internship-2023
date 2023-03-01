@@ -11,7 +11,6 @@ import {
 import { socketId, socket } from "./../../GlobalSocket";
 import { Time, TimeMath } from "./FPSEngine";
 import { gameMap } from "./Maps";
-import kartTest from "./../../constants/images";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
 import "./CanvasStyles.css";
@@ -45,9 +44,11 @@ function Canvas(props: Props) {
   const { gameId, userData } = props;
 
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
+
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
     useState(false);
   const colors = ["yellow", "blue", "red", "orange", "pink"];
+
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
 
@@ -108,6 +109,7 @@ function Canvas(props: Props) {
 
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
+    setWaitingForGameModalOpen(false);
   };
 
   const hasPellets = () => {
@@ -161,6 +163,8 @@ function Canvas(props: Props) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+    
+    if (isGameOverModalOpen === false) {
     const previousXVelocity = kart.velocity.x;
 
     if (
@@ -226,9 +230,10 @@ function Canvas(props: Props) {
 
     kart.position.x += kart.velocity.x;
     kart.position.y += kart.velocity.y;
-    kart.updateKartAngle();
-    //
 
+    kart.updateKartAngle();
+
+    //
     if (kart.isGhost === true) {
       const kartsArr = Array.from(roomGameRef.current.karts, function (entry) {
         return { color: entry[0], pacmanKart: entry[1] };
@@ -277,7 +282,6 @@ function Canvas(props: Props) {
       });
     }
     //
-
     boundariesRef.current.forEach((boundary) => {
       if (
         circleCollidesWithRectangle({
@@ -289,12 +293,15 @@ function Canvas(props: Props) {
         kart.velocity.x = 0;
       }
     });
+    }
     return kart;
   };
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current.karts.get(myColor) ?? new Kart(); //not sure about this..
+
+    if (isGameOverModalOpen === false) {
 
     const previousYVelocity = kart.velocity.y;
 
@@ -408,7 +415,7 @@ function Canvas(props: Props) {
         kart.velocity.y = 0;
       }
     });
-
+    }
     return kart;
   };
 
@@ -738,6 +745,7 @@ function Canvas(props: Props) {
 
       if (socketId === socketIds[numberOfUsers - 1]) {
         if (numberOfUsers % 2 === 0) {
+
           const spawnPosition = spawnPointsRef.current[numberOfUsers / 2 - 1];
 
           if (gameId) {
