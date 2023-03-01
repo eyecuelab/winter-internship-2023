@@ -454,15 +454,15 @@ function Canvas(props: any) {
       playerControlDisplay.innerText = isInControl
         ? `YOU ARE IN CONTROL`
         : `your are NOT in control`;
-      if (isInControl) {
-        canvasBorderRef.current = {
-          borderStyle: "solid",
-          borderColor: "red",
-          borderWidth: 10,
-        };
-      } else {
-        canvasBorderRef.current = { borderStyle: "none" };
-      }
+      // if (isInControl) {
+      //   canvasBorderRef.current = {
+      //     borderStyle: "solid",
+      //     borderColor: "red",
+      //     borderWidth: 10,
+      //   };
+      // } else {
+      //   canvasBorderRef.current = { borderStyle: "none" };
+      // }
     }
   };
 
