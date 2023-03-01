@@ -1,4 +1,4 @@
-import { Boundary, Kart, Pellet, SpawnPoint } from "./gameClasses";
+import { Boundary, Kart, Pellet, Poof, SpawnPoint } from "./gameClasses";
 
 function frameRenderer(
   this: any,
@@ -11,6 +11,7 @@ function frameRenderer(
   boundaries: Boundary[],
   pellets: Pellet[],
   spawnPoints: SpawnPoint[],
+  poofs: Poof[],
   mapBrickSvg: HTMLImageElement | undefined,
   pelletSvg: HTMLImageElement | undefined,
   redKartSvg: HTMLImageElement | undefined,
@@ -20,7 +21,8 @@ function frameRenderer(
   redGhostSvg: HTMLImageElement | undefined,
   orangeGhostSvg: HTMLImageElement | undefined,
   blueGhostSvg: HTMLImageElement | undefined,
-  pinkGhostSvg: HTMLImageElement | undefined
+  pinkGhostSvg: HTMLImageElement | undefined,
+  poofSvg: HTMLImageElement | undefined
 ) {
   const transform = this.getTransform();
   this.translate(-transform.e, -transform.f);
@@ -28,7 +30,6 @@ function frameRenderer(
   this.clearRect(0, 0, size.width, size.height);
   
   const drawBoundary = (boundary: Boundary) => {
-   
     this.drawImage(
       mapBrickSvg,
       boundary.position.x,
@@ -40,8 +41,8 @@ function frameRenderer(
 
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
-      this.drawImage(pelletSvg, pellet.position.x - 5,
-        pellet.position.y - 5, 11, 11)
+      //this.drawImage(pelletSvg, pellet.position.x - 5,
+      //  pellet.position.y - 5, 11, 11)
       this.drawImage(
         pelletSvg,
         pellet.position.x - 10,
@@ -51,6 +52,24 @@ function frameRenderer(
       );
       this.closePath();
     }
+  };
+
+  const drawPoof = (poof: Poof) => {
+    this.globalAlpha = this.opacity;
+    this.save();
+    this.translate( poof.position.x,
+      poof.position.y);
+    this.beginPath();
+    this.rotate(poof.angle);
+    this.drawImage(
+      poofSvg,
+      -poof.size / 2,
+      -poof.size / 2,
+      poof.size,
+      poof.size
+    );
+    this.closePath();
+    this.restore();
   };
 
   const drawKart = (
@@ -118,6 +137,10 @@ function frameRenderer(
       entry.kart.angle.currentAngle,
       entry.kart.isGhost
     );
+  });
+
+  poofs.forEach((poof) => {
+    drawPoof(poof);
   });
 }
 export default frameRenderer;

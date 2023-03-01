@@ -48,4 +48,9 @@ export type pelletType = {
   isVisible: boolean;
 };
 
-//teamFromJSONtype
+export type poofType = {
+  position: { x: number; y: number };
+  size: number;
+  opacity: number;
+  angle: number;
+}
