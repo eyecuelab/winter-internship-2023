@@ -46,7 +46,7 @@ function Canvas(props: Props) {
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] = useState(false);
 
-  const colors = ["pink", "blue", "red", "orange", "pink"];
+  const colors = ["blue", "orange", "pink", "red"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
 
@@ -792,7 +792,7 @@ function Canvas(props: Props) {
 
           if (gameId) {
             const newTeam = await postData(`/team`, {
-              color: colors[numberOfUsers],
+              color: colors[numberOfUsers/2 - 1],
               score: 0,
               position: spawnPosition.position,
               velocity: { x: 0, y: 0 },
