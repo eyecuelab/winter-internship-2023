@@ -22,6 +22,24 @@ function frameRenderer(
   pinkGhostSvg: HTMLImageElement | undefined,
   blueGhostSvg: HTMLImageElement | undefined
 ) {
+  const transform = this.getTransform();
+  this.translate(-transform.e, -transform.f);
+  this.translate(-myKart.position.x+60, -myKart.position.y+60)
+
+
+  
+
+// extract the x and y translations
+//The e and f properties are convenience properties that provide direct access to the translation values of the matrix. They are equivalent to accessing the matrix elements directly using the m13 and m23 properties,
+
+ // how far away it is from the origin of x
+// from here we change the translate to 2 translations, first we send it back to the origin with negative x and y translations, then we move it again to the proper position
+
+
+  // const getTransform = this.getTransform();
+  // console.log(getTransform);
+  // this.translate(myKart.position.x, myKart.position.y);
+
   const camera = {
     x: 0,
     y: 0,
@@ -39,46 +57,46 @@ function frameRenderer(
   }
   
 // once, we've moved the camera, we move it again if its outside the boundaries to be back in
+this.clearRect(0, 0, size.width, size.height);
 
 
-
-  this.clearRect(0, 0, size.width, size.height);
+  
   // MAYBE HERE
   // this.drawImage(mapBrick, 1, 100, 100, 100);
 
 
   const drawBoundary = (boundary: Boundary) => {
-    this.fillStyle = "pink";
-    this.fillRect(
-      boundary.position.x,
-      boundary.position.y,
-      Boundary.width,
-      Boundary.height
-    );
+    // this.fillStyle = "pink";
+    // this.fillRect(
+    //   boundary.position.x,
+    //   boundary.position.y,
+    //   Boundary.width,
+    //   Boundary.height
+    // );
     this.drawImage(mapBrickSvg, boundary.position.x, boundary.position.y, 40, 40)
   };
 
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
-      var grd = this.createLinearGradient(
-        pellet.position.x - 5,
-        pellet.position.y - 5,
-        pellet.position.x + 5,
-        pellet.position.y + 5
-      );
-      grd.addColorStop(0, "#fa06f9");
-      grd.addColorStop(1, "white");
-
-      // this.beginPath();
-      // this.arc(
-      //   pellet.position.x,
-      //   pellet.position.y,
-      //   pellet.radius,
-      //   0,
-      //   Math.PI * 2
+      // var grd = this.createLinearGradient(
+      //   pellet.position.x - 5,
+      //   pellet.position.y - 5,
+      //   pellet.position.x + 5,
+      //   pellet.position.y + 5
       // );
-      this.fillStyle = grd;
-      this.fill();
+      // grd.addColorStop(0, "#fa06f9");
+      // grd.addColorStop(1, "white");
+
+      // // this.beginPath();
+      // // this.arc(
+      // //   pellet.position.x,
+      // //   pellet.position.y,
+      // //   pellet.radius,
+      // //   0,
+      // //   Math.PI * 2
+      // // );
+      // this.fillStyle = grd;
+      // this.fill();
       this.drawImage(pelletSvg, pellet.position.x - 5,
         pellet.position.y - 5, 11, 11)
       this.closePath();
@@ -187,6 +205,8 @@ function frameRenderer(
       entry.kart.isGhost
     );
   });
+
+  //this.translate(myKart.position.x - size.width/2, myKart.position.y - size.height/2)
   //final fill to be here
 }
 export default frameRenderer;
