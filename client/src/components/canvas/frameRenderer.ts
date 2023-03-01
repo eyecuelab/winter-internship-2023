@@ -19,7 +19,8 @@ function frameRenderer(
   redGhostSvg: HTMLImageElement | undefined,
   orangeGhostSvg: HTMLImageElement | undefined,
   blueGhostSvg: HTMLImageElement | undefined,
-  pinkGhostSvg: HTMLImageElement | undefined
+  pinkGhostSvg: HTMLImageElement | undefined,
+  poofSvg: HTMLImageElement | undefined
 ) {
   this.clearRect(0, 0, size.width, size.height);
 

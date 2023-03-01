@@ -35,6 +35,7 @@ import { redGhostSvgString } from "../../assets/redGhostSvg";
 import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
 import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
 import { blueGhostSvgString } from "../../assets/blueGhostSvg";
+import { poofSvgString } from "../../assets/poofSvg";
 
 interface Props {
   gameId: string | undefined;
@@ -50,6 +51,7 @@ function Canvas(props: Props) {
   const colors = ["yellow", "blue", "red", "orange", "pink"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
   const pelletSvgRef = useRef<HTMLImageElement | undefined>();
+  const poofSvgRef = useRef<HTMLImageElement | undefined>();
 
   const redKartSvgRef = useRef<HTMLImageElement | undefined>();
   const pinkKartSvgRef = useRef<HTMLImageElement | undefined>();
@@ -581,7 +583,8 @@ function Canvas(props: Props) {
       redGhostSvgRef.current,
       orangeGhostSvgRef.current,
       blueGhostSvgRef.current,
-      pinkGhostSvgRef.current
+      pinkGhostSvgRef.current,
+      poofSvgRef.current
     );
   };
 
@@ -649,6 +652,12 @@ function Canvas(props: Props) {
     pelletImg.src = `data:image/svg+xml;base64,${window.btoa(pelletSvgString)}`;
     pelletImg.addEventListener("load", () => {
       pelletSvgRef.current = pelletImg;
+    });
+
+    const poofImg = new Image();
+    poofImg.src = `data:image/svg+xml;base64,${window.btoa(poofSvgString)}`;
+    poofImg.addEventListener("load", () => {
+      poofSvgRef.current = poofImg;
     });
 
     const redKartImg = new Image();
