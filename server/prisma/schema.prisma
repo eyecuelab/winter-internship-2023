@@ -52,7 +52,7 @@ model Team {
   score                  Int
   position               Json
   velocity               Json
-  angle                  Int
+  angle                  Json
   characterId            Int
   gameId                 Int
   kartId                 Int
