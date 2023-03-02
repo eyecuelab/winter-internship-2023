@@ -21,7 +21,7 @@ const GamePage = (props: Props) => {
   });
 
 
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
 
   useEffect(() => {
