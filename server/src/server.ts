@@ -39,11 +39,6 @@ io.on("connection", (socket) => {
     io.in(`${room}`).emit("receive_client_joined", { socketIds });
   });
 
-  socket.on("ghost_kart_toggle", (data) => {
-    const { kartColor, ghostColor, spawnNum, gameId } = data;
-    io.in(`${gameId}`).emit("receive_ghost_kart_toggle", {kartColor, ghostColor, spawnNum})
-  })
-
   socket.on("send_team", (data) => {
     const { jsonTeam, jsonKart, gameId } = data;
     io.in(`${gameId}`).emit("receive_team_added", { jsonTeam, jsonKart });
@@ -67,7 +62,16 @@ io.on("connection", (socket) => {
     socket.to(`${gameId}`).emit("receive_pellet_update", { i, isGameOver });
   });
 
-  socket.on("db_update", (data) => {
+  socket.on("ghost_kart_toggle", (data) => {
+    const { kartColor, ghostColor, spawnNum, gameId } = data;
+    io.in(`${gameId}`).emit("receive_ghost_kart_toggle", {
+      kartColor,
+      ghostColor,
+      spawnNum,
+    });
+  });
+
+  socket.on("db_update", async (data) => {
     const {
       gameId,
       currentTeamId,
@@ -77,60 +81,53 @@ io.on("connection", (socket) => {
       currentIsGameOver,
     } = data;
 
-    const gameUpdatesOnInterval = async () => {
+    if (gameId) {
       await prisma.game.update({
         where: { id: parseInt(gameId) },
         data: {
           pellets: currentPellets,
           isActive: !currentIsGameOver,
         },
-      }),
-        await prisma.team.update({
-          where: { id: parseInt(currentTeamId) },
-          data: {
-            score: currentScore,
-            position: currentKart["position"],
-            velocity: currentKart["velocity"],
-            angle: currentKart["angle"],
-          },
-        });
-    };
-    if (currentTeamId) {
-      console.count("db_update2");
-      gameUpdatesOnInterval();
+      });
     }
-
+    if (currentTeamId) {
+      await prisma.team.update({
+        where: { id: parseInt(currentTeamId) },
+        data: {
+          score: currentScore,
+          position: currentKart["position"],
+          velocity: currentKart["velocity"],
+          angle: currentKart["angle"],
+        },
+      });
+    }
     console.count("db_update");
   });
 
-  socket.on("game_over", (data) => {
+  socket.on("game_over", async (data) => {
     const { gameId } = data;
-    const gameOverUpdate = async () => {
-      await prisma.game.update({
+    await prisma.game.update({
       where: { id: parseInt(gameId) },
       data: {
         isActive: false,
-      }
-    })
-  }
-  gameOverUpdate();
-});
+      },
+    });
+  });
 
-  socket.on("disconnect", (reason) => {
+  socket.on("disconnect", async (reason) => {
     console.log(socket.id + "disconnected");
     const disconnectedClientId = socket.id;
-    socket.broadcast.emit("client_disconnect", {disconnectedClientId});
+    socket.broadcast.emit("client_disconnect", { disconnectedClientId });
 
-    const gameOverUpdate = async () => {
-    let lastGame = await prisma.game.findFirst({
+    const lastGame = await prisma.game.findFirst({
       orderBy: {
         id: "desc",
       },
     });
     if (lastGame) {
-      let gameUsers = await prisma.gameUser.findMany({
+      const gameUsers = await prisma.gameUser.findMany({
         where: {
-            gameId: lastGame.id,
+          gameId: lastGame.id,
         },
       });
       if (gameUsers.length === 1) {
@@ -144,10 +141,8 @@ io.on("connection", (socket) => {
         });
       }
     }
-  }
-  gameOverUpdate();
   });
-})
+});
 
 server.listen(3001, () =>
   console.log("Server ready at: http://localhost:3001")
@@ -155,6 +150,5 @@ server.listen(3001, () =>
 // server.listen(8080, () =>
 //   console.log("Server ready at: 8080")
 // );
-
 
 export default io;

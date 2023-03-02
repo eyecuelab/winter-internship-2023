@@ -45,7 +45,6 @@ interface Props {
 
 function Canvas(props: Props) {
   const { gameId, userData, roomGameRef } = props;
-  console.log(roomGameRef);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
     useState(false);
@@ -315,7 +314,6 @@ function Canvas(props: Props) {
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
           }
         }
       }
@@ -449,7 +447,7 @@ function Canvas(props: Props) {
             socket.emit("game_over", { gameId });
             toggleGameOver();
           }
-          socket.emit("remove_pellet", { gameId, i, isGameOver });
+          socket.emit("update_pellets", { gameId, i, isGameOver });
         }
       }
     });
@@ -546,7 +544,6 @@ function Canvas(props: Props) {
           myGameRef.current.myTeam.color
         );
         const cxt = contextRef.current;
-        console.log(cxt);
         cxt.scale(1.5, 1.5);
       }
     }
@@ -626,23 +623,7 @@ function Canvas(props: Props) {
         poofSvgRef.current
       );
     }
-
-    const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
-
-    // if (kart) {
-    //   context.translate(kart.position.x, kart.position.y);
-    // }
   };
-
-  // useEffect(()=> {
-  //   const canvas = canvasRef.current;
-  //   if (!canvas) {
-  //     return;
-  //   }
-  //   const cxt = context.current
-  //   console.log(cxt);
-  //   cxt.scale(1.5, 1.5);
-  // }, []);
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -904,7 +885,6 @@ function Canvas(props: Props) {
       }
     });
 
-    //pellet, scores, and power-up updates can live here eventually:
     socket.on("receive_game_update", (data) => {
       const { tempColor, jsonKart, tempScore } = data;
       const tempKart = new Kart(JSON.parse(jsonKart));
@@ -924,7 +904,7 @@ function Canvas(props: Props) {
       initiatePoofAnimation(spawnNum, ghostColor);
     });
 
-    socket.on("pellet_gone", (data) => {
+    socket.on("receive_pellet_update", (data) => {
       const { i, isGameOver } = data;
       pelletsRef.current[i].isVisible = false;
       if (isGameOver && roomGameRef.current) {
@@ -938,8 +918,6 @@ function Canvas(props: Props) {
     });
 
     socket.on("client_disconnect", (data) => {
-      console.log(data.disconnectedClientId + " has disconnected");
-      console.log(myGameRef.current.userList);
       myGameRef.current.userList.forEach((user) => {
         if (roomGameRef.current && data.disconnectedClientId === user) {
           roomGameRef.current.isGameOver = true;
@@ -955,7 +933,7 @@ function Canvas(props: Props) {
   }, [socket]);
 
   setInterval(async () => {
-    if (teamId.current) {
+    if (myGameRef.current.myTeam.players.x === socketId) {
       const currentScore = roomGameRef.current?.scores.get(
         myGameRef.current.myTeam.color
       );
@@ -964,7 +942,7 @@ function Canvas(props: Props) {
       );
       const currentIsGameOver = roomGameRef.current?.isGameOver;
       const currentPellets = pelletsRef.current;
-      const currentTeamId = teamId.current;
+      const currentTeamId = myGameRef.current.myTeam.teamId;
 
       socket.emit("db_update", {
         gameId,
