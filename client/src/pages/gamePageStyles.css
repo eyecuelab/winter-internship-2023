@@ -38,3 +38,17 @@
     #wrapper-info img {
       width: 150px;
     }
+
+    button {
+    background-color:  #5D5D7E;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    box-shadow: 2px 2px white;
+    margin-top: 2rem;
+    margin-left: 70px;
+    }

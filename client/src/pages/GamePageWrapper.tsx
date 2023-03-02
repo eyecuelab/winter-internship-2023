@@ -170,9 +170,9 @@ function GamePageWrapper (props:Props) {
   return (
     <>
       <div id="left">
-      <button style={{marginTop: 50}} onClick={handlePauseClick}>music</button>
       <ul id="wrapper-info">
         </ul>
+        <button id="music-button"style={{marginTop: 50}} onClick={handlePauseClick}>music</button>
       </div>
       
       <div id="right"></div>
