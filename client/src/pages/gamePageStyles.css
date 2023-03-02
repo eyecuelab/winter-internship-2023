@@ -24,3 +24,17 @@
 		}
 		#top { top: 0; }
 		#bottom { bottom: 0; }
+
+    #wrapper-info {
+      list-style: none;
+      line-height: 20px;
+      font-family: 'namco regular';
+    }
+
+    #wrapper-info li {
+    margin-bottom: 30px;
+    }
+
+    #wrapper-info img {
+      width: 150px;
+    }

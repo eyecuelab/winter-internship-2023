@@ -10,6 +10,7 @@ import {
   Team
 } from "./../components/canvas/gameClasses";
 
+
 interface Props {
   userData: userType | undefined;
 }
@@ -53,7 +54,7 @@ const GamePage = (props: Props) => {
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef}/>
+      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef} myGameRef={myGameRef}/>
       <div>
         <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} />
       </div>
