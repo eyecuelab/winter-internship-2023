@@ -19,7 +19,7 @@
   - [Installation](#installation)
   - [Required Files](#required-files)
   - [Running The App Locally](#running-the-app-locally)
-- [Super Pacart API Reference](#super-pacart-api-reference)
+- [Super Pacart API Reference](#the-super-pacart-api-reference)
 - [Bugs](#bugs)
 - [License](#license)
 
@@ -85,19 +85,33 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 ### ⭐ Stretch Goals <a id="stretch-goals"></a>
 
 [] One-player/demo mode
+
 [] Chat/messenger
+
 [] Customizable colors for Pacarts/Ghosts
+
 [] Power-ups are viable based on different factors
-[] Camera focused on the player and can move around 
+
+[] Camera focused on the player and can move around
+
 [] Choose size on the map
+
 [] Rounds
+
 [] Collection of maps
+
 [] Waiting Room with setting, sharable game links
+
 [] Multiple games happening simultaneously
+
 [] Multiple cart stats
+
 [] Having up to eight players in one game
+
 [] Leader-boards
+
 [] Smart respawn: Characters respawn based on the location of capture
+
 [] Option the rematch with the same players
 
 ## 🖥️ Technologies Used <a id="technologies-used"></a>
@@ -144,7 +158,7 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 - Navigate one terminal into the `/server` directory and run `npm start`
 - Navigate the second terminal into the `/client` directory and run `npm run dev` as well. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
 
-## Super Pacart API Reference <a id="super-pacart-api-reference"></a>
+## Super Pacart API Reference <a id="the-super-pacart-api-reference"></a>
 
 - Everything you need to interact with our API.
 - If you want to access our API directly, you can use the following base URL: `http://localhost:3000/` after running the app locally.
