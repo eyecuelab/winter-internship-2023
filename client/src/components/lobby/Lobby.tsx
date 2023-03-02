@@ -106,10 +106,9 @@ const Lobby = (props: Props) => {
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
-    const userId = undefined;
       postData(`/gameUser`, {
         gameId: gameUsers[0].gameId,
-        userId: userId,
+        userId: userData?.id,
         roleId: 1,
       }).then((gameUser) => {
         if(gameUser.gameId){
