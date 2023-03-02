@@ -4,8 +4,6 @@ export type userType = {
   id: number;
   name: string;
   email: string;
-  games: GameUser[];
-  teams: TeamUser[];
 };
 
 export type gameType = {
@@ -23,28 +21,11 @@ export type teamType = {
   score: number;
 };
 
-export type teamConstructorType = {
-  teamId: string;
-  color: string;
-  players: { x: string; y: string };
-  score: number;
-};
-
 export type kartType = {
   position: { x: number; y: number };
   velocity: { x: number; y: number };
   radius: number;
-  angle: number;
-  imgSrc: string;
-  isGhost: boolean;
-};
-
-export type kartConstructorType = {
-  position: { x: number; y: number };
-  velocity: { x: number; y: number };
-  radius: number;
-  imgSrc: string;
-  angle: number;
+  angle: { currentAngle: number; goalAngle: number };
   isGhost: boolean;
 };
 
@@ -67,4 +48,9 @@ export type pelletType = {
   isVisible: boolean;
 };
 
-//teamFromJSONtype
+export type poofType = {
+  position: { x: number; y: number };
+  size: number;
+  opacity: number;
+  angle: number;
+}

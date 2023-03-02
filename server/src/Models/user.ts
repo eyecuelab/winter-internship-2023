@@ -29,3 +29,46 @@ export const createUser = async (email: string, name: string) => {
     },
   });
 };
+
+export const deactivateLastGameForUser = async (
+  userId: number
+) => {
+  try {
+    const lastGame = await prisma.game.findFirst({
+      where: {
+        users: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+      orderBy: {
+        id: "desc",
+      },
+    });
+
+    if (!lastGame) {
+      return { error: "User has no games" };
+    }
+    if (!lastGame.isActive) {
+      return { message: "Last game was already inactive" };
+    }
+
+    const updatedGame = await prisma.game.update({
+      where: {
+        id: lastGame.id,
+      },
+      data: {
+        isActive: false,
+      },
+    });
+
+    return {
+      message: `Game ${updatedGame.id} deactivated`,
+      gameId: updatedGame.id,
+    };
+  } catch (error) {
+    console.error(error);
+    return { error: "Internal server error" };
+  }
+};

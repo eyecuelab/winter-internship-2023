@@ -8,13 +8,21 @@ import Test1 from "./Test1";
 import Test2 from "./Test2";
 import { userType } from "./types/Types";
 import GamePage from "./pages/GamePage";
+import { socket } from "./GlobalSocket";
 
 function App() {
   const [userData, setUserData] = useState<userType | undefined>();
 
-  const handleUserData = (newData: userType) => {
-    setUserData(newData);
-  };
+  useEffect(() => {
+    return () => {
+      setUserData(undefined);
+    };
+  }, []);
+
+  useEffect(()=>{
+    const userId =userData?.id;
+    socket.emit("user_id_update", { userId });
+  }, [userData])
 
   const handleLogout = () => {
     setUserData(undefined);
@@ -30,15 +38,17 @@ function App() {
           path="/lobby"
           element={
             <Lobby
-              updateUserData={handleUserData}
+              setUserData={setUserData}
               userData={userData}
               logout={handleLogout}
             />
           }
         />
-        <Route path="/game" element={<Canvas />} />
 
-        <Route path="/game/:gameId" element={<GamePage />} />
+        <Route
+          path="/game/:gameId"
+          element={<GamePage userData={userData} />}
+        />
 
         <Route path="/Test1" element={<Test1 />} />
         <Route path="/Test2" element={<Test2 />} />
