@@ -19,7 +19,7 @@
   - [Installation](#installation)
   - [Required Files](#required-files)
   - [Running The App Locally](#running-the-app-locally)
-- [The Nameless Terror API Reference](#the-mafia-api-reference)
+- [Super Pacart API Reference](#super-pacart-api-reference)
 - [Bugs](#bugs)
 - [License](#license)
 
@@ -144,7 +144,7 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 - Navigate one terminal into the `/server` directory and run `npm start`
 - Navigate the second terminal into the `/client` directory and run `npm run dev` as well. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
 
-## Super Pacart API Reference <a id="the-mafia-api-reference"></a>
+## Super Pacart API Reference <a id="super-pacart-api-reference"></a>
 
 - Everything you need to interact with our API.
 - If you want to access our API directly, you can use the following base URL: `http://localhost:3000/` after running the app locally.
