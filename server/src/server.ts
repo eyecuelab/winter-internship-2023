@@ -22,21 +22,27 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
+  
+  socket.on("user_id_update", ({userId}) => {
+    socket.data.userId = userId;
+    console.log("userId update:", socket.data.userId)
+  })
 
   socket.on("join_game_room", async (data) => {
     const { gameId } = data;
-
-    const room = gameId.toString();
-    socket.join(room);
-    console.log(socket.id, "joined room: ", room);
-
-    const gameData = JSON.stringify(await getGameById(room));
-    io.to(socket.id).emit("receive_initial_game_data", gameData);
-
-    const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
-    const socketIds = Array.from(socketsInRoom);
-
-    io.in(`${room}`).emit("receive_client_joined", { socketIds });
+    if (gameId){
+      const room = gameId.toString();
+      socket.join(room);
+      console.log(socket.id, "joined room: ", room);
+  
+      const gameData = JSON.stringify(await getGameById(room));
+      io.to(socket.id).emit("receive_initial_game_data", gameData);
+  
+      const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
+      const socketIds = Array.from(socketsInRoom);
+  
+      io.in(`${room}`).emit("receive_client_joined", { socketIds });
+    }
   });
 
   socket.on("send_team", (data) => {
@@ -114,15 +120,22 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("leave_room", async (gameId) => {
+  socket.on("leave_room", async (leaveRoomData) => {
+    const { gameId, userId} = leaveRoomData;
+    console.log("disconnect from canvas:", userId)
     socket.leave(`$gameId`);
     const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${gameId}`);
     const socketIds = Array.from(socketsInRoom);
     console.log("users in room now that someone has left:", socketIds)
   })
 
+  socket.on("disconnect_user", (userId) => {
+    console.log("disconnect user from app.ts", userId)
+  })
+
   socket.on("disconnect", async (reason) => {
-    console.log(socket.id + "disconnected");
+    console.log("disconnect user Id:", socket.data.userId)
+    console.log(socket.id + " disconnected");
     const disconnectedClientId = socket.id;
     socket.broadcast.emit("client_disconnect", { disconnectedClientId });
 

@@ -908,8 +908,9 @@ function Canvas(props: Props) {
     }, 10000);
 
     return () => {
-      console.log("cleanup socket useEffect")
-      socket.emit('leave_room', gameId);
+      const userId = userData?.id;
+      const leaveRoomData = {gameId, userId}
+      socket.emit('leave_room', leaveRoomData);
       socket.removeAllListeners();
     };
   }, [socket]);
