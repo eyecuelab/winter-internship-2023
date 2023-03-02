@@ -12,9 +12,11 @@ import GamePage from "./pages/GamePage";
 function App() {
   const [userData, setUserData] = useState<userType | undefined>();
 
-  const handleUserData = (newData: userType) => {
-    setUserData(newData);
-  };
+  useEffect(()=>{
+    return () => {
+      setUserData(undefined);
+    }
+  }, [])
 
   const handleLogout = () => {
     setUserData(undefined);
@@ -30,15 +32,14 @@ function App() {
           path="/lobby"
           element={
             <Lobby
-              updateUserData={handleUserData}
+              setUserData={setUserData}
               userData={userData}
               logout={handleLogout}
             />
           }
         />
-        <Route path="/game" element={<Canvas />} />
 
-        <Route path="/game/:gameId" element={<GamePage />} />
+        <Route path="/game/:gameId" element={<GamePage userData={userData}/>} />
 
         <Route path="/Test1" element={<Test1 />} />
         <Route path="/Test2" element={<Test2 />} />

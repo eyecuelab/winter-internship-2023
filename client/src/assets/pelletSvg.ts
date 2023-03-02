@@ -1,0 +1,5 @@
+export const pelletSvgString = `<svg width="51" height="50" viewBox="0 0 51 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M51 28.5C51 40.3741 41.3741 50 29.5 50C17.6259 50 8 40.3741 8 28.5C8 16.6259 17.6259 7 29.5 7C41.3741 7 51 16.6259 51 28.5Z" fill="#414158"/>
+<circle cx="21.5" cy="21.5" r="21.5" fill="#FFC327"/>
+<path d="M21.7956 35.4142C19.2324 35.8342 13.2211 35.372 9.68127 30.1632C6.14148 24.9544 6.99117 19.3008 7.85849 17.125" stroke="#FFE39C" stroke-width="6" stroke-linecap="round"/>
+</svg>`
