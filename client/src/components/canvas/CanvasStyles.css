@@ -2,6 +2,11 @@ body {
   background-color: rgb(93,93,126);
 }
 
+@font-face {
+  font-family: 'namco regular';
+  src: url(./../../assets/namco.ttf);
+}
+
 #canvas-container {
   margin-top: 15px;
   margin-left: 250px;
