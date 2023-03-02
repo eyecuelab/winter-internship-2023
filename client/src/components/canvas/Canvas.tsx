@@ -36,16 +36,20 @@ import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
 import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
 import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 import { poofSvgString } from "../../assets/poofSvg";
+import backgroundMusic from "../../assets/backgroundMusic.wav";
 
 interface Props {
   gameId: string | undefined;
   userData: userType | undefined;
   roomGameRef: React.RefObject<roomGameType>;
   myGameRef: React.RefObject<myGameType>;
+  setRoomGameStateWrapper: (state: roomGameType) => void;
+  setMyGameStateWrapper: (state: myGameType) => void;
+  updateWrapperState: () => void;
 }
 
 function Canvas(props: Props) {
-  const { gameId, userData, roomGameRef, myGameRef } = props;
+  const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper } = props;
   console.log(roomGameRef);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
@@ -205,7 +209,6 @@ function Canvas(props: Props) {
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
           }
         }
       } else if (
@@ -234,7 +237,6 @@ function Canvas(props: Props) {
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
           }
         }
       }
@@ -323,7 +325,7 @@ function Canvas(props: Props) {
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
+            // console.log(kart.angle);
           }
         }
       }
@@ -568,6 +570,16 @@ function Canvas(props: Props) {
 
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
+    props.updateWrapperState();
+    if (roomGameRef.current) {
+      setRoomGameStateWrapper(roomGameRef.current);
+      // console.log(roomGameRef.current);
+    }
+    if (myGameRef.current) {
+      setMyGameStateWrapper(myGameRef.current);
+    }
+
+
     const canvas = canvasRef.current;
     if (!canvas) {
       return;
@@ -643,6 +655,7 @@ function Canvas(props: Props) {
       );
     }
   }
+
   };
 
   // useEffect(()=> {
@@ -876,6 +889,7 @@ function Canvas(props: Props) {
         }
         if (isWaitingForGameModalOpen) {
           setMyGameState(myGameRef.current);
+          setMyGameStateWrapper(myGameRef.current);
           if (numberOfUsers === 4 && isTimerReady) {
             setInterval(async () => {
               setIsCountingDown(true);
@@ -914,8 +928,12 @@ function Canvas(props: Props) {
         roomGameRef.current?.scores.set(tempTeam.color, 0);
 
         setMyGameState(myGameRef.current);
+        if (myGameRef.current) {
+          setMyGameStateWrapper(myGameRef.current);
+        }
         if (roomGameRef.current) {
           setRoomGameState(roomGameRef.current);
+          setRoomGameStateWrapper(roomGameRef.current);
         }
     }
     });
@@ -1017,6 +1035,25 @@ function Canvas(props: Props) {
     };
   }, []);
 
+  // GAME MUSIC
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+  const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
+
+  useEffect(() => {
+    gameMusic.volume = 0.1;
+    gameMusic.loop = true;
+    if (isMusicPlaying) {
+      gameMusic.play();
+    } else {
+      gameMusic.pause();
+      gameMusic.currentTime = 0;
+    }
+  }, [gameMusic, isMusicPlaying]);
+
+  const handlePauseClick = () => {
+    setIsMusicPlaying(!isMusicPlaying);
+  };
+
   return (
     <>
       <div
@@ -1031,6 +1068,8 @@ function Canvas(props: Props) {
         </div>
         <div>
           <span id="playerControlDisplay"></span>
+        </div>
+        <div className={`app-container`}>
         </div>
         <div id="canvas-container">
           <canvas {...size} ref={canvasRef} />

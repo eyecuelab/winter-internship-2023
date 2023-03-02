@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState} from 'react';
 import { roomGameType, myGameType } from '../types/Types';
-import { Kart, Team } from "./../components/canvas/gameClasses";
+import { Kart, Team } from "../components/canvas/gameClasses";
 import "./gamePageStyles.css";
 import { verticalDirSvgString } from "../assets/verticalDirSvg";
 import { horizontalDirSvgString } from "../assets/horizontalDirSvg";
@@ -15,12 +15,13 @@ import { pinkPacmanIconSvgString } from "../assets/pinkPacmanIconSvg";
 
 interface Props {
   handlePauseClick: () => void;
-  roomGameRef: React.RefObject<roomGameType>;
-  myGameRef:  React.RefObject<myGameType>
+  roomGameStateWrapper: roomGameType;
+  myGameStateWrapper:  myGameType;
+  updateWrapperState: () => void;
 }
 
 function GamePageWrapper (props:Props) {
-  const { handlePauseClick, roomGameRef, myGameRef } = props;
+  const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, updateWrapperState } = props;
   
   const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
   const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
@@ -33,8 +34,8 @@ function GamePageWrapper (props:Props) {
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
 
-  const [roomGame, setRoomGame] = useState<roomGameType | undefined>(undefined);
-  const [myGame, setMyGame] = useState<myGameType | null>(null);
+  // const [roomGame, setRoomGame] = useState<roomGameType | undefined>(undefined);
+  // const [myGame, setMyGame] = useState<myGameType | null>(null);
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
 
@@ -102,30 +103,43 @@ function GamePageWrapper (props:Props) {
   }, [])
 
   useEffect(() => {
-    if (roomGameRef.current && myGameRef.current) {
-      const myCurrentTeam = myGameRef.current.myTeam;
-      const myCurrentKart = roomGameRef.current.karts.get(myCurrentTeam.color);
-      if (myCurrentTeam) {
-        setMyTeam(myCurrentTeam);
-      }
+    if (myGameStateWrapper.myTeam && roomGameStateWrapper.karts) {
+      const myCurrentTeam = myGameStateWrapper.myTeam;
+      const myCurrentKart = roomGameStateWrapper.karts.get(myCurrentTeam.color);
+      console.log(roomGameStateWrapper);
+      console.log(myGameStateWrapper);
+      console.log(myCurrentTeam.color);
+      console.log(myCurrentKart)
+      setMyTeam(myCurrentTeam);
+      console.log(myTeam);
       setMyKart(myCurrentKart);
+      console.log(myKart);
     }
-
     displayTeam();
+    updateWrapperState();
+    console.count();
   });
+
+  useEffect(() => {
+    displayTeam();
+    console.count();
+  }, [roomGameStateWrapper, myGameStateWrapper])
 
 
   const displayTeam = () => {
     const teamInfo = document.getElementById("wrapper-info");
-    if (roomGameRef.current && myGameRef.current) {
+    if (roomGameStateWrapper && myGameStateWrapper) {
       if (teamInfo) {        
         teamInfo.innerHTML = "";
       } 
       const li = document.createElement("li");
         const teamImg = document.createElement("img"); 
         teamImg.setAttribute('id', 'team-img');
+        console.log(myKart);
+        // console.log(myTeam);
         if (myKart?.isGhost === false) {
           if (myTeam?.color === "blue") {
+            console.log(bluePacmanSvgRef.current?.src);
             teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
           } 
           else if (myTeam?.color === "orange") {
@@ -162,6 +176,13 @@ function GamePageWrapper (props:Props) {
         divElement.appendChild(teamImg);
         li?.appendChild(divElement);
         teamInfo?.appendChild(li);
+
+        const liTwo = document.createElement("li");
+        liTwo.setAttribute('id', 'my-team');
+        if (myKart) {
+          liTwo.textContent =`${myKart.position.x} position`;
+        }
+        teamInfo?.appendChild(liTwo);
       }
      
   } 

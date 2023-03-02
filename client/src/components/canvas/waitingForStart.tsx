@@ -108,7 +108,6 @@ export function WaitingForStart(props: WaitingForStartType) {
       setMyTeam(myCurrentTeam);
       setMyKart(myCurrentKart);
     }
-
     displayTeam();
   });
 

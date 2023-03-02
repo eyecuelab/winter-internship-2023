@@ -23,6 +23,7 @@ export function GameOver(props: GameOverType) {
 
   const displayScores = () => {
     //this function exists in canvas so we could combine them.
+    if (props.scores) {
     const scoresArr = Array.from(props.scores, function (score) {
       return [score[0], score[1] ?? 0];
     });
@@ -59,6 +60,7 @@ export function GameOver(props: GameOverType) {
           }
       });
     }
+  }
   };
 
   displayScores();

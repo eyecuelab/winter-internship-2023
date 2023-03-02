@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
@@ -33,6 +33,20 @@ const GamePage = (props: Props) => {
     myKart: new Kart(), // deprecated
   });
 
+  const [roomGameStateWrapper, setRoomGameStateWrapper] = useState<roomGameType>({
+    karts: new Map(),
+    scores: new Map(),
+    isGameOver: false,
+  });
+
+  const [myGameStateWrapper, setMyGameStateWrapper] = useState<myGameType>({
+    userList: [],
+    myTeamMate: "",
+    myControl: "",
+    myTeam: new Team(),
+    myKart: new Kart(), // deprecated
+  });
+
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
@@ -46,7 +60,30 @@ const GamePage = (props: Props) => {
       gameMusic.pause();
       gameMusic.currentTime = 0;
     }
+
   }, [gameMusic, isMusicPlaying]);
+
+  // useMemo(() => {
+  //   updateWrapperState();
+  // },[myGameStateWrapper, roomGameStateWrapper]
+  // );
+
+  useEffect(()=> {
+    console.log(myGameStateWrapper);
+    console.log(roomGameStateWrapper);
+  }, [myGameStateWrapper, roomGameStateWrapper])
+
+  const updateWrapperState = () => {
+    // console.count();
+    // console.log(myGameRef.current);
+    // console.log(roomGameRef.current);
+    const myGameRefCurrent = myGameRef.current;
+    const roomGameRefCurrent = roomGameRef.current
+    setMyGameStateWrapper(myGameRefCurrent);
+    setRoomGameStateWrapper(roomGameRefCurrent);
+    // console.log(myGameStateWrapper);
+    // console.log(roomGameStateWrapper);
+  }
 
   const handlePauseClick = () => {
     setIsMusicPlaying(!isMusicPlaying);
@@ -54,9 +91,11 @@ const GamePage = (props: Props) => {
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef} myGameRef={myGameRef}/>
+      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState}/>
       <div>
-        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} />
+        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} />
+        {/*setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} />*/}
+        
       </div>
     </div>
   );
@@ -64,4 +103,3 @@ const GamePage = (props: Props) => {
 
 export default GamePage;
 
-GamePage.propTypes = {};
