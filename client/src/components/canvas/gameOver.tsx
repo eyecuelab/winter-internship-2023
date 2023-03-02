@@ -22,30 +22,26 @@ export function GameOver(props: GameOverType) {
 
   const displayScores = () => {
     //this function exists in canvas so we could combine them.
-    const scoresArr = Array.from(props.scores, function (score) {
-      return [score[0], score[1] ?? 0];
-    });
-    
-    const finalScoreHeading = document.createElement('h2');
+    if (props.scores) {
+      const scoresArr = Array.from(props.scores, function (score) {
+        return [score[0], score[1] ?? 0];
+      });
+      const finalScoreHeading = document.createElement("h2");
 
-    const scoresList = document.getElementById("scores-list");
-    if (scoresList) {
-      while (scoresList.firstChild) {
-        scoresList.removeChild(scoresList.firstChild);
-      }
-      scoresArr.forEach((item) => {
-        var li = document.createElement("li");
-        li.appendChild(
-          document.createTextNode(`${item[0]} team `)
-        );
-        var teamScore = document.createElement("span");
-        teamScore.innerText = ` ${item[1]}`;
-        teamScore.setAttribute('id','team-score');
-        li.appendChild(
-          teamScore
-        );
-        scoresList.appendChild(li);
-        if (item[0] === "red") {
+      const scoresList = document.getElementById("scores-list");
+      if (scoresList) {
+        while (scoresList.firstChild) {
+          scoresList.removeChild(scoresList.firstChild);
+        }
+        scoresArr.forEach((item) => {
+          var li = document.createElement("li");
+          li.appendChild(document.createTextNode(`${item[0]} team `));
+          var teamScore = document.createElement("span");
+          teamScore.innerText = ` ${item[1]}`;
+          teamScore.setAttribute("id", "team-score");
+          li.appendChild(teamScore);
+          scoresList.appendChild(li);
+          if (item[0] === "red") {
             li.style.color = "#D52527";
           } else if (item[0] === "orange") {
             li.style.color = "#F69343";
@@ -54,9 +50,9 @@ export function GameOver(props: GameOverType) {
           } else if (item[0] === "pink") {
             li.style.color = "#F06ACA";
           } else {
-  
           }
-      });
+        });
+      }
     }
   };
 
