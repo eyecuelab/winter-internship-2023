@@ -106,10 +106,9 @@ const Lobby = (props: Props) => {
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
-    const userId = undefined;
       postData(`/gameUser`, {
         gameId: gameUsers[0].gameId,
-        userId: userId,
+        userId: userData?.id,
         roleId: 1,
       }).then((gameUser) => {
         if(gameUser.gameId){
@@ -127,6 +126,7 @@ const Lobby = (props: Props) => {
 
   const startAGame = () => {
     const quads = generateMapQuadrants();
+    console.log(quads);
     const newGameMap = new GameMap(quads);
     newGameMap.generateMapArr();
     newGameMap.generateMapPropertiesArrs();
@@ -153,6 +153,7 @@ const Lobby = (props: Props) => {
 
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
+      console.log(lastPost);
       if (!lastPost) {
         startAGame();
       } else {

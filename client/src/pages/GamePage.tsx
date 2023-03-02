@@ -3,8 +3,12 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
-import { roomGameType, userType } from "../types/Types";
+import { roomGameType, userType, myGameType } from "../types/Types";
 import backgroundMusic from "../assets/backgroundMusic.wav";
+import {
+  Kart,
+  Team
+} from "./../components/canvas/gameClasses";
 
 interface Props {
   userData: userType | undefined;
@@ -18,6 +22,14 @@ const GamePage = (props: Props) => {
     karts: new Map(),
     scores: new Map(),
     isGameOver: false,
+  });
+
+  const myGameRef = useRef<myGameType>({
+    userList: [],
+    myTeamMate: "",
+    myControl: "",
+    myTeam: new Team(),
+    myKart: new Kart(), // deprecated
   });
 
 
@@ -43,7 +55,7 @@ const GamePage = (props: Props) => {
     <div className={`app-container`}>
       <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef}/>
       <div>
-        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} />
+        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} />
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ interface GameOverType {
 }
 
 export function GameOver(props: GameOverType) {
+  console.log(props.scores);
   const navigate = useNavigate();
   const goToLobby = () => {
     navigate("/lobby");
