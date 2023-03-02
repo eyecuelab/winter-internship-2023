@@ -114,6 +114,13 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("leave_room", async (gameId) => {
+    socket.leave(`$gameId`);
+    const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${gameId}`);
+    const socketIds = Array.from(socketsInRoom);
+    console.log("users in room now that someone has left:", socketIds)
+  })
+
   socket.on("disconnect", async (reason) => {
     console.log(socket.id + "disconnected");
     const disconnectedClientId = socket.id;

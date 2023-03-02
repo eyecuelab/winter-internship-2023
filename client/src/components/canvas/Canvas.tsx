@@ -65,22 +65,18 @@ function Canvas(props: Props) {
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const contextRef = useRef<any | null>(null);
   const requestIdRef = useRef<any>(null);
   const size = { width: 2000, height: 2000 };
-  const canvasBorderRef = useRef<object>({});
 
   const boundariesRef = useRef<Boundary[]>([]);
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const poofsRef = useRef<Poof[]>([]);
   const lastKeyRef = useRef("");
-  const teamId = useRef<number | null>(null);
 
-  // const roomGameRef = useRef<roomGameType>({
-  //   karts: new Map(),
-  //   scores: new Map(),
-  //   isGameOver: false,
-  // });
+  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
+  const [isTimerReady, setIsTimerReady] = useState<boolean>(true);
 
   const myGameRef = useRef<myGameType>({
     userList: [],
@@ -90,16 +86,6 @@ function Canvas(props: Props) {
     myKart: new Kart(), // deprecated
   });
 
-  const contextRef = useRef<any | null>(null);
-
-  //WAITING FOR GAME START STATE:
-
-  const [roomGameState, setRoomGameState] = useState<roomGameType>({
-    karts: new Map(),
-    scores: new Map(),
-    isGameOver: false,
-  });
-
   const [myGameState, setMyGameState] = useState<myGameType>({
     userList: [],
     myTeamMate: "",
@@ -107,43 +93,14 @@ function Canvas(props: Props) {
     myTeam: new Team(),
     myKart: new Kart(), // deprecated
   });
-  const [isCountingDown, setIsCountingDown] = useState<boolean>(false);
-  const [isTimerReady, setIsTimerReady] = useState<boolean>(true);
 
-  //GAME OVER FUNCTIONS:
+  //WAITING FOR GAME START STATE:
+  const [roomGameState, setRoomGameState] = useState<roomGameType>({
+    karts: new Map(),
+    scores: new Map(),
+    isGameOver: false,
+  });
 
-  const toggleGameOver = () => {
-    setIsGameOverModalOpen(!isGameOverModalOpen);
-    setWaitingForGameModalOpen(false);
-  };
-
-  const hasPellets = () => {
-    for (let i = 0; i < pelletsRef.current.length; i++) {
-      if (pelletsRef.current[i].isVisible === true) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  const kill = (/*victimsColor: string, */ spawnNum: number) => {
-    console.log("I was killed!");
-    const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
-
-    // const kart:Kart|undefined = roomGameRef.current.karts.get(victimsColor);
-    if (kart) {
-      kart.isGhost = true;
-      kart.position = spawnPointsRef.current[spawnNum].position;
-      kart.velocity = { x: 0, y: 0 };
-      //   roomGameRef.current.karts.set(victimsColor, kart)
-
-      kart.position = spawnPointsRef.current[spawnNum].position;
-      kart.velocity = { x: 0, y: 0 };
-      //   roomGameRef.current.karts.set(victimsColor, kart)
-
-      /*this technically works but the other users send out the information that their isGhost is false still */
-    }
-  };
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
 
@@ -899,7 +856,7 @@ function Canvas(props: Props) {
         myGameRef.current.myTeam.playerInControl === socket.id &&
         myGameRef.current.myTeam.color === kartColor
       ) {
-        kill(spawnNum);
+        toggleToGhost(spawnNum);
       }
       initiatePoofAnimation(spawnNum, ghostColor);
     });
@@ -927,35 +884,39 @@ function Canvas(props: Props) {
       });
     });
 
+    setInterval(async () => {
+      if (myGameRef.current.myTeam.players.x === socketId) {
+        const currentScore = roomGameRef.current?.scores.get(
+          myGameRef.current.myTeam.color
+        );
+        const currentKart = roomGameRef.current?.karts.get(
+          myGameRef.current.myTeam.color
+        );
+        const currentIsGameOver = roomGameRef.current?.isGameOver;
+        const currentPellets = pelletsRef.current;
+        const currentTeamId = myGameRef.current.myTeam.teamId;
+  
+        socket.emit("db_update", {
+          gameId,
+          currentTeamId,
+          currentScore,
+          currentKart,
+          currentPellets,
+          currentIsGameOver,
+        });
+      }
+    }, 10000);
+
     return () => {
+      console.log("cleanup socket useEffect")
+      socket.emit('leave_room', gameId);
       socket.removeAllListeners();
     };
   }, [socket]);
 
-  setInterval(async () => {
-    if (myGameRef.current.myTeam.players.x === socketId) {
-      const currentScore = roomGameRef.current?.scores.get(
-        myGameRef.current.myTeam.color
-      );
-      const currentKart = roomGameRef.current?.karts.get(
-        myGameRef.current.myTeam.color
-      );
-      const currentIsGameOver = roomGameRef.current?.isGameOver;
-      const currentPellets = pelletsRef.current;
-      const currentTeamId = myGameRef.current.myTeam.teamId;
 
-      socket.emit("db_update", {
-        gameId,
-        currentTeamId,
-        currentScore,
-        currentKart,
-        currentPellets,
-        currentIsGameOver,
-      });
-    }
-  }, 10000);
 
-  //KEYBOARD EVEN LISTENERS when component mounts
+  //KEYBOARD EVENT LISTENERS
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
@@ -978,6 +939,31 @@ function Canvas(props: Props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  const toggleToGhost = (spawnNum: number) => {
+    const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
+
+    if (kart) {
+      kart.isGhost = true;
+      kart.position = spawnPointsRef.current[spawnNum].position;
+      kart.velocity = { x: 0, y: 0 };
+    }
+  };
+
+  //GAME OVER FUNCTIONS:
+  const toggleGameOver = () => {
+    setIsGameOverModalOpen(!isGameOverModalOpen);
+    setWaitingForGameModalOpen(false);
+  };
+
+  const hasPellets = () => {
+    for (let i = 0; i < pelletsRef.current.length; i++) {
+      if (pelletsRef.current[i].isVisible === true) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   return (
     <>
