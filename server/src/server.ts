@@ -25,7 +25,6 @@ io.on("connection", (socket) => {
 
   socket.on("join_game_room", async (data) => {
     const { gameId } = data;
-    console.log("gameId " + gameId);
 
     const room = gameId.toString();
     socket.join(room);
@@ -35,7 +34,6 @@ io.on("connection", (socket) => {
     io.to(socket.id).emit("receive_initial_game_data", gameData);
 
     const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
-    console.log(`guests in room ${room}`, socketsInRoom);
     const socketIds = Array.from(socketsInRoom);
 
     io.in(`${room}`).emit("receive_client_joined", { socketIds });
@@ -43,12 +41,12 @@ io.on("connection", (socket) => {
 
   socket.on("ghost_kart_toggle", (data) => {
     const { kartColor, ghostColor, spawnNum, gameId } = data;
-    io.in(data.gameId).emit("receive_ghost_kart_toggle", {kartColor, ghostColor, spawnNum})
+    io.in(`${gameId}`).emit("receive_ghost_kart_toggle", {kartColor, ghostColor, spawnNum})
   })
 
   socket.on("send_team", (data) => {
-    const { jsonTeam, jsonKart } = data;
-    io.in(data.gameId).emit("receive_team_added", { jsonTeam, jsonKart });
+    const { jsonTeam, jsonKart, gameId } = data;
+    io.in(`${gameId}`).emit("receive_team_added", { jsonTeam, jsonKart });
   });
 
   socket.on("game_update", (data) => {
@@ -64,20 +62,10 @@ io.on("connection", (socket) => {
       .emit("receive_toggle_player_control", data.jsonTeam);
   });
 
-  socket.on("remove_pellet", (data) => {
+  socket.on("update_pellets", (data) => {
     const { gameId, i, isGameOver } = data;
-    socket.to(gameId).emit("pellet_gone", { i, isGameOver });
+    socket.to(`${gameId}`).emit("receive_pellet_update", { i, isGameOver });
   });
-
-  //potential
-  // socket.on("leave_room", async ({ roomId, userId }) => {
-  //   socket.leave(roomId);
-  //   const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${roomId}`);
-  //   console.log(`updated guests in room: ${roomId}`, socketsInRoom);
-  //   const usersInRoom = Array.from(socketsInRoom);
-
-  //   socket.to(roomId).emit("update_user_list", { usersInRoom });
-  // });
 
   socket.on("db_update", (data) => {
     const {
@@ -161,12 +149,12 @@ io.on("connection", (socket) => {
   });
 })
 
-// server.listen(3001, () =>
-//   console.log("Server ready at: http://localhost:3001")
-// );
-server.listen(8080, () =>
-  console.log("Server ready at: 8080")
+server.listen(3001, () =>
+  console.log("Server ready at: http://localhost:3001")
 );
+// server.listen(8080, () =>
+//   console.log("Server ready at: 8080")
+// );
 
 
 export default io;
