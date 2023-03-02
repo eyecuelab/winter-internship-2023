@@ -125,6 +125,7 @@ function Canvas(props: Props) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
       const previousXVelocity = kart.velocity.x;
@@ -141,7 +142,7 @@ function Canvas(props: Props) {
                 ...kart,
                 velocity: {
                   x: 0,
-                  y: -10,
+                  y: -velocityUnit,
                 },
               },
               rectangle: boundary,
@@ -152,7 +153,7 @@ function Canvas(props: Props) {
 
             break;
           } else {
-            kart.velocity.y = -10;
+            kart.velocity.y = -velocityUnit;
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -171,7 +172,7 @@ function Canvas(props: Props) {
                 ...kart,
                 velocity: {
                   x: kart.velocity.x,
-                  y: 10,
+                  y: velocityUnit,
                 },
               },
               rectangle: boundary,
@@ -181,7 +182,7 @@ function Canvas(props: Props) {
             kart.velocity.x = previousXVelocity;
             break;
           } else {
-            kart.velocity.y = 10;
+            kart.velocity.y = velocityUnit;
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -212,7 +213,8 @@ function Canvas(props: Props) {
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); 
+    const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
       const previousYVelocity = kart.velocity.y;
@@ -228,7 +230,7 @@ function Canvas(props: Props) {
               circle: {
                 ...kart,
                 velocity: {
-                  x: -10,
+                  x: -velocityUnit,
                   y: 0,
                 },
               },
@@ -239,7 +241,7 @@ function Canvas(props: Props) {
             kart.velocity.y = previousYVelocity;
             break;
           } else {
-            kart.velocity.x = -10;
+            kart.velocity.x = -velocityUnit;
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -256,7 +258,7 @@ function Canvas(props: Props) {
               circle: {
                 ...kart,
                 velocity: {
-                  x: 10,
+                  x: velocityUnit,
                   y: 0,
                 },
               },
@@ -267,7 +269,7 @@ function Canvas(props: Props) {
             kart.velocity.y = previousYVelocity;
             break;
           } else {
-            kart.velocity.x = 10;
+            kart.velocity.x = velocityUnit;
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
