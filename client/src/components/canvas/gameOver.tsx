@@ -7,7 +7,7 @@ interface GameOverType {
   isGameOverModalOpen: boolean;
   setIsGameOverModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleGameOver: () => void;
-  scores: Map<string, number>;
+  scores: Map<string, number> | undefined;
 }
 
 export function GameOver(props: GameOverType) {

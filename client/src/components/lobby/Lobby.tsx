@@ -84,11 +84,16 @@ const Lobby = (props: Props) => {
       if (!user) {
         handleCreateUser(object);
       } else {
-        setUserData({
-          id: user.id,
-          email: user.email,
-          name: user.name
-        });
+        if(user.id){
+          setUserData({
+            id: user.id,
+            email: user.email,
+            name: user.name
+          });
+        } else {
+          navigate(`/`);
+        }
+        
       }
     });
   };
@@ -101,18 +106,23 @@ const Lobby = (props: Props) => {
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
-    postData(`/gameUser`, {
-      gameId: gameUsers[0].gameId,
-      userId: userData?.id,
-      roleId: 1,
-    }).then((gameUser) => {
-      const gameId = gameUser.gameId;
-      const userId = gameUser.userId;
-
-      socket.emit("join_game_room", { gameId, userId });
-      navigate(`/game/${gameId}`);
-    });
-    // });
+    const userId = undefined;
+      postData(`/gameUser`, {
+        gameId: gameUsers[0].gameId,
+        userId: userId,
+        roleId: 1,
+      }).then((gameUser) => {
+        if(gameUser.gameId){
+          const gameId = gameUser.gameId;
+          const userId = gameUser.userId;
+          
+          socket.emit("join_game_room", { gameId, userId });
+          navigate(`/game/${gameId}`);
+        } else {
+          navigate(`/`);
+        }
+        
+      });
   };
 
   const startAGame = () => {

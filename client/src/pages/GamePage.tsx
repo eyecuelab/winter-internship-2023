@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
-import { userType } from "../types/Types";
+import { roomGameType, userType } from "../types/Types";
 import backgroundMusic from "../assets/backgroundMusic.wav";
 
 interface Props {
@@ -14,7 +14,14 @@ const GamePage = (props: Props) => {
   const { userData } = props;
   const { gameId } = useParams();
 
-  const [isMusicPlaying, setIsMusicPlaying] = useState(true);
+  const roomGameRef = useRef<roomGameType>({
+    karts: new Map(),
+    scores: new Map(),
+    isGameOver: false,
+  });
+
+
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
 
   useEffect(() => {
@@ -34,9 +41,9 @@ const GamePage = (props: Props) => {
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick}/>
+      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef}/>
       <div>
-        <Canvas gameId={gameId} userData={userData} />
+        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} />
       </div>
     </div>
   );

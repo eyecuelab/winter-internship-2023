@@ -21,7 +21,7 @@ export class Kart {
   isGhost: boolean;
 
   constructor();
-  constructor(kartData: kartType);
+  constructor(kartData: kartType | undefined);
   constructor(kartData?: kartType) {
     this.position = kartData?.position ?? { x: 0, y: 0 };
     this.velocity = kartData?.velocity ?? { x: 0, y: 0 };

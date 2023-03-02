@@ -1,3 +1,7 @@
+body {
+  background-color: rgb(93,93,126);
+}
+
 #canvas-container {
   margin-top: 15px;
   margin-left: 250px;

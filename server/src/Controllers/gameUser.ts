@@ -4,9 +4,13 @@ const gameUserControllers = {
 
   async createGameUser(req: any, res: any) {
     const { gameId, userId, roleId } = req.body;
-    
-    const newGameUser = await createGameUser(gameId, userId, roleId);
-    res.status(200).json(newGameUser);
+
+    if (!userId) {
+      return res.status(400).json({ error: "Missing userId" });
+    } else {
+      const newGameUser = await createGameUser(gameId, userId, roleId);
+      res.status(200).json(newGameUser);
+    }
   },
 
   async findManyGameUsers(req: any, res: any) {
