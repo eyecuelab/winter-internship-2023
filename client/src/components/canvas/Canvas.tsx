@@ -884,6 +884,14 @@ function Canvas(props: Props) {
       });
     });
 
+    socket.on("disconnect_game_over", (data) => {
+      console.log("disconnect game over:", data)
+      if(data === gameId){
+        toggleGameOver();
+      }
+    })
+
+
     setInterval(async () => {
       if (myGameRef.current.myTeam.players.x === socketId) {
         const currentScore = roomGameRef.current?.scores.get(

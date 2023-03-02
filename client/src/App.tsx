@@ -15,8 +15,7 @@ function App() {
 
   useEffect(() => {
     return () => {
-      socket.emit("disconnect_user", userData?.id);
-
+      setUserData(undefined);
     };
   }, []);
 

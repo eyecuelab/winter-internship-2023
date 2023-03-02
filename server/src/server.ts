@@ -3,6 +3,7 @@ import http from "http";
 import { Server } from "socket.io";
 import { getGameById } from "./Models/game";
 import { PrismaClient } from "@prisma/client";
+import { deactivateLastGameForUser } from "./Models/user";
 
 const prisma = new PrismaClient();
 const server = http.createServer(app);
@@ -22,25 +23,24 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log("User Connected: " + socket.id);
-  
-  socket.on("user_id_update", ({userId}) => {
+
+  socket.on("user_id_update", ({ userId }) => {
     socket.data.userId = userId;
-    console.log("userId update:", socket.data.userId)
-  })
+  });
 
   socket.on("join_game_room", async (data) => {
     const { gameId } = data;
-    if (gameId){
+    if (gameId) {
       const room = gameId.toString();
       socket.join(room);
       console.log(socket.id, "joined room: ", room);
-  
+
       const gameData = JSON.stringify(await getGameById(room));
       io.to(socket.id).emit("receive_initial_game_data", gameData);
-  
+
       const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${room}`);
       const socketIds = Array.from(socketsInRoom);
-  
+
       io.in(`${room}`).emit("receive_client_joined", { socketIds });
     }
   });
@@ -107,7 +107,6 @@ io.on("connection", (socket) => {
         },
       });
     }
-    console.count("db_update");
   });
 
   socket.on("game_over", async (data) => {
@@ -121,45 +120,27 @@ io.on("connection", (socket) => {
   });
 
   socket.on("leave_room", async (leaveRoomData) => {
-    const { gameId, userId} = leaveRoomData;
-    console.log("disconnect from canvas:", userId)
+    const { gameId, userId } = leaveRoomData;
+    console.log("disconnect from canvas:", userId);
     socket.leave(`$gameId`);
-    const socketsInRoom: any = await io.sockets.adapter.rooms.get(`${gameId}`);
-    const socketIds = Array.from(socketsInRoom);
-    console.log("users in room now that someone has left:", socketIds)
-  })
 
-  socket.on("disconnect_user", (userId) => {
-    console.log("disconnect user from app.ts", userId)
-  })
+    const res = await deactivateLastGameForUser(socket.data.userId);
+    if(res.gameId){
+      const gameId = res.gameId
+      io.in(`${gameId}`).emit("disconnect_game_over", (gameId))
+    }
+  });
 
   socket.on("disconnect", async (reason) => {
-    console.log("disconnect user Id:", socket.data.userId)
-    console.log(socket.id + " disconnected");
+    console.log("disconnect user:", socket.data.userId, "socketId:", socket.id);
     const disconnectedClientId = socket.id;
     socket.broadcast.emit("client_disconnect", { disconnectedClientId });
 
-    const lastGame = await prisma.game.findFirst({
-      orderBy: {
-        id: "desc",
-      },
-    });
-    if (lastGame) {
-      const gameUsers = await prisma.gameUser.findMany({
-        where: {
-          gameId: lastGame.id,
-        },
-      });
-      if (gameUsers.length === 1) {
-        await prisma.game.update({
-          where: {
-            id: lastGame.id,
-          },
-          data: {
-            isActive: false,
-          },
-        });
-      }
+    const res = await deactivateLastGameForUser(socket.data.userId);
+    if(res.gameId){
+      const gameId = res.gameId
+      io.in(`${gameId}`).emit("disconnect_game_over", (gameId))
+      socket.leave(`$gameId`);
     }
   });
 });
