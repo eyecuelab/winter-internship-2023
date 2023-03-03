@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useMemo } from "react";
 import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
-import GamePageWrapper from "./GamePage/GamePageWrapper";
+import GamePageWrapper from "./GamePageWrapper";
 import {
   roomGameType,
   userType,
