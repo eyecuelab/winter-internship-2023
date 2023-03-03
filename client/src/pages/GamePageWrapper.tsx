@@ -170,9 +170,7 @@ function GamePageWrapper (props:Props) {
       // console.log(myCurrentTeam.color);
       // console.log(myCurrentKart)
       setMyTeam(myCurrentTeam);
-      // console.log(myTeam);
       setMyKart(myCurrentKart);
-      // console.log(myKart);
     }
     displayTeam();
     updateWrapperState();
@@ -304,6 +302,10 @@ function GamePageWrapper (props:Props) {
       liThree.appendChild(dirImg);
       // console.log(liThree.textContent);
       teamInfo?.appendChild(liThree);
+      const liFour = document.createElement("li");
+      liFour.appendChild(
+        document.createTextNode(`${}`)
+      )
   } 
 
 
