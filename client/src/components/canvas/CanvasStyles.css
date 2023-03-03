@@ -4,7 +4,7 @@ body {
 
 @font-face {
   font-family: 'Roboto-Regular';
-  src: url(./../assets/Roboto-Regular.ttf);
+  src: url(./../../assets/Roboto-Regular.ttf);
 }
 
 #canvas-container {

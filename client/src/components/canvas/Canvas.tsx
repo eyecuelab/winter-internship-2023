@@ -55,7 +55,7 @@ function Canvas(props: Props) {
   console.log(roomGameRef);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(false);
+    useState(true);
 
   const colors = ["blue", "orange", "pink", "red"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
