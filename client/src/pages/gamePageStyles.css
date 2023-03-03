@@ -1,0 +1,99 @@
+#top, #bottom, #left, #right {
+	background: #323240;
+	position: fixed;
+	}
+
+  #top, #bottom {
+    height: 15px;
+  }
+
+	#left, #right {
+		top: 0; bottom: 0;
+		}
+		#left { 
+      left: 0;
+      width: 300px; 
+    }
+		#right { 
+      right: 0;
+      width: 15px;
+     }
+		
+	#top, #bottom {
+		left: 0; right: 0;
+		}
+		#top { top: 0; }
+		#bottom { bottom: 0; }
+
+    #wrapper-info {
+      list-style: none;
+      line-height: 5px;
+      font-family: 'namco regular';
+      text-align: center;
+      padding: 5px;
+    }
+
+    #wrapper-info li {
+    margin-bottom: 30px;
+    }
+
+    /* #wrapper-info img {
+      width: 150px;
+    } */
+
+    #wrapper-info #team-img{
+      width: 195px;
+    }
+
+    #wrapper-info #team-name{
+      font-size: 32px;
+    }
+
+   #wrapper-info .my-direction-wrapper, .horizontal img {
+    width: 250px;
+    margin-top: 50px;
+   }
+
+   #wrapper-info .my-direction-wrapper, .vertical img {
+    width: 120px;
+    margin-top: 50px;
+   }
+
+   /* #wrapper-info .my-direction-wrapper img .vertical {
+    width: 200px;
+   } */
+
+   #scores-info {
+    list-style: none;
+    line-height: 30px;
+    font-family: 'namco regular';
+    text-align: left;
+    padding: 5px;
+    margin: 0px 30px 70px 30px;
+    font-size: 1.2em;
+  }
+
+   #score-heading-wrapper {
+    color: white;
+    font-size: .75em;
+    padding: 5px;
+    margin: 40px 10px 0px 20px;
+    font-family: 'namco regular';
+   }
+
+    #left #music-button {
+    background-color:  #5D5D7E;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    box-shadow: -2px 2px white;
+    margin: 0px 60px 40px 70px;
+    }
+
+    #my-turn {
+      filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.5));
+    }

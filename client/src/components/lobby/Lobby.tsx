@@ -8,6 +8,8 @@ import CoverImage from "../../assets/cover.png";
 import { Button, Container, Text, Card, Spacer } from "@nextui-org/react";
 import { generateMapQuadrants } from "../canvas/quadrants";
 import { GameMap } from "../canvas/gameClasses";
+import { Instructions, useInstructions } from "./HowToPlay";
+import "./lobby.css";
 
 interface UserDataGoogle {
   name: string;
@@ -112,6 +114,7 @@ const Lobby = (props: Props) => {
 
   const startAGame = () => {
     const quads = generateMapQuadrants();
+    console.log(quads);
     const newGameMap = new GameMap(quads);
     newGameMap.generateMapArr();
     newGameMap.generateMapPropertiesArrs();
@@ -138,6 +141,7 @@ const Lobby = (props: Props) => {
 
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
+      console.log(lastPost);
       if (!lastPost) {
         startAGame();
       } else {
@@ -155,6 +159,8 @@ const Lobby = (props: Props) => {
       }
     });
   };
+
+  const { isOpen, toggle } = useInstructions();
 
   return (
     <>
@@ -188,7 +194,12 @@ const Lobby = (props: Props) => {
 
           <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
-            JOIN GAME!
+            Join Game
+          </Button>
+          <br></br>
+          <Button color="gradient" onClick={toggle}>
+            <Spacer x={0.5} />
+            How to Play
           </Button>
           <Spacer y={1} />
           <Button color="gradient" onClick={handleLogout}>
@@ -196,6 +207,7 @@ const Lobby = (props: Props) => {
             LOG OUT
           </Button>
         </Card>
+        <Instructions areInstructionsModalOpen={isOpen} toggle={toggle}></Instructions>
       </Container>
     </>
   );

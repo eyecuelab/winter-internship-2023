@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Login from "./components/login/Login";
 import Lobby from "./components/lobby/Lobby";
-import GamePage from "./pages/GamePage/GamePage";
+import GamePage from "./pages/GamePage";
 import { socket } from "./GlobalSocket";
 import { userType } from "./types/Types";
 
@@ -21,12 +21,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route
           path="/lobby"
-          element={
-            <Lobby
-              setUserData={setUserData}
-              userData={userData}
-            />
-          }
+          element={<Lobby setUserData={setUserData} userData={userData} />}
         />
         <Route
           path="/game/:gameId"

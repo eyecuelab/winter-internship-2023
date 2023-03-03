@@ -2,8 +2,9 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
+import CoverImage from '../../assets/cover.png';
+import "./loginStyles.css";
 import { userType } from "../../types/Types";
-import CoverImage from "../../assets/cover.png";
 
 interface Props {
   userData: userType | undefined;

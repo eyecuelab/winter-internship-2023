@@ -54,3 +54,6 @@ export type poofType = {
   opacity: number;
   angle: number;
 }
+export type lastKeyType = {
+  lastKey: string;
+}

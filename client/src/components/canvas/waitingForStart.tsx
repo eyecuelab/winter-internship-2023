@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import React, { ReactNode } from "react";
 import { Kart, Team } from "./gameClasses";
-import { myGameType, roomGameType } from "./../../types/Types";
-import { verticalDirSvgString } from "../../assets/verticalDirSvg";
-import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
+import { myGameType, roomGameType } from "./../../types/Types"
+import { verticalDirBothYellowSvgString } from "../../assets/verticalDirBothYellowSvg";
+import { horizontalDirBothYellowSvgString } from "../../assets/horizontalDirBothYellowSvg";
 import { redGhostIconSvgString } from "../../assets/redGhostIconSvg";
 import { pinkGhostIconSvgString } from "../../assets/pinkGhostIconSvg";
 import { blueGhostIconSvgString } from "../../assets/blueGhostIconSvg";
@@ -45,17 +45,13 @@ export function WaitingForStart(props: WaitingForStartType) {
 
   useEffect(() => {
     const verticalDirImg = new Image();
-    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(
-      verticalDirSvgString
-    )}`;
+    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBothYellowSvgString)}`;
     verticalDirImg.addEventListener("load", () => {
       verticalDirSvgRef.current = verticalDirImg;
     });
 
     const horizontalDirImg = new Image();
-    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(
-      horizontalDirSvgString
-    )}`;
+    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirBothYellowSvgString)}`;
     horizontalDirImg.addEventListener("load", () => {
       horizontalDirSvgRef.current = horizontalDirImg;
     });
@@ -132,7 +128,6 @@ export function WaitingForStart(props: WaitingForStartType) {
       setMyTeam(myCurrentTeam);
       setMyKart(myCurrentKart);
     }
-
     displayTeam();
   });
 
