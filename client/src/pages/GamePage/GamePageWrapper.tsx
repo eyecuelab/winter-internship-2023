@@ -1,5 +1,5 @@
 import React from "react";
-import { roomGameType } from "../types/Types";
+import { roomGameType } from "../../types/Types";
 import "./gamePageStyles.css";
 
 interface Props {

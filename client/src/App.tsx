@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Login from "./components/login/Login";
 import Lobby from "./components/lobby/Lobby";
-import GamePage from "./pages/GamePage";
+import GamePage from "./pages/GamePage/GamePage";
 import { socket } from "./GlobalSocket";
 import { userType } from "./types/Types";
 
@@ -15,8 +15,6 @@ function App() {
     socket.emit("user_id_update", { userId });
   }, [userData]);
 
-
-
   return (
     <Router>
       <Routes>
@@ -27,7 +25,6 @@ function App() {
             <Lobby
               setUserData={setUserData}
               userData={userData}
-              logout={handleLogout}
             />
           }
         />

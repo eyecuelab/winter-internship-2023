@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
 import { userType } from "../../types/Types";
-import { socketId, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "../../GlobalSocket";
 import { getUserDataGoogle } from "./services/lobby-services";
 import CoverImage from "../../assets/cover.png";
 import { Button, Container, Text, Card, Spacer } from "@nextui-org/react";
@@ -17,11 +17,10 @@ interface UserDataGoogle {
 interface Props {
   userData: userType | undefined;
   setUserData: React.Dispatch<React.SetStateAction<userType | undefined>>;
-  logout: () => void;
 }
 
 const Lobby = (props: Props) => {
-  const { userData, setUserData, logout } = props;
+  const { userData, setUserData } = props;
   const [userataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );

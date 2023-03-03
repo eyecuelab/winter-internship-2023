@@ -3,7 +3,7 @@ import { postData } from "../../apiHelper";
 import { myGameType, roomGameType, userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
 import "./CanvasStyles.css";
-import { frameRenderer } from "./frameRenderer";
+import frameRenderer from "./frameRenderer";
 import { kartCollidesWithBoundary } from "./kartCollidesWithBoundary";
 import { ghostCollidesWithKart } from "./ghostCollidesWithKart";
 import { Boundary, Kart, Team, Pellet, SpawnPoint, Poof } from "./gameClasses";

@@ -26,9 +26,9 @@ function frameRenderer(
 ) {
   const transform = this.getTransform();
   this.translate(-transform.e, -transform.f);
-  this.translate(-myKart.position.x+120, -myKart.position.y+120)
+  this.translate(-myKart.position.x + 120, -myKart.position.y + 120);
   this.clearRect(0, 0, size.width, size.height);
-  
+
   const drawBoundary = (boundary: Boundary) => {
     this.drawImage(
       mapBrickSvg,
@@ -57,8 +57,7 @@ function frameRenderer(
   const drawPoof = (poof: Poof) => {
     this.globalAlpha = this.opacity;
     this.save();
-    this.translate( poof.position.x,
-      poof.position.y);
+    this.translate(poof.position.x, poof.position.y);
     this.beginPath();
     this.rotate(poof.angle);
     this.drawImage(
@@ -112,7 +111,7 @@ function frameRenderer(
     this.save();
     this.translate(x, y);
     this.rotate(angle);
-   
+
     this.drawImage(img, -width / 2, -height / 2, 80, 80);
     this.restore();
   };
@@ -143,4 +142,5 @@ function frameRenderer(
     drawPoof(poof);
   });
 }
+
 export default frameRenderer;

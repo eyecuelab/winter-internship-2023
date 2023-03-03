@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import Canvas from "../components/canvas/Canvas";
+import Canvas from "../../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
-import { roomGameType, userType } from "../types/Types";
-import backgroundMusic from "../assets/backgroundMusic.wav";
+import { roomGameType, userType } from "../../types/Types";
+import backgroundMusic from "../../assets/backgroundMusic.wav";
 
 interface Props {
   userData: userType | undefined;
