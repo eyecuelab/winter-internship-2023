@@ -148,11 +148,11 @@ const Lobby = (props: Props) => {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (
             gameUsers.length !== 0 &&
-            gameUsers.length < 8 &&
+            gameUsers.length < 4 &&
             lastPost.isActive === true
           ) {
             joinAGame(gameUsers);
-          } else if ((gameUsers.length = 0 || 8)) {
+          } else if ((gameUsers.length = 0 || 4)) {
             startAGame();
           }
         });
@@ -187,6 +187,7 @@ const Lobby = (props: Props) => {
               mb: "20px",
             }}
           >
+            {userData?.name ? `Welcome ${userData?.name}` : `Welcome!`}
             Welcome {userData?.name}!
           </Text>
 
