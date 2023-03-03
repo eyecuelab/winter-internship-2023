@@ -21,7 +21,7 @@ interface Props {
 
 const Lobby = (props: Props) => {
   const { userData, setUserData } = props;
-  const [userataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
+  const [useDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
@@ -144,11 +144,11 @@ const Lobby = (props: Props) => {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (
             gameUsers.length !== 0 &&
-            gameUsers.length < 4 &&
+            gameUsers.length < 8 &&
             lastPost.isActive === true
           ) {
             joinAGame(gameUsers);
-          } else if ((gameUsers.length = 0 || 4)) {
+          } else if ((gameUsers.length = 0 || 8)) {
             startAGame();
           }
         });

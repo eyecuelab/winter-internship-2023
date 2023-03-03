@@ -35,7 +35,7 @@ function Canvas(props: Props) {
   const { gameId, userData, roomGameRef } = props;
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(true);
+    useState(false);
 
   const explosionSound = new Audio(explosionSoundEffect);
   const turningSound = new Audio(turningSoundEffect);
@@ -269,6 +269,22 @@ function Canvas(props: Props) {
     }
   };
 
+  const findFurthersSpawnPoint = (currentKart: Kart) => {
+    if(currentKart.position.x < 880){
+      if(currentKart.position.y < 560){
+        return 0;
+      } else{
+        return 2;
+      }
+    } else {
+      if(currentKart.position.y < 560){
+        return 1;
+      } else{
+        return 3;
+      }
+    }
+  }
+
   const checkForGhostCollisions = () => {
     const teamColor = myGameRef.current.myTeam.color;
     const currentKart: Kart =
@@ -289,7 +305,8 @@ function Canvas(props: Props) {
           if (
             ghostCollidesWithKart({ ghost: currentKart, paCart: item.pacKart })
           ) {
-            const spawnNum = Math.floor(Math.random() * 4);
+
+            const spawnNum = findFurthersSpawnPoint(currentKart);
 
             const kartColor = item.color;
             const ghostColor = myGameRef.current.myTeam.color;
@@ -714,7 +731,7 @@ function Canvas(props: Props) {
               position: spawnPosition.position,
               velocity: { x: 0, y: 0 },
               angle: { currentAngle: 0, goalAngle: 0 },
-              characterId: numberOfUsers > 3 ? 2 : 1,
+              characterId: numberOfUsers > 3 && numberOfUsers < 7 ? 2 : 1,
               gameId: parseInt(gameId),
               kartId: 1,
             });
@@ -766,7 +783,7 @@ function Canvas(props: Props) {
       }
       if (isWaitingForGameModalOpen) {
         setMyGameState(myGameRef.current);
-        if (numberOfUsers === 4 && isTimerReady) {
+        if (numberOfUsers === 8 && isTimerReady) {
           setInterval(async () => {
             setIsCountingDown(true);
           }, 3000);
