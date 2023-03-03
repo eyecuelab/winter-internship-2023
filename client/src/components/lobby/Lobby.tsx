@@ -1,23 +1,11 @@
-import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
 import { userType } from "../../types/Types";
-import { socketId, socket } from "./../../GlobalSocket";
+import { socketId, socket } from "../../GlobalSocket";
 import { getUserDataGoogle } from "./services/lobby-services";
 import CoverImage from "../../assets/cover.png";
-import {
-  Button,
-  Col,
-  Container,
-  Navbar,
-  Row,
-  Text,
-  User,
-  Card,
-  Spacer,
-  useModal,
-} from "@nextui-org/react";
+import { Button, Container, Text, Card, Spacer } from "@nextui-org/react";
 import { generateMapQuadrants } from "../canvas/quadrants";
 import { GameMap } from "../canvas/gameClasses";
 import { Instructions, useInstructions } from "./HowToPlay";
@@ -31,7 +19,6 @@ interface UserDataGoogle {
 interface Props {
   userData: userType | undefined;
   setUserData: React.Dispatch<React.SetStateAction<userType | undefined>>;
-  logout: () => void;
 }
 
 const Lobby = (props: Props) => {
@@ -77,7 +64,7 @@ const Lobby = (props: Props) => {
       setUserData({
         id: resp.id,
         email: resp.email,
-        name: resp.name
+        name: resp.name,
       });
     });
   };
@@ -87,44 +74,42 @@ const Lobby = (props: Props) => {
       if (!user) {
         handleCreateUser(object);
       } else {
-        if(user.id){
+        if (user.id) {
           setUserData({
             id: user.id,
             email: user.email,
-            name: user.name
+            name: user.name,
           });
         } else {
           navigate(`/`);
         }
-        
       }
     });
   };
 
-  const setLogOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("loginWith");
-    navigate("/");
+  const handleLogout = () => {
+    setUserData(undefined);
+    localStorage.clear();
+    window.localStorage.clear();
   };
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
-      postData(`/gameUser`, {
-        gameId: gameUsers[0].gameId,
-        userId: userData?.id,
-        roleId: 1,
-      }).then((gameUser) => {
-        if(gameUser.gameId){
-          const gameId = gameUser.gameId;
-          const userId = gameUser.userId;
-          
-          socket.emit("join_game_room", { gameId, userId });
-          navigate(`/game/${gameId}`);
-        } else {
-          navigate(`/`);
-        }
-        
-      });
+    postData(`/gameUser`, {
+      gameId: gameUsers[0].gameId,
+      userId: userData?.id,
+      roleId: 1,
+    }).then((gameUser) => {
+      if (gameUser.gameId) {
+        const gameId = gameUser.gameId;
+        const userId = gameUser.userId;
+
+        socket.emit("join_game_room", { gameId, userId });
+        navigate(`/game/${gameId}`);
+      } else {
+        navigate(`/`);
+      }
+    });
   };
 
   const startAGame = () => {
@@ -163,11 +148,11 @@ const Lobby = (props: Props) => {
         getData(`/game/${lastPost.id}/gameUser`).then((gameUsers) => {
           if (
             gameUsers.length !== 0 &&
-            gameUsers.length < 4 &&
+            gameUsers.length < 8 &&
             lastPost.isActive === true
           ) {
             joinAGame(gameUsers);
-          } else if ((gameUsers.length = 0 || 4)) {
+          } else if ((gameUsers.length = 0 || 8)) {
             startAGame();
           }
         });
@@ -216,8 +201,11 @@ const Lobby = (props: Props) => {
             <Spacer x={0.5} />
             How to Play
           </Button>
-          
-          
+          <Spacer y={1} />
+          <Button color="gradient" onClick={handleLogout}>
+            <Spacer x={0.5} />
+            LOG OUT
+          </Button>
         </Card>
         <Instructions areInstructionsModalOpen={isOpen} toggle={toggle}></Instructions>
       </Container>

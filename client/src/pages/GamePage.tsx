@@ -3,13 +3,14 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
-import { roomGameType, userType, myGameType, lastKeyType } from "../types/Types";
-import backgroundMusic from "../assets/backgroundMusic.wav";
 import {
-  Kart,
-  Team
-} from "./../components/canvas/gameClasses";
-
+  roomGameType,
+  userType,
+  myGameType,
+  lastKeyType,
+} from "../types/Types";
+import backgroundMusic from "../assets/backgroundMusic.wav";
+import { Kart, Team } from "./../components/canvas/gameClasses";
 
 interface Props {
   userData: userType | undefined;
@@ -34,14 +35,15 @@ const GamePage = (props: Props) => {
   });
 
   const lastKeyRef = useRef<lastKeyType>({
-    lastKey: ""
+    lastKey: "",
   });
 
-  const [roomGameStateWrapper, setRoomGameStateWrapper] = useState<roomGameType>({
-    karts: new Map(),
-    scores: new Map(),
-    isGameOver: false,
-  });
+  const [roomGameStateWrapper, setRoomGameStateWrapper] =
+    useState<roomGameType>({
+      karts: new Map(),
+      scores: new Map(),
+      isGameOver: false,
+    });
 
   const [myGameStateWrapper, setMyGameStateWrapper] = useState<myGameType>({
     userList: [],
@@ -50,7 +52,6 @@ const GamePage = (props: Props) => {
     myTeam: new Team(),
     myKart: new Kart(), // deprecated
   });
-
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
@@ -64,30 +65,14 @@ const GamePage = (props: Props) => {
       gameMusic.pause();
       gameMusic.currentTime = 0;
     }
-
   }, [gameMusic, isMusicPlaying]);
 
-  // useMemo(() => {
-  //   updateWrapperState();
-  // },[myGameStateWrapper, roomGameStateWrapper]
-  // );
-
-  // useEffect(()=> {
-  //   console.log(myGameStateWrapper);
-  //   console.log(roomGameStateWrapper);
-  // }, [myGameStateWrapper, roomGameStateWrapper])
-
   const updateWrapperState = () => {
-    // console.count();
-    // console.log(myGameRef.current);
-    // console.log(roomGameRef.current);
     const myGameRefCurrent = myGameRef.current;
-    const roomGameRefCurrent = roomGameRef.current
+    const roomGameRefCurrent = roomGameRef.current;
     setMyGameStateWrapper(myGameRefCurrent);
     setRoomGameStateWrapper(roomGameRefCurrent);
-    // console.log(myGameStateWrapper);
-    // console.log(roomGameStateWrapper);
-  }
+  };
 
   const handlePauseClick = () => {
     setIsMusicPlaying(!isMusicPlaying);
@@ -95,15 +80,27 @@ const GamePage = (props: Props) => {
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
+      <GamePageWrapper
+        handlePauseClick={handlePauseClick}
+        roomGameStateWrapper={roomGameStateWrapper}
+        myGameStateWrapper={myGameStateWrapper}
+        updateWrapperState={updateWrapperState}
+        lastKeyRef={lastKeyRef}
+      />
       <div>
-        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
-        {/*setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} />*/}
-        
+        <Canvas
+          gameId={gameId}
+          userData={userData}
+          roomGameRef={roomGameRef}
+          myGameRef={myGameRef}
+          setRoomGameStateWrapper={setRoomGameStateWrapper}
+          setMyGameStateWrapper={setMyGameStateWrapper}
+          updateWrapperState={updateWrapperState}
+          lastKeyRef={lastKeyRef}
+        />
       </div>
     </div>
   );
 };
 
 export default GamePage;
-

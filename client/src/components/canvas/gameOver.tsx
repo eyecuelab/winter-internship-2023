@@ -55,6 +55,7 @@ export function GameOver(props: GameOverType) {
       }
     }
   };
+
   return (
     <>
       {props.isGameOverModalOpen && (

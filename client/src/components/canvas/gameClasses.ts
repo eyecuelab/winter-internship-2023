@@ -26,7 +26,6 @@ export class Kart {
     this.position = kartData?.position ?? { x: 0, y: 0 };
     this.velocity = kartData?.velocity ?? { x: 0, y: 0 };
     this.radius = 35;
-    //this.imgSrc = kartData?.imgSrc ?? "";
     this.angle = kartData?.angle ?? { currentAngle: 0, goalAngle: 0 };
     this.isGhost = kartData?.isGhost ?? false;
   }
@@ -141,7 +140,7 @@ export class Poof {
   static readonly SHRINK_SPEED = 2;
   static readonly FADE_SPEED = 1;
 
-  constructor(position: {x:number, y:number}, size: number, angle: number) {
+  constructor(position: { x: number; y: number }, size: number, angle: number) {
     this.position = position;
     this.size = size;
     this.opacity = 100;
@@ -150,7 +149,7 @@ export class Poof {
 
   update() {
     this.size -= Poof.SHRINK_SPEED;
-    
+
     this.opacity -= Poof.FADE_SPEED;
 
     this.size = Math.max(0, this.size);
@@ -186,7 +185,6 @@ export class GameMap {
     );
 
     function reverseArrs(arr: any[]) {
-      //reverses each arrays elements w/in a 2d array
       const reversedArr = arr.map((innerArr: any[]) =>
         innerArr.slice().reverse()
       );
@@ -194,7 +192,6 @@ export class GameMap {
     }
 
     function reverseOrderOfArrs(arr: any[]) {
-      //reverses order of arrays w/in a 2d array
       const reversedArr = arr
         .slice()
         .reverse()
