@@ -36,6 +36,9 @@ import { orangeGhostSvgString } from "../../assets/orangeGhostSvg";
 import { pinkGhostSvgString } from "../../assets/pinkGhostSvg";
 import { blueGhostSvgString } from "../../assets/blueGhostSvg";
 import { poofSvgString } from "../../assets/poofSvg";
+import explosionSoundEffect from "../../assets/explosion.wav";
+import pelletSoundEffect from "../../assets/pellet.wav";
+import turningSoundEffect from "../../assets/turning-corner.wav";
 
 interface Props {
   gameId: string | undefined;
@@ -47,7 +50,11 @@ function Canvas(props: Props) {
   const { gameId, userData, roomGameRef } = props;
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(false);
+    useState(true);
+
+  const explosionSound = new Audio(explosionSoundEffect);
+  const turningSound = new Audio(turningSoundEffect);
+  const pelletSound = new Audio(pelletSoundEffect);
 
   const colors = ["blue", "orange", "pink", "red"];
   const mapBrickSvgRef = useRef<HTMLImageElement | undefined>();
@@ -104,27 +111,10 @@ function Canvas(props: Props) {
   //UPDATE GAME STATE FUNCTIONS:
   //updates kart movement based on collision detection and player axis control:
 
-  const checkCollisionsWithBoundaries = (
-    kart: Kart,
-    boundaries: Boundary[]
-  ) => {
-    for (let i = 0; i < boundaries.length; i++) {
-      const boundary = boundaries[i];
-      if (
-        kartCollidesWithBoundary({
-          circle: kart,
-          rectangle: boundary,
-        })
-      ) {
-        kart.velocity.y = 0;
-        kart.velocity.x = 0;
-      }
-    }
-  };
-
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
     const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
       const previousXVelocity = kart.velocity.x;
@@ -141,7 +131,7 @@ function Canvas(props: Props) {
                 ...kart,
                 velocity: {
                   x: 0,
-                  y: -10,
+                  y: -velocityUnit,
                 },
               },
               rectangle: boundary,
@@ -152,7 +142,7 @@ function Canvas(props: Props) {
 
             break;
           } else {
-            kart.velocity.y = -10;
+            kart.velocity.y = -velocityUnit;
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -171,7 +161,7 @@ function Canvas(props: Props) {
                 ...kart,
                 velocity: {
                   x: kart.velocity.x,
-                  y: 10,
+                  y: velocityUnit,
                 },
               },
               rectangle: boundary,
@@ -181,7 +171,7 @@ function Canvas(props: Props) {
             kart.velocity.x = previousXVelocity;
             break;
           } else {
-            kart.velocity.y = 10;
+            kart.velocity.y = velocityUnit;
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -212,7 +202,8 @@ function Canvas(props: Props) {
 
   const updateKartXMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
+    const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
       const previousYVelocity = kart.velocity.y;
@@ -228,7 +219,7 @@ function Canvas(props: Props) {
               circle: {
                 ...kart,
                 velocity: {
-                  x: -10,
+                  x: -velocityUnit,
                   y: 0,
                 },
               },
@@ -239,7 +230,7 @@ function Canvas(props: Props) {
             kart.velocity.y = previousYVelocity;
             break;
           } else {
-            kart.velocity.x = -10;
+            kart.velocity.x = -velocityUnit;
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -256,7 +247,7 @@ function Canvas(props: Props) {
               circle: {
                 ...kart,
                 velocity: {
-                  x: 10,
+                  x: velocityUnit,
                   y: 0,
                 },
               },
@@ -267,7 +258,7 @@ function Canvas(props: Props) {
             kart.velocity.y = previousYVelocity;
             break;
           } else {
-            kart.velocity.x = 10;
+            kart.velocity.x = velocityUnit;
             kart.velocity.y = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
@@ -384,6 +375,8 @@ function Canvas(props: Props) {
           pellet.isVisible === true
         ) {
           pellet.isVisible = false;
+          playPelletSound();
+
           updateScore(10);
           const isGameOver = hasPellets();
 
@@ -427,6 +420,7 @@ function Canvas(props: Props) {
       );
       if (myGameRef.current.myControl === "x") {
         if (kart?.velocity.x != 0) {
+          playTurningSound();
           lastKeyRef.current = "";
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
@@ -436,6 +430,7 @@ function Canvas(props: Props) {
       }
       if (myGameRef.current.myControl === "y") {
         if (kart?.velocity.y != 0) {
+          playTurningSound();
           lastKeyRef.current = "";
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
@@ -476,15 +471,6 @@ function Canvas(props: Props) {
         playerControlDisplay.innerText = isInControl
           ? `YOU ARE IN CONTROL`
           : `your are NOT in control`;
-        // if (isInControl) {
-        //   canvasBorderRef.current = {
-        //     borderStyle: "solid",
-        //     borderColor: "red",
-        //     borderWidth: 10,
-        //   };
-        // } else {
-        //   canvasBorderRef.current = { borderStyle: "none" };
-        // }
       }
     }
   };
@@ -512,10 +498,6 @@ function Canvas(props: Props) {
     if (!canvas) {
       return;
     }
-    // const context = canvas.getContext("2d");
-    // if (!context) {
-    //   return;
-    // }
 
     const myKartForCamera = roomGameRef.current?.karts.get(
       myGameRef.current.myTeam.color
@@ -852,6 +834,8 @@ function Canvas(props: Props) {
 
     socket.on("receive_ghost_kart_toggle", (data) => {
       const { kartColor, ghostColor, spawnNum } = data;
+      playExplosionSound();
+      console.log('explosion sound!')
       if (
         myGameRef.current.myTeam.playerInControl === socket.id &&
         myGameRef.current.myTeam.color === kartColor
@@ -871,6 +855,7 @@ function Canvas(props: Props) {
     });
 
     socket.on("receive_toggle_player_control", (data) => {
+      playTurningSound();
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
@@ -885,12 +870,11 @@ function Canvas(props: Props) {
     });
 
     socket.on("disconnect_game_over", (data) => {
-      console.log("disconnect game over:", data)
-      if(data === gameId){
+      console.log("disconnect game over:", data);
+      if (data === gameId) {
         toggleGameOver();
       }
-    })
-
+    });
 
     setInterval(async () => {
       if (myGameRef.current.myTeam.players.x === socketId) {
@@ -903,7 +887,7 @@ function Canvas(props: Props) {
         const currentIsGameOver = roomGameRef.current?.isGameOver;
         const currentPellets = pelletsRef.current;
         const currentTeamId = myGameRef.current.myTeam.teamId;
-  
+
         socket.emit("db_update", {
           gameId,
           currentTeamId,
@@ -917,13 +901,11 @@ function Canvas(props: Props) {
 
     return () => {
       const userId = userData?.id;
-      const leaveRoomData = {gameId, userId}
-      socket.emit('leave_room', leaveRoomData);
+      const leaveRoomData = { gameId, userId };
+      socket.emit("leave_room", leaveRoomData);
       socket.removeAllListeners();
     };
   }, [socket]);
-
-
 
   //KEYBOARD EVENT LISTENERS
   useEffect(() => {
@@ -972,6 +954,24 @@ function Canvas(props: Props) {
       }
     }
     return true;
+  };
+
+  const playPelletSound = () => {
+    pelletSound.currentTime = 0;
+    pelletSound.volume = .5;
+    pelletSound.play();
+  };
+
+  const playTurningSound = () => {
+    turningSound.currentTime = 0;
+    turningSound.volume = .5;
+    turningSound.play();
+  };
+
+  const playExplosionSound = () => {
+    explosionSound.currentTime = 0;
+    explosionSound.volume = .5;
+    explosionSound.play();
   };
 
   return (
