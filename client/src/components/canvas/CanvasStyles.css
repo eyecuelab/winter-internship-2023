@@ -1,5 +1,12 @@
 body {
   background-color: rgb(93,93,126);
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+@font-face {
+  font-family: 'namco regular';
+  src: url(./../../assets/namco.ttf);
 }
 
 @font-face {

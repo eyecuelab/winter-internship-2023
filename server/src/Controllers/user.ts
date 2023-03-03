@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { /*getOneUser,*/ createUser, findUserByEmail } from "../Models/user";
+import { createUser, deactivateLastGameForUser, findUserByEmail } from "../Models/user";
 
 const prisma = new PrismaClient();
 
@@ -31,6 +31,18 @@ const userControllers = {
     });
     return newUser;
   },
+
+  async deactivateLastGame(req: any, res: any) {
+    const { userId } = req.params;
+  
+    const result = await deactivateLastGameForUser(parseInt(userId));
+  
+    if (result.error) {
+      return res.status(404).json({ message: result.error });
+    }
+  
+    return res.json(result);
+  }
 };
 
 export default userControllers;
