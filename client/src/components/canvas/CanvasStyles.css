@@ -1,5 +1,7 @@
 body {
   background-color: rgb(93,93,126);
+  overflow-y: hidden;
+  overflow-x: hidden;
 }
 
 @font-face {
