@@ -1,30 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import frameRenderer from "./frameRenderer";
-import {
-  Boundary,
-  Kart,
-  Team,
-  Pellet,
-  SpawnPoint,
-  GameMap,
-  Poof,
-} from "./gameClasses";
+import { postData } from "../../apiHelper";
+import { myGameType, roomGameType, userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
+import "./CanvasStyles.css";
+import { frameRenderer } from "./frameRenderer";
+import { kartCollidesWithBoundary } from "./kartCollidesWithBoundary";
+import { ghostCollidesWithKart } from "./ghostCollidesWithKart";
+import { Boundary, Kart, Team, Pellet, SpawnPoint, Poof } from "./gameClasses";
 import { Time, TimeMath } from "./FPSEngine";
-import { gameMap } from "./Maps";
 import { GameOver } from "./gameOver";
 import { WaitingForStart } from "./waitingForStart";
-import "./CanvasStyles.css";
-import {
-  myGameType,
-  roomGameType,
-  kartType,
-  userType,
-} from "../../types/Types";
-import { kartCollidesWithBoundary } from "./kartCollidesWithBoundary";
-import { generateMapQuadrants } from "./quadrants";
-import { ghostCollidesWithKart } from "./ghostCollidesWithKart";
-import { postData } from "../../apiHelper";
 import { mapBrickSvgString } from "../../assets/mapBrickSvg";
 import { pelletSvgString } from "../../assets/pelletSvg";
 import { redKartSvgString } from "../../assets/redKartSvg";
@@ -90,7 +75,7 @@ function Canvas(props: Props) {
     myTeamMate: "",
     myControl: "",
     myTeam: new Team(),
-    myKart: new Kart(), // deprecated
+    myKart: new Kart(),
   });
 
   const [myGameState, setMyGameState] = useState<myGameType>({
@@ -98,7 +83,7 @@ function Canvas(props: Props) {
     myTeamMate: "",
     myControl: "",
     myTeam: new Team(),
-    myKart: new Kart(), // deprecated
+    myKart: new Kart(),
   });
 
   //WAITING FOR GAME START STATE:
@@ -835,7 +820,7 @@ function Canvas(props: Props) {
     socket.on("receive_ghost_kart_toggle", (data) => {
       const { kartColor, ghostColor, spawnNum } = data;
       playExplosionSound();
-      console.log('explosion sound!')
+      console.log("explosion sound!");
       if (
         myGameRef.current.myTeam.playerInControl === socket.id &&
         myGameRef.current.myTeam.color === kartColor
@@ -958,19 +943,19 @@ function Canvas(props: Props) {
 
   const playPelletSound = () => {
     pelletSound.currentTime = 0;
-    pelletSound.volume = .5;
+    pelletSound.volume = 0.5;
     pelletSound.play();
   };
 
   const playTurningSound = () => {
     turningSound.currentTime = 0;
-    turningSound.volume = .5;
+    turningSound.volume = 0.5;
     turningSound.play();
   };
 
   const playExplosionSound = () => {
     explosionSound.currentTime = 0;
-    explosionSound.volume = .5;
+    explosionSound.volume = 0.5;
     explosionSound.play();
   };
 

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
@@ -19,7 +18,6 @@ const GamePage = (props: Props) => {
     scores: new Map(),
     isGameOver: false,
   });
-
 
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
@@ -41,7 +39,10 @@ const GamePage = (props: Props) => {
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameRef={roomGameRef}/>
+      <GamePageWrapper
+        handlePauseClick={handlePauseClick}
+        roomGameRef={roomGameRef}
+      />
       <div>
         <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} />
       </div>

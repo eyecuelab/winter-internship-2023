@@ -1,4 +1,3 @@
-import * as io from "socket.io-client";
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { getData, postData } from "../../apiHelper";
@@ -6,17 +5,7 @@ import { userType } from "../../types/Types";
 import { socketId, socket } from "./../../GlobalSocket";
 import { getUserDataGoogle } from "./services/lobby-services";
 import CoverImage from "../../assets/cover.png";
-import {
-  Button,
-  Col,
-  Container,
-  Navbar,
-  Row,
-  Text,
-  User,
-  Card,
-  Spacer,
-} from "@nextui-org/react";
+import { Button, Container, Text, Card, Spacer } from "@nextui-org/react";
 import { generateMapQuadrants } from "../canvas/quadrants";
 import { GameMap } from "../canvas/gameClasses";
 
@@ -32,8 +21,8 @@ interface Props {
 }
 
 const Lobby = (props: Props) => {
-  const { userData, setUserData } = props;
-  const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
+  const { userData, setUserData, logout } = props;
+  const [userataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));
@@ -74,7 +63,7 @@ const Lobby = (props: Props) => {
       setUserData({
         id: resp.id,
         email: resp.email,
-        name: resp.name
+        name: resp.name,
       });
     });
   };
@@ -84,44 +73,42 @@ const Lobby = (props: Props) => {
       if (!user) {
         handleCreateUser(object);
       } else {
-        if(user.id){
+        if (user.id) {
           setUserData({
             id: user.id,
             email: user.email,
-            name: user.name
+            name: user.name,
           });
         } else {
           navigate(`/`);
         }
-        
       }
     });
   };
 
-  const setLogOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("loginWith");
-    navigate("/");
+  const handleLogout = () => {
+    setUserData(undefined);
+    localStorage.clear();
+    window.localStorage.clear();
   };
 
   //start game functions:
   const joinAGame = (gameUsers: any) => {
-      postData(`/gameUser`, {
-        gameId: gameUsers[0].gameId,
-        userId: userData?.id,
-        roleId: 1,
-      }).then((gameUser) => {
-        if(gameUser.gameId){
-          const gameId = gameUser.gameId;
-          const userId = gameUser.userId;
-          
-          socket.emit("join_game_room", { gameId, userId });
-          navigate(`/game/${gameId}`);
-        } else {
-          navigate(`/`);
-        }
-        
-      });
+    postData(`/gameUser`, {
+      gameId: gameUsers[0].gameId,
+      userId: userData?.id,
+      roleId: 1,
+    }).then((gameUser) => {
+      if (gameUser.gameId) {
+        const gameId = gameUser.gameId;
+        const userId = gameUser.userId;
+
+        socket.emit("join_game_room", { gameId, userId });
+        navigate(`/game/${gameId}`);
+      } else {
+        navigate(`/`);
+      }
+    });
   };
 
   const startAGame = () => {
@@ -203,6 +190,11 @@ const Lobby = (props: Props) => {
           <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
             JOIN GAME!
+          </Button>
+          <Spacer y={1} />
+          <Button color="gradient" onClick={handleLogout}>
+            <Spacer x={0.5} />
+            LOG OUT
           </Button>
         </Card>
       </Container>
