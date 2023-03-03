@@ -215,6 +215,7 @@ function GamePageWrapper (props:Props) {
           } else {
             teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
           }
+          li.textContent =`${myTeam?.color} pacman`;
         }
 
         if (myKart?.isGhost === true) {
@@ -232,6 +233,7 @@ function GamePageWrapper (props:Props) {
           } else {
             teamImg.setAttribute('src', `${blueGhostSvgRef.current?.src}`);
           }
+          li.textContent =`${myTeam?.color} ghost`;
         }
         const divElement = document.createElement('div');
         divElement.style.display = 'block';
