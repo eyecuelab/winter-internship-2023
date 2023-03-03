@@ -1,14 +1,14 @@
-import { useGoogleLogin } from "@react-oauth/google";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import React, { Dispatch, SetStateAction } from "react";
-import { userType } from "../../types/Types";
+import { useGoogleLogin } from "@react-oauth/google";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
 import CoverImage from '../../assets/cover.png';
+import "./loginStyles.css";
+import { userType } from "../../types/Types";
 
 interface Props {
   userData: userType | undefined;
   setUserData: React.Dispatch<React.SetStateAction<userType | undefined>>;
-  logout: () => void;
 }
 
 const Login = () => {
@@ -56,7 +56,6 @@ const Login = () => {
             Login with
           </Text>
           <Spacer y={1} />
-
           <Button color="gradient" onClick={() => loginToGoogle()}>
             <Spacer x={0.5} />
             Google
@@ -67,6 +66,7 @@ const Login = () => {
             Continue as Guest
           </Button>
         </Card>
+
       </Container>
     </>
   );
