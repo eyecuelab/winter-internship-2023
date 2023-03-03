@@ -85,6 +85,15 @@ const GamePage = (props: Props) => {
     // console.log(roomGameStateWrapper);
   }
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "q") {
+        console.log(roomGameStateWrapper);
+        console.log(myGameStateWrapper);
+  
+      } 
+    }});
+
   const handlePauseClick = () => {
     setIsMusicPlaying(!isMusicPlaying);
   };

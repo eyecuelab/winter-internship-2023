@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState} from 'react';
 import { roomGameType, myGameType } from '../types/Types';
 import { Kart, Team } from "../components/canvas/gameClasses";
 import "./gamePageStyles.css";
-import { verticalDirSvgString } from "../assets/verticalDirSvg";
-import { horizontalDirSvgString } from "../assets/horizontalDirSvg";
+import { verticalDirSvgString } from "../assets/verticalDirBothYellowSvg";
+import { horizontalDirSvgString } from "../assets/horizontalDirBothYellowSvg";
 import { redGhostIconSvgString } from "../assets/redGhostIconSvg";
 import { pinkGhostIconSvgString } from "../assets/pinkGhostIconSvg";
 import { blueGhostIconSvgString } from "../assets/blueGhostIconSvg";
@@ -12,6 +12,7 @@ import { redPacmanIconSvgString } from "../assets/redPacmanIconSvg";
 import { bluePacmanIconSvgString } from "../assets/bluePacmanIconSvg";
 import { orangePacmanIconSvgString } from "../assets/orangePacmanIconSvg";
 import { pinkPacmanIconSvgString } from "../assets/pinkPacmanIconSvg";
+import { socketId } from "./../GlobalSocket";
 
 interface Props {
   handlePauseClick: () => void;
@@ -38,6 +39,7 @@ function GamePageWrapper (props:Props) {
   // const [myGame, setMyGame] = useState<myGameType | null>(null);
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const verticalDirImg = new Image();
@@ -103,17 +105,25 @@ function GamePageWrapper (props:Props) {
   }, [])
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setCount(prevCount => prevCount + 1);
+    }, 33);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     if (myGameStateWrapper.myTeam && roomGameStateWrapper.karts) {
       const myCurrentTeam = myGameStateWrapper.myTeam;
       const myCurrentKart = roomGameStateWrapper.karts.get(myCurrentTeam.color);
-      console.log(roomGameStateWrapper);
-      console.log(myGameStateWrapper);
-      console.log(myCurrentTeam.color);
-      console.log(myCurrentKart)
+      // console.log(roomGameStateWrapper);
+      // console.log(myGameStateWrapper);
+      // console.log(myCurrentTeam.color);
+      // console.log(myCurrentKart)
       setMyTeam(myCurrentTeam);
-      console.log(myTeam);
+      // console.log(myTeam);
       setMyKart(myCurrentKart);
-      console.log(myKart);
+      // console.log(myKart);
     }
     displayTeam();
     updateWrapperState();
@@ -184,7 +194,22 @@ function GamePageWrapper (props:Props) {
         }
         teamInfo?.appendChild(liTwo);
       }
-     
+      console.log(myTeam);
+      console.log(myKart);
+      
+      const liThree = document.createElement("li");
+      liThree.setAttribute('id', 'my-direction-wrapper');
+      const dirImg = document.createElement("img"); 
+      dirImg.setAttribute('id', 'dir-img-wrapper');
+      console.log(myTeam?.playerInControl);
+      if (socketId === myTeam?.playerInControl) {
+        dirImg.setAttribute('src', `${verticalDirSvgRef.current?.src}`);
+      } else {
+        // dirImg.setAttribute('src', `${pinkGhostSvgRef.current?.src}`);
+      }
+      liThree.appendChild(dirImg);
+      console.log(liThree.textContent);
+      teamInfo?.appendChild(liThree);
   } 
 
 
@@ -198,7 +223,9 @@ function GamePageWrapper (props:Props) {
       
       <div id="right"></div>
       <div id="top"></div>
-      <div id="bottom"></div>
+      <div id="bottom">
+        <div>{count}</div>;
+      </div>
     </>
   )
 }

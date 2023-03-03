@@ -2,8 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import React, { ReactNode } from "react";
 import { Kart, Team } from "./gameClasses";
 import { myGameType, roomGameType } from "./../../types/Types"
-import { verticalDirSvgString } from "../../assets/verticalDirSvg";
-import { horizontalDirSvgString } from "../../assets/horizontalDirSvg";
+import { verticalDirSvgString } from "../../assets/verticalDirBothYellowSvg";
+import { horizontalDirSvgString } from "../../assets/horizontalDirBothYellowSvg";
 import { redGhostIconSvgString } from "../../assets/redGhostIconSvg";
 import { pinkGhostIconSvgString } from "../../assets/pinkGhostIconSvg";
 import { blueGhostIconSvgString } from "../../assets/blueGhostIconSvg";
