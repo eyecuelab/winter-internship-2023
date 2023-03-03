@@ -129,7 +129,6 @@ function Canvas(props: Props) {
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
           }
         }
       } else if (
@@ -158,7 +157,6 @@ function Canvas(props: Props) {
             kart.velocity.x = 0;
             kart.angle.goalAngle =
               Math.atan2(kart.velocity.y, kart.velocity.x) + Math.PI / 2;
-            console.log(kart.angle);
           }
         }
       }
@@ -837,7 +835,6 @@ function Canvas(props: Props) {
         myGameRef.current.myTeam.playerInControl === socket.id &&
         myGameRef.current.myTeam.color === kartColor
       ) {
-        console.log("toggling")
         toggleToGhost(spawnNum);
       }
       initiatePoofAnimation(spawnNum, ghostColor);
@@ -869,7 +866,6 @@ function Canvas(props: Props) {
     });
 
     socket.on("disconnect_game_over", (data) => {
-      console.log("disconnect game over:", data);
       if (data === gameId) {
         toggleGameOver();
       }

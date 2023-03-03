@@ -10,8 +10,6 @@ interface Props {
 function GamePageWrapper(props: Props) {
   const { handlePauseClick, roomGameRef } = props;
 
-  console.log(roomGameRef.current);
-
   return (
     <>
       <div id="left">
