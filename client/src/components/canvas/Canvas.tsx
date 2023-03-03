@@ -487,7 +487,7 @@ function Canvas(props: Props) {
           myGameRef.current.myTeam.color
         );
         const cxt = contextRef.current;
-        cxt.scale(1.25, 1.25);
+        cxt.scale(1, 1);
       }
     }
   }, []);
