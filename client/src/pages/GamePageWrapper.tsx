@@ -341,25 +341,7 @@ function GamePageWrapper (props:Props) {
               liFive.style.color = "#D52527";
             }
       }
-      // if (scoresArr[1][0] === "blue") {
-      //   if (liFour) {
-      //     liFour.style.color = "#005487";
-      //   }
-      //  } else if (scoresArr[1][0] === "orange") {
-      //     if (liFour) {
-      //       liFour.style.color = "#F69343";
-      //     }
-      //   } else if (scoresArr[1][0] === "pink") {
-      //     if (liFour) {
-      //       liFour.style.color = "#F06ACA";
-      //     }
-      //   } else if (scoresArr[1][0] === "red") {
-      //       if (liFour) {
-      //         liFour.style.color = "#D52527";
-      //       }
-      //   }
       scoresInfo?.appendChild(liFive);
-
   } 
 
 
@@ -370,7 +352,7 @@ function GamePageWrapper (props:Props) {
         </ul>
         <p id="score-heading-wrapper">scores</p>
         <ul id="scores-info"></ul>
-        <button id="music-button"style={{marginTop: 50}} onClick={handlePauseClick}>music</button>
+        <button id="music-button"style={{marginTop: 50}} onClick={handlePauseClick}>music on/off</button>
       </div>
       
       <div id="right"></div>

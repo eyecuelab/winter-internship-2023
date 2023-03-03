@@ -69,7 +69,7 @@
     font-family: 'namco regular';
     text-align: left;
     padding: 5px;
-    margin: 0px 30px;
+    margin: 0px 30px 70px 30px;
     font-size: 1.2em;
   }
 
@@ -81,7 +81,7 @@
     font-family: 'namco regular';
    }
 
-    #music-button {
+    #left #music-button {
     background-color:  #5D5D7E;
     border: none;
     color: white;
@@ -90,9 +90,8 @@
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
-    box-shadow: 2px 2px white;
-    margin-top: 2rem;
-    margin-left: 70px;
+    box-shadow: -2px 2px white;
+    margin: 0px 60px 40px 70px;
     }
 
     #my-turn {
