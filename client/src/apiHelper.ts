@@ -1,13 +1,10 @@
-export const API_ENDPOINT = "http://localhost:3001";
-// export const API_ENDPOINT = "https://super-pacart.fly.dev";
-
-// const credentials: RequestCredentials = "include";
+// export const API_ENDPOINT = "http://localhost:3001";
+export const API_ENDPOINT = "https://super-pacart.fly.dev";
 
 const BASE_HEADERS = {
   headers: {
     "Content-Type": "application/json",
-  }, //,
-  // credentials: credentials,
+  }, 
 };
 
 const handleResponse = async (response: Response) => {
