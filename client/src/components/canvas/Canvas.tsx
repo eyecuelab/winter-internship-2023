@@ -90,6 +90,7 @@ function Canvas(props: Props) {
 
   //UPDATE GAME STATE FUNCTIONS:
   const updateKartYMovements = () => {
+    if (isWaitingForGameModalOpen === false) {
     const myColor = myGameRef.current?.myTeam.color;
     if (myColor) {
     const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
@@ -176,14 +177,18 @@ function Canvas(props: Props) {
     }
   
     return kart;
+   }
   }
-  };
+};
 
   const updateKartXMovements = () => {
+
+    if (isWaitingForGameModalOpen === false) {
     const myColor = myGameRef.current?.myTeam.color;
     if (myColor) {
-      const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
-      const velocityUnit = kart.isGhost ? 20 : 10;
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
+    const velocityUnit = kart.isGhost ? 20 : 10;
+
 
       if (isGameOverModalOpen === false) {
         const previousYVelocity = kart.velocity.y;
@@ -266,6 +271,7 @@ function Canvas(props: Props) {
       }
     }
   };
+
 
   const findFurthestSpawnPoint = (currentKart: Kart) => {
     if (currentKart.position.x < 880) {
@@ -541,8 +547,8 @@ function Canvas(props: Props) {
       );
     }
 
- }
-  };
+  }
+};
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -845,7 +851,9 @@ function Canvas(props: Props) {
 
     socket.on("receive_toggle_player_control", (data) => {
       // playTurningSound();
-      myGameRef.current?.myTeam.updateTeamWithJson(data);
+      if (myGameRef.current) {
+        myGameRef.current.myTeam.updateTeamWithJson(data);
+      }
     });
 
     socket.on("client_disconnect", (data) => {
@@ -871,7 +879,6 @@ function Canvas(props: Props) {
       socket.removeAllListeners();
     };
   }, [socket]);
-
 
   setInterval(async () => {
     if (myGameRef.current?.myTeam.players.x === socketId) {
@@ -926,11 +933,10 @@ function Canvas(props: Props) {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-
+ 
   const toggleToGhost = (spawnNum: number) => {
-    if(myGameRef.current){
-      const kart = roomGameRef.current?.karts.get(myGameRef.current
-        .myTeam.color);
+    if (myGameRef.current) {
+    const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
   
       if (kart) {
         kart.position = spawnPointsRef.current[spawnNum].position;
@@ -938,7 +944,8 @@ function Canvas(props: Props) {
         kart.isGhost = true;
       }
     }
-  };
+  }
+};
 
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
