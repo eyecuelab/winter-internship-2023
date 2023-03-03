@@ -21,7 +21,7 @@ interface Props {
 
 const Lobby = (props: Props) => {
   const { userData, setUserData } = props;
-  const [useDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
+  const [userDataGoogle, setUserDataGoogle] = useState<null | UserDataGoogle>(
     null
   );
   const loginWith = useRef(localStorage.getItem("loginWith"));

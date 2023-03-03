@@ -41,8 +41,6 @@ function frameRenderer(
 
   const drawPellet = (pellet: Pellet) => {
     if (pellet.isVisible === true) {
-      //this.drawImage(pelletSvg, pellet.position.x - 5,
-      //  pellet.position.y - 5, 11, 11)
       this.drawImage(
         pelletSvg,
         pellet.position.x - 10,
