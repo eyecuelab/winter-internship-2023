@@ -4,6 +4,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import { userType } from "../../types/Types";
 import { Card, Spacer, Button, Text, Container } from "@nextui-org/react";
 import CoverImage from '../../assets/cover.png';
+import "./loginStyles.css";
 
 interface Props {
   userData: userType | undefined;

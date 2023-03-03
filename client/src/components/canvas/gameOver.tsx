@@ -11,6 +11,7 @@ interface GameOverType {
 }
 
 export function GameOver(props: GameOverType) {
+  console.log(props.scores);
   const navigate = useNavigate();
   const goToLobby = () => {
     navigate("/lobby");
@@ -23,10 +24,9 @@ export function GameOver(props: GameOverType) {
   const displayScores = () => {
     //this function exists in canvas so we could combine them.
     if (props.scores) {
-      const scoresArr = Array.from(props.scores, function (score) {
-        return [score[0], score[1] ?? 0];
-      });
-      const finalScoreHeading = document.createElement("h2");
+    const scoresArr = Array.from(props.scores, function (score) {
+      return [score[0], score[1] ?? 0];
+    });
 
       const scoresList = document.getElementById("scores-list");
       if (scoresList) {
@@ -54,6 +54,7 @@ export function GameOver(props: GameOverType) {
         });
       }
     }
+  }
   };
 
   displayScores();
