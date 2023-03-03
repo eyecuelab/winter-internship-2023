@@ -301,7 +301,6 @@ function GamePageWrapper (props:Props) {
         return [score[0], score[1]];
       }
       );
-      console.log(scoresArr);
       if (scoresArr[0]) {
         if (scoresArr[0][0] === "blue") {
           liFour.style.color = "#005487";

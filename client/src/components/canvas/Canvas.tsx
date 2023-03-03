@@ -109,6 +109,7 @@ function Canvas(props: Props) {
   //updates kart movement based on collision detection and player axis control:
 
   const updateKartYMovements = () => {
+    if (isWaitingForGameModalOpen === false) {
     const myColor = myGameRef.current?.myTeam.color;
     if (myColor) {
     const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
@@ -195,11 +196,14 @@ function Canvas(props: Props) {
     }
   
     return kart;
+   }
   }
-  };
+};
 
   const updateKartXMovements = () => {
-    const myColor = myGameRef.current.myTeam.color;
+    if (isWaitingForGameModalOpen === false) {
+    const myColor = myGameRef.current?.myTeam.color;
+    if (myColor) {
     const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
     const velocityUnit = kart.isGhost ? 20 : 10;
 
@@ -281,8 +285,9 @@ function Canvas(props: Props) {
       });
 
       return kart;
+     }
     }
-  }
+    }
   };
 
   const checkForGhostCollisions = () => {
@@ -460,8 +465,7 @@ function Canvas(props: Props) {
         cxt.scale(1, 1);
       }
 
-    }
-  }, []);
+    }, []);
 
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
@@ -546,8 +550,8 @@ function Canvas(props: Props) {
       );
     }
 
-//  }
-  };
+  }
+};
 
   const tick = () => {
     if (!canvasRef.current) return;
@@ -851,11 +855,13 @@ function Canvas(props: Props) {
 
     socket.on("receive_toggle_player_control", (data) => {
       // playTurningSound();
-      myGameRef.current.myTeam.updateTeamWithJson(data);
+      if (myGameRef.current) {
+        myGameRef.current.myTeam.updateTeamWithJson(data);
+      }
     });
 
     socket.on("client_disconnect", (data) => {
-      myGameRef.current.userList.forEach((user) => {
+      myGameRef.current?.userList.forEach((user) => {
         if (roomGameRef.current && data.disconnectedClientId === user) {
           roomGameRef.current.isGameOver = true;
           socket.emit("game_over", { gameId });
@@ -871,29 +877,6 @@ function Canvas(props: Props) {
       }
     });
 
-    setInterval(async () => {
-      if (myGameRef.current.myTeam.players.x === socketId) {
-        const currentScore = roomGameRef.current?.scores.get(
-          myGameRef.current.myTeam.color
-        );
-        const currentKart = roomGameRef.current?.karts.get(
-          myGameRef.current.myTeam.color
-        );
-        const currentIsGameOver = roomGameRef.current?.isGameOver;
-        const currentPellets = pelletsRef.current;
-        const currentTeamId = myGameRef.current.myTeam.teamId;
-
-        socket.emit("db_update", {
-          gameId,
-          currentTeamId,
-          currentScore,
-          currentKart,
-          currentPellets,
-          currentIsGameOver,
-        });
-      }
-    }, 10000);
-
     return () => {
       const userId = userData?.id;
       const leaveRoomData = { gameId, userId };
@@ -902,9 +885,8 @@ function Canvas(props: Props) {
     };
   }, [socket]);
 
-
   setInterval(async () => {
-    if (teamId.current && myGameRef.current) {
+    if (myGameRef.current?.myTeam.players.x === socketId) {
       const currentScore = roomGameRef.current?.scores.get(
         myGameRef.current.myTeam.color
       );
@@ -913,7 +895,7 @@ function Canvas(props: Props) {
       );
       const currentIsGameOver = roomGameRef.current?.isGameOver;
       const currentPellets = pelletsRef.current;
-      const currentTeamId = teamId.current;
+      const currentTeamId = myGameRef.current.myTeam.teamId;
 
       socket.emit("db_update", {
         gameId,
@@ -957,6 +939,7 @@ function Canvas(props: Props) {
   }, []);
  
   const toggleToGhost = (spawnNum: number) => {
+    if (myGameRef.current) {
     const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
 
     if (kart) {
@@ -964,7 +947,8 @@ function Canvas(props: Props) {
       kart.position = spawnPointsRef.current[spawnNum].position;
       kart.velocity = { x: 0, y: 0 };
     }
-  };
+  }
+};
 
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
