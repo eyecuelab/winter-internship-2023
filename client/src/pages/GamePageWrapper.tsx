@@ -257,20 +257,24 @@ function GamePageWrapper (props:Props) {
       dirImg.setAttribute('id', 'dir-img-wrapper');
       // console.log(myTeam?.playerInControl);
       if (socketId === myTeam?.playerInControl) {
-        console.log(lastKeyRef.current?.lastKey);
         if (myGameStateWrapper.myControl === 'y') {
-          if (lastKeyRef.current?.lastKey === 'w') {
-            dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
-            dirImg.setAttribute('id', 'my-turn'); 
-          } else if (lastKeyRef.current?.lastKey === 's') {
-            dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
-            dirImg.setAttribute('id', 'my-turn'); 
-          } else {
+          // if (lastKeyRef.current?.lastKey === 'w') {
+          //   dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
+          //   dirImg.setAttribute('id', 'my-turn'); 
+          // } else if (lastKeyRef.current?.lastKey === 's') {
+          //   dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
+          //   dirImg.setAttribute('id', 'my-turn'); 
+          // } else {
             dirImg.setAttribute('src', `${verticalDirBothGreySvgRef.current?.src}`)
+            dirImg.setAttribute('id', 'my-turn'); 
+          // }
+        }
+        else if (myGameStateWrapper.myControl === 'x') {
+            dirImg.setAttribute('src', `${horizontalDirBothGreySvgRef.current?.src}`)
             dirImg.setAttribute('id', 'my-turn'); 
           }
         }
-      } else {
+        else {
           if (myGameStateWrapper.myControl === 'y') {
             dirImg.removeAttribute('id'); 
             if (lastKeyState === 'w') {
@@ -279,6 +283,17 @@ function GamePageWrapper (props:Props) {
               dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
             } else {
               dirImg.setAttribute('src', `${verticalDirBothGreySvgRef.current?.src}`)
+            }
+          }
+          else if (myGameStateWrapper.myControl === 'x') {
+            dirImg.removeAttribute('id'); 
+            console.log(lastKeyState);
+            if (lastKeyState === 'a') {
+              dirImg.setAttribute('src', `${horizontalDirRightGreySvgRef.current?.src}`)
+            } else if (lastKeyState === 'd') {
+              dirImg.setAttribute('src', `${horizontalDirLeftGreySvgRef.current?.src}`)
+            } else {
+              dirImg.setAttribute('src', `${horizontalDirBothGreySvgRef.current?.src}`)
             }
           }
         }
