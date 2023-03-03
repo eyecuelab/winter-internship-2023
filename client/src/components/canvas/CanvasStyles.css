@@ -4,6 +4,11 @@ body {
   overflow-x: hidden;
 }
 
+@font-face {
+  font-family: 'namco regular';
+  src: url(./../../assets/namco.ttf);
+}
+
 #canvas-container {
   margin-top: 15px;
   margin-left: 250px;
