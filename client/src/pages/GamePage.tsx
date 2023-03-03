@@ -67,26 +67,13 @@ const GamePage = (props: Props) => {
 
   }, [gameMusic, isMusicPlaying]);
 
-  // useMemo(() => {
-  //   updateWrapperState();
-  // },[myGameStateWrapper, roomGameStateWrapper]
-  // );
 
-  // useEffect(()=> {
-  //   console.log(myGameStateWrapper);
-  //   console.log(roomGameStateWrapper);
-  // }, [myGameStateWrapper, roomGameStateWrapper])
 
   const updateWrapperState = () => {
-    // console.count();
-    // console.log(myGameRef.current);
-    // console.log(roomGameRef.current);
     const myGameRefCurrent = myGameRef.current;
     const roomGameRefCurrent = roomGameRef.current
     setMyGameStateWrapper(myGameRefCurrent);
     setRoomGameStateWrapper(roomGameRefCurrent);
-    // console.log(myGameStateWrapper);
-    // console.log(roomGameStateWrapper);
   }
 
   const handlePauseClick = () => {
@@ -98,7 +85,6 @@ const GamePage = (props: Props) => {
       <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
       <div>
         <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
-        {/*setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} />*/}
         
       </div>
     </div>
