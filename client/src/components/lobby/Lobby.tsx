@@ -16,9 +16,12 @@ import {
   User,
   Card,
   Spacer,
+  useModal,
 } from "@nextui-org/react";
 import { generateMapQuadrants } from "../canvas/quadrants";
 import { GameMap } from "../canvas/gameClasses";
+import { Instructions, useInstructions } from "./HowToPlay";
+import "./lobby.css";
 
 interface UserDataGoogle {
   name: string;
@@ -172,6 +175,8 @@ const Lobby = (props: Props) => {
     });
   };
 
+  const { isOpen, toggle } = useInstructions();
+
   return (
     <>
       <Container
@@ -204,9 +209,17 @@ const Lobby = (props: Props) => {
 
           <Button color="gradient" onClick={handleStartGameClick}>
             <Spacer x={0.5} />
-            JOIN GAME!
+            Join Game
           </Button>
+          <br></br>
+          <Button color="gradient" onClick={toggle}>
+            <Spacer x={0.5} />
+            How to Play
+          </Button>
+          
+          
         </Card>
+        <Instructions areInstructionsModalOpen={isOpen} toggle={toggle}></Instructions>
       </Container>
     </>
   );
