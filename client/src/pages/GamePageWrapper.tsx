@@ -3,7 +3,13 @@ import { roomGameType, myGameType, lastKeyType } from '../types/Types';
 import { Kart, Team } from "../components/canvas/gameClasses";
 import "./gamePageStyles.css";
 import { verticalDirBothYellowSvgString } from "../assets/verticalDirBothYellowSvg";
+import { verticalDirBothGreySvgString } from "../assets/verticalDirBothGreySvg";
+import { verticalDirBottomGreySvgString } from "../assets/verticalDirBottomGreySvg";
+import { verticalDirTopGreySvgString } from "../assets/verticalDirTopGreySvg";
 import { horizontalDirBothYellowSvgString } from "../assets/horizontalDirBothYellowSvg";
+import { horizontalDirBothGreySvgString } from "../assets/horizontalDirBothGreySvg";
+import { horizontalDirLeftGreySvgString } from "../assets/horizontalDirLeftGreySvg";
+import { horizontalDirRightGreySvgString } from "../assets/horizontalDirRightGreySvg";
 import { redGhostIconSvgString } from "../assets/redGhostIconSvg";
 import { pinkGhostIconSvgString } from "../assets/pinkGhostIconSvg";
 import { blueGhostIconSvgString } from "../assets/blueGhostIconSvg";
@@ -25,8 +31,15 @@ interface Props {
 function GamePageWrapper (props:Props) {
   const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, updateWrapperState, lastKeyRef } = props;
   
-  const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
-  const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
+  const verticalDirBothYellowSvgRef = useRef<HTMLImageElement | undefined>();
+  const verticalDirBothGreySvgRef = useRef<HTMLImageElement | undefined>();
+  const verticalDirTopGreySvgRef = useRef<HTMLImageElement | undefined>();
+  const verticalDirBottomGreySvgRef = useRef<HTMLImageElement | undefined>();
+  const horizontalDirBothYellowSvgRef = useRef<HTMLImageElement | undefined>();
+  const horizontalDirBothGreySvgRef = useRef<HTMLImageElement | undefined>();
+  const horizontalDirLeftGreySvgRef = useRef<HTMLImageElement | undefined>();
+  const horizontalDirRightGreySvgRef = useRef<HTMLImageElement | undefined>();
+ 
   const bluePacmanSvgRef = useRef<HTMLImageElement | undefined>();
   const orangePacmanSvgRef = useRef<HTMLImageElement | undefined>();
   const redPacmanSvgRef = useRef<HTMLImageElement | undefined>();
@@ -36,23 +49,58 @@ function GamePageWrapper (props:Props) {
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
 
-  // const [roomGame, setRoomGame] = useState<roomGameType | undefined>(undefined);
-  // const [myGame, setMyGame] = useState<myGameType | null>(null);
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
   const [count, setCount] = useState(0);
+  const [lastKeyState, setLastKeyState] = useState("");
 
   useEffect(() => {
-    const verticalDirImg = new Image();
-    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBothYellowSvgString)}`;
-    verticalDirImg.addEventListener("load", () => {
-      verticalDirSvgRef.current = verticalDirImg;
+    const verticalDirBothYellowImg = new Image();
+    verticalDirBothYellowImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBothYellowSvgString)}`;
+    verticalDirBothYellowImg.addEventListener("load", () => {
+      verticalDirBothYellowSvgRef.current = verticalDirBothYellowImg;
     });
 
-    const horizontalDirImg = new Image();
-    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirBothYellowSvgString)}`;
-    horizontalDirImg.addEventListener("load", () => {
-      horizontalDirSvgRef.current = horizontalDirImg;
+    const verticalDirBothGreyImg = new Image();
+    verticalDirBothGreyImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBothGreySvgString)}`;
+    verticalDirBothGreyImg.addEventListener("load", () => {
+      verticalDirBothGreySvgRef.current = verticalDirBothGreyImg;
+    });
+
+    const verticalDirBottomGreyImg = new Image();
+    verticalDirBottomGreyImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBottomGreySvgString)}`;
+    verticalDirBottomGreyImg.addEventListener("load", () => {
+      verticalDirBottomGreySvgRef.current = verticalDirBottomGreyImg;
+    });
+
+    const verticalDirTopGreyImg = new Image();
+    verticalDirTopGreyImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirTopGreySvgString)}`;
+    verticalDirTopGreyImg.addEventListener("load", () => {
+      verticalDirTopGreySvgRef.current = verticalDirTopGreyImg;
+    });
+
+    const horizontalDirBothYellowImg = new Image();
+    horizontalDirBothYellowImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirBothYellowSvgString)}`;
+    horizontalDirBothYellowImg.addEventListener("load", () => {
+      horizontalDirBothYellowSvgRef.current = horizontalDirBothYellowImg;
+    });
+
+    const horizontalDirBothGreyImg = new Image();
+    horizontalDirBothGreyImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirBothGreySvgString)}`;
+    horizontalDirBothGreyImg.addEventListener("load", () => {
+      horizontalDirBothGreySvgRef.current = horizontalDirBothGreyImg;
+    });
+
+    const horizontalDirLeftGreyImg = new Image();
+    horizontalDirLeftGreyImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirLeftGreySvgString)}`;
+    horizontalDirLeftGreyImg.addEventListener("load", () => {
+      horizontalDirLeftGreySvgRef.current = horizontalDirLeftGreyImg;
+    });
+
+    const horizontalDirRightGreyImg = new Image();
+    horizontalDirRightGreyImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirRightGreySvgString)}`;
+    horizontalDirRightGreyImg.addEventListener("load", () => {
+      horizontalDirRightGreySvgRef.current = horizontalDirRightGreyImg;
     });
 
     const bluePacmanImg = new Image();
@@ -107,7 +155,6 @@ function GamePageWrapper (props:Props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log(lastKeyRef.current?.lastKey)
       setCount(prevCount => prevCount + 1);
     }, 33);
 
@@ -129,13 +176,18 @@ function GamePageWrapper (props:Props) {
     }
     displayTeam();
     updateWrapperState();
-    console.count();
+    if (lastKeyRef.current) {
+    if (lastKeyRef.current.lastKey === 'a' ||  lastKeyRef.current.lastKey === 'd' || lastKeyRef.current.lastKey === 's' || lastKeyRef.current.lastKey === 'w') {
+      setLastKeyState(lastKeyRef.current.lastKey);
+    }
+    }
+    // console.count();
   });
 
-  useEffect(() => {
-    displayTeam();
-    console.count();
-  }, [roomGameStateWrapper, myGameStateWrapper])
+  // useEffect(() => {
+  //   displayTeam();
+  //   console.count();
+  // }, [roomGameStateWrapper, myGameStateWrapper])
 
 
   const displayTeam = () => {
@@ -147,11 +199,11 @@ function GamePageWrapper (props:Props) {
       const li = document.createElement("li");
         const teamImg = document.createElement("img"); 
         teamImg.setAttribute('id', 'team-img');
-        console.log(myKart);
+        // console.log(myKart);
         // console.log(myTeam);
         if (myKart?.isGhost === false) {
           if (myTeam?.color === "blue") {
-            console.log(bluePacmanSvgRef.current?.src);
+            // console.log(bluePacmanSvgRef.current?.src);
             teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
           } 
           else if (myTeam?.color === "orange") {
@@ -192,26 +244,50 @@ function GamePageWrapper (props:Props) {
         const liTwo = document.createElement("li");
         liTwo.setAttribute('id', 'my-team');
         if (myKart) {
-          liTwo.textContent =`${myKart.position.x} position`;
+          // liTwo.textContent =`${myKart.position.x} position`;
         }
         teamInfo?.appendChild(liTwo);
       }
-      console.log(myTeam);
-      console.log(myKart);
+      // console.log(myTeam);
+      // console.log(myKart);
       
       const liThree = document.createElement("li");
       liThree.setAttribute('id', 'my-direction-wrapper');
       const dirImg = document.createElement("img"); 
       dirImg.setAttribute('id', 'dir-img-wrapper');
-      console.log(myTeam?.playerInControl);
+      // console.log(myTeam?.playerInControl);
       if (socketId === myTeam?.playerInControl) {
-        // if ()
-        dirImg.setAttribute('src', `${verticalDirSvgRef.current?.src}`);
+        console.log(lastKeyRef.current?.lastKey);
+        if (myGameStateWrapper.myControl === 'y') {
+          if (lastKeyRef.current?.lastKey === 'w') {
+            dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
+            dirImg.setAttribute('id', 'my-turn'); 
+          } else if (lastKeyRef.current?.lastKey === 's') {
+            dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
+            dirImg.setAttribute('id', 'my-turn'); 
+          } else {
+            dirImg.setAttribute('src', `${verticalDirBothGreySvgRef.current?.src}`)
+            dirImg.setAttribute('id', 'my-turn'); 
+          }
+        }
       } else {
-        // dirImg.setAttribute('src', `${pinkGhostSvgRef.current?.src}`);
-      }
+          if (myGameStateWrapper.myControl === 'y') {
+            dirImg.removeAttribute('id'); 
+            if (lastKeyState === 'w') {
+              dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
+            } else if (lastKeyState === 's') {
+              dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
+            } else {
+              dirImg.setAttribute('src', `${verticalDirBothGreySvgRef.current?.src}`)
+            }
+          }
+        }
+      //   // (myGameStateWrapper.myControl === 'x') 
+      //   {
+      //   dirImg.setAttribute('src', `${horizontalDirBothGreySvgRef.current?.src}`);
+      // }
       liThree.appendChild(dirImg);
-      console.log(liThree.textContent);
+      // console.log(liThree.textContent);
       teamInfo?.appendChild(liThree);
   } 
 
