@@ -514,48 +514,48 @@ function Canvas(props: Props) {
     }
   };
 
-  const displayScores = () => {
-    if (roomGameRef.current) {
-      const scoresArr = Array.from(
-        roomGameRef.current.scores,
-        function (score) {
-          return [score[0], score[1]];
-        }
-      );
+  // const displayScores = () => {
+  //   if (roomGameRef.current) {
+  //     const scoresArr = Array.from(
+  //       roomGameRef.current.scores,
+  //       function (score) {
+  //         return [score[0], score[1]];
+  //       }
+  //     );
 
-      const teamOne = document.getElementById("team1");
-      const teamTwo = document.getElementById("team2");
+  //     const teamOne = document.getElementById("team1");
+  //     const teamTwo = document.getElementById("team2");
 
-      if (teamOne && scoresArr[0]) {
-        const teamScore = scoresArr[0][1] ?? 0;
-        teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
-      }
-      if (teamTwo && scoresArr[1]) {
-        const teamScore = scoresArr[1][1] ?? 0;
-        teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
-      }
+  //     if (teamOne && scoresArr[0]) {
+  //       const teamScore = scoresArr[0][1] ?? 0;
+  //       teamOne.innerText = `${scoresArr[0][0]} kart - ${teamScore}`;
+  //     }
+  //     if (teamTwo && scoresArr[1]) {
+  //       const teamScore = scoresArr[1][1] ?? 0;
+  //       teamTwo.innerText = `${scoresArr[1][0]} kart - ${teamScore}`;
+  //     }
 
-      const playerControlDisplay = document.getElementById(
-        "playerControlDisplay"
-      );
-      if (playerControlDisplay) {
-        const isInControl =
-          myGameRef.current?.myTeam.playerInControl === socketId;
-        playerControlDisplay.innerText = isInControl
-          ? `YOU ARE IN CONTROL`
-          : `your are NOT in control`;
-        // if (isInControl) {
-        //   canvasBorderRef.current = {
-        //     borderStyle: "solid",
-        //     borderColor: "red",
-        //     borderWidth: 10,
-        //   };
-        // } else {
-        //   canvasBorderRef.current = { borderStyle: "none" };
-        // }
-      }
-    }
-  };
+  //     const playerControlDisplay = document.getElementById(
+  //       "playerControlDisplay"
+  //     );
+  //     if (playerControlDisplay) {
+  //       const isInControl =
+  //         myGameRef.current?.myTeam.playerInControl === socketId;
+  //       playerControlDisplay.innerText = isInControl
+  //         ? `YOU ARE IN CONTROL`
+  //         : `your are NOT in control`;
+  //       // if (isInControl) {
+  //       //   canvasBorderRef.current = {
+  //       //     borderStyle: "solid",
+  //       //     borderColor: "red",
+  //       //     borderWidth: 10,
+  //       //   };
+  //       // } else {
+  //       //   canvasBorderRef.current = { borderStyle: "none" };
+  //       // }
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -624,7 +624,7 @@ function Canvas(props: Props) {
       socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
     }
 
-    displayScores();
+    // displayScores();
     updatePlayerControl();
     updatePoofs();
 
@@ -950,7 +950,7 @@ function Canvas(props: Props) {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current?.karts.set(tempColor, tempKart);
       roomGameRef.current?.scores.set(tempColor, tempScore);
-      displayScores();
+      // displayScores();
     });
 
     socket.on("receive_ghost_kart_toggle", (data) => {

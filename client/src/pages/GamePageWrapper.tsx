@@ -303,9 +303,34 @@ function GamePageWrapper (props:Props) {
       // console.log(liThree.textContent);
       teamInfo?.appendChild(liThree);
       const liFour = document.createElement("li");
-      liFour.appendChild(
-        document.createTextNode(`${}`)
-      )
+      const scoresArr = Array.from(roomGameStateWrapper.scores, function (score) {
+        return [score[0], score[1]];
+      }
+      );
+      console.log(scoresArr);
+      if (scoresArr[0]) {
+        const teamOneScore = scoresArr[0][1];
+        console.log(teamOneScore);
+        liFour.appendChild(
+          document.createTextNode(`${scoresArr[0]}`)
+        )
+      }
+      teamInfo?.appendChild(liFour);
+
+      const liFive = document.createElement("li");
+      if (scoresArr[1]) {
+        const teamTwoScore = scoresArr[1][1];
+        console.log(teamTwoScore);
+        liFive.appendChild(
+          document.createTextNode(`${scoresArr[1]}`)
+        )
+      }
+      teamInfo?.appendChild(liFive);
+      
+      
+      // liFour.appendChild(
+      //   document.createTextNode(`${teamTwoScore}`)
+      // )
   } 
 
 
@@ -320,7 +345,6 @@ function GamePageWrapper (props:Props) {
       <div id="right"></div>
       <div id="top"></div>
       <div id="bottom">
-        <div>{count}</div>;
       </div>
     </>
   )
