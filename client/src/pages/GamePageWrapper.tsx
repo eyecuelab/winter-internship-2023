@@ -178,10 +178,14 @@ function GamePageWrapper (props:Props) {
 
   const displayWrapperContent = () => {
     const wrapperInfo = document.getElementById("wrapper-info");
+    const scoresInfo = document.getElementById("scores-info");
     if (roomGameStateWrapper && myGameStateWrapper) {
       if (wrapperInfo) {        
         wrapperInfo.innerHTML = "";
       } 
+      if (scoresInfo) {
+        scoresInfo.innerHTML = "";
+      }
       const li = document.createElement("li");
         const teamImg = document.createElement("img"); 
         teamImg.setAttribute('id', 'team-img');
@@ -266,6 +270,7 @@ function GamePageWrapper (props:Props) {
         else {
           if (myGameStateWrapper.myControl === 'y') {
             dirImg.removeAttribute('id'); 
+            liThree.setAttribute('class', 'vertical');
             if (lastKeyState === 'w') {
               dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
             } else if (lastKeyState === 's') {
@@ -276,6 +281,7 @@ function GamePageWrapper (props:Props) {
           }
           else if (myGameStateWrapper.myControl === 'x') {
             dirImg.removeAttribute('id'); 
+            liThree.setAttribute('class', 'horizontal');
             console.log(lastKeyState);
             if (lastKeyState === 'a') {
               dirImg.setAttribute('src', `${horizontalDirRightGreySvgRef.current?.src}`)
@@ -288,7 +294,7 @@ function GamePageWrapper (props:Props) {
         }
      
       liThree.appendChild(dirImg);
-      
+
       wrapperInfo?.appendChild(liThree);
       const liFour = document.createElement("li");
       const scoresArr = Array.from(roomGameStateWrapper.scores, function (score) {
@@ -297,13 +303,44 @@ function GamePageWrapper (props:Props) {
       );
       console.log(scoresArr);
       if (scoresArr[0]) {
+        if (scoresArr[0][0] === "blue") {
+          liFour.style.color = "#005487";
+        } else if (scoresArr[0][0] === "orange") {
+            liFour.style.color = "#F69343";
+          } else if (scoresArr[0][0] === "pink") {
+            liFour.style.color = "#F06ACA";
+            } else if (scoresArr[0][0] === "red") {
+              liFour.style.color = "#D52527";
+            }
+      }
+      // if (scoresArr[0][0] === "blue") {
+      //   if (liFour) {
+      //     liFour.style.color = "#005487";
+      //   }
+      // }
+      //  else if (scoresArr[0][0] === "orange") {
+      //     if (liFour) {
+      //       liFour.style.color = "#F69343";
+      //     }
+      //   } else if (scoresArr[0][0] === "pink") {
+      //     if (liFour) {
+      //       liFour.style.color = "#F06ACA";
+      //     }
+      //   } else if (scoresArr[0][0] === "red") {
+      //       if (liFour) {
+      //         liFour.style.color = "#D52527";
+      //       }
+      //   }
+      // }
+
+  
+      if (scoresArr[0]) {
         const teamOneScore = scoresArr[0][1];
-        console.log(teamOneScore);
         liFour.appendChild(
           document.createTextNode(`${scoresArr[0]}`)
         )
       }
-      wrapperInfo?.appendChild(liFour);
+      scoresInfo?.appendChild(liFour);
 
       const liFive = document.createElement("li");
       if (scoresArr[1]) {
@@ -313,7 +350,35 @@ function GamePageWrapper (props:Props) {
           document.createTextNode(`${scoresArr[1]}`)
         )
       }
-      wrapperInfo?.appendChild(liFive);
+      if (scoresArr[1]) {
+        if (scoresArr[1][0] === "blue") {
+          liFive.style.color = "#005487";
+        } else if (scoresArr[1][0] === "orange") {
+            liFive.style.color = "#F69343";
+          } else if (scoresArr[1][0] === "pink") {
+            liFive.style.color = "#F06ACA";
+            } else if (scoresArr[1][0] === "red") {
+              liFive.style.color = "#D52527";
+            }
+      }
+      // if (scoresArr[1][0] === "blue") {
+      //   if (liFour) {
+      //     liFour.style.color = "#005487";
+      //   }
+      //  } else if (scoresArr[1][0] === "orange") {
+      //     if (liFour) {
+      //       liFour.style.color = "#F69343";
+      //     }
+      //   } else if (scoresArr[1][0] === "pink") {
+      //     if (liFour) {
+      //       liFour.style.color = "#F06ACA";
+      //     }
+      //   } else if (scoresArr[1][0] === "red") {
+      //       if (liFour) {
+      //         liFour.style.color = "#D52527";
+      //       }
+      //   }
+      scoresInfo?.appendChild(liFive);
 
   } 
 
@@ -321,8 +386,10 @@ function GamePageWrapper (props:Props) {
   return (
     <>
       <div id="left">
-      <ul id="wrapper-info">
+        <ul id="wrapper-info">
         </ul>
+        <p id="score-heading-wrapper">scores</p>
+        <ul id="scores-info"></ul>
         <button id="music-button"style={{marginTop: 50}} onClick={handlePauseClick}>music</button>
       </div>
       

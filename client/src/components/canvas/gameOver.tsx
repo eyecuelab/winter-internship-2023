@@ -27,8 +27,6 @@ export function GameOver(props: GameOverType) {
     const scoresArr = Array.from(props.scores, function (score) {
       return [score[0], score[1] ?? 0];
     });
-    
-    const finalScoreHeading = document.createElement('h2');
 
     const scoresList = document.getElementById("scores-list");
     if (scoresList) {
@@ -56,7 +54,6 @@ export function GameOver(props: GameOverType) {
           } else if (item[0] === "pink") {
             li.style.color = "#F06ACA";
           } else {
-  
           }
       });
     }

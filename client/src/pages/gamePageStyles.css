@@ -12,7 +12,7 @@
 		}
 		#left { 
       left: 0;
-      width: 250px; 
+      width: 300px; 
     }
 		#right { 
       right: 0;
@@ -24,6 +24,14 @@
 		}
 		#top { top: 0; }
 		#bottom { bottom: 0; }
+
+    #scores-info {
+      list-style: none;
+      line-height: 5px;
+      font-family: 'namco regular';
+      text-align: center;
+      padding: 5px;
+    }
 
     #wrapper-info {
       list-style: none;
@@ -46,11 +54,16 @@
     }
 
     #wrapper-info #team-name{
-      font-size: 36px;
+      font-size: 32px;
     }
 
    #wrapper-info .my-direction-wrapper, .horizontal img {
-    width: 210px;
+    width: 250px;
+    margin-top: 50px;
+   }
+
+   #wrapper-info .my-direction-wrapper, .vertical img {
+    width: 120px;
     margin-top: 50px;
    }
 
