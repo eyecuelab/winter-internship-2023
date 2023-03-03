@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState} from 'react';
-import { roomGameType, myGameType } from '../types/Types';
+import { roomGameType, myGameType, lastKeyType } from '../types/Types';
 import { Kart, Team } from "../components/canvas/gameClasses";
 import "./gamePageStyles.css";
-import { verticalDirSvgString } from "../assets/verticalDirBothYellowSvg";
-import { horizontalDirSvgString } from "../assets/horizontalDirBothYellowSvg";
+import { verticalDirBothYellowSvgString } from "../assets/verticalDirBothYellowSvg";
+import { horizontalDirBothYellowSvgString } from "../assets/horizontalDirBothYellowSvg";
 import { redGhostIconSvgString } from "../assets/redGhostIconSvg";
 import { pinkGhostIconSvgString } from "../assets/pinkGhostIconSvg";
 import { blueGhostIconSvgString } from "../assets/blueGhostIconSvg";
@@ -18,11 +18,12 @@ interface Props {
   handlePauseClick: () => void;
   roomGameStateWrapper: roomGameType;
   myGameStateWrapper:  myGameType;
+  lastKeyRef:  React.RefObject<lastKeyType>;
   updateWrapperState: () => void;
 }
 
 function GamePageWrapper (props:Props) {
-  const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, updateWrapperState } = props;
+  const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, updateWrapperState, lastKeyRef } = props;
   
   const verticalDirSvgRef = useRef<HTMLImageElement | undefined>();
   const horizontalDirSvgRef = useRef<HTMLImageElement | undefined>();
@@ -43,13 +44,13 @@ function GamePageWrapper (props:Props) {
 
   useEffect(() => {
     const verticalDirImg = new Image();
-    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirSvgString)}`;
+    verticalDirImg.src = `data:image/svg+xml;base64,${window.btoa(verticalDirBothYellowSvgString)}`;
     verticalDirImg.addEventListener("load", () => {
       verticalDirSvgRef.current = verticalDirImg;
     });
 
     const horizontalDirImg = new Image();
-    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirSvgString)}`;
+    horizontalDirImg.src = `data:image/svg+xml;base64,${window.btoa(horizontalDirBothYellowSvgString)}`;
     horizontalDirImg.addEventListener("load", () => {
       horizontalDirSvgRef.current = horizontalDirImg;
     });
@@ -106,6 +107,7 @@ function GamePageWrapper (props:Props) {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      console.log(lastKeyRef.current?.lastKey)
       setCount(prevCount => prevCount + 1);
     }, 33);
 
@@ -203,6 +205,7 @@ function GamePageWrapper (props:Props) {
       dirImg.setAttribute('id', 'dir-img-wrapper');
       console.log(myTeam?.playerInControl);
       if (socketId === myTeam?.playerInControl) {
+        // if ()
         dirImg.setAttribute('src', `${verticalDirSvgRef.current?.src}`);
       } else {
         // dirImg.setAttribute('src', `${pinkGhostSvgRef.current?.src}`);

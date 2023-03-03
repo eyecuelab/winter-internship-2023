@@ -20,6 +20,7 @@ import {
   roomGameType,
   kartType,
   userType,
+  lastKeyType
 } from "../../types/Types";
 import { kartCollidesWithBoundary } from "./kartCollidesWithBoundary";
 import { generateMapQuadrants } from "./quadrants";
@@ -43,13 +44,14 @@ interface Props {
   userData: userType | undefined;
   roomGameRef: React.RefObject<roomGameType>;
   myGameRef: React.RefObject<myGameType>;
+  lastKeyRef:  React.RefObject<lastKeyType>;
   setRoomGameStateWrapper: (state: roomGameType) => void;
   setMyGameStateWrapper: (state: myGameType) => void;
   updateWrapperState: () => void;
 }
 
 function Canvas(props: Props) {
-  const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper } = props;
+  const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper, lastKeyRef } = props;
   console.log(roomGameRef);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
@@ -79,7 +81,7 @@ function Canvas(props: Props) {
   const pelletsRef = useRef<Pellet[]>([]);
   const spawnPointsRef = useRef<SpawnPoint[]>([]);
   const poofsRef = useRef<Poof[]>([]);
-  const lastKeyRef = useRef("");
+  // const lastKeyRef = useRef("");
   const teamId = useRef<number | null>(null);
 
   // const roomGameRef = useRef<roomGameType>({
@@ -183,7 +185,7 @@ function Canvas(props: Props) {
       const previousXVelocity = kart.velocity.x;
 
       if (
-        lastKeyRef.current === "w" &&
+        lastKeyRef.current?.lastKey === "w" &&
         (kart.position.x - Boundary.width / 2) % Boundary.width === 0
       ) {
         for (let i = 0; i < boundariesRef.current.length; i++) {
@@ -212,7 +214,7 @@ function Canvas(props: Props) {
           }
         }
       } else if (
-        lastKeyRef.current === "s" &&
+        lastKeyRef.current?.lastKey === "s" &&
         (kart.position.x - Boundary.width / 2) % Boundary.width === 0
       ) {
         for (let i = 0; i < boundariesRef.current.length; i++) {
@@ -272,7 +274,7 @@ function Canvas(props: Props) {
       const previousYVelocity = kart.velocity.y;
 
       if (
-        lastKeyRef.current === "a" &&
+        lastKeyRef.current?.lastKey === "a" &&
         (kart.position.y - Boundary.width / 2) % Boundary.width === 0
       ) {
         for (let i = 0; i < boundariesRef.current.length; i++) {
@@ -300,7 +302,7 @@ function Canvas(props: Props) {
           }
         }
       } else if (
-        lastKeyRef.current === "d" &&
+        lastKeyRef.current?.lastKey === "d" &&
         (kart.position.y - Boundary.width / 2) % Boundary.width === 0
       ) {
         for (let i = 0; i < boundariesRef.current.length; i++) {
@@ -488,8 +490,10 @@ function Canvas(props: Props) {
         myGameRef.current.myTeam.color
       );
       if (myGameRef.current.myControl === "x") {
-        if (kart?.velocity.x != 0) {
-          lastKeyRef.current = "";
+        if (kart?.velocity.x != 0 ) {
+          if (lastKeyRef.current) {
+            lastKeyRef.current.lastKey = "";
+          }
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
           const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
@@ -498,7 +502,9 @@ function Canvas(props: Props) {
       }
       if (myGameRef.current.myControl === "y") {
         if (kart?.velocity.y != 0) {
-          lastKeyRef.current = "";
+          if (lastKeyRef.current) {
+            lastKeyRef.current.lastKey = "";
+          }
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
           const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
@@ -1015,18 +1021,24 @@ function Canvas(props: Props) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-        lastKeyRef.current = e.key;
+          console.log(lastKeyRef);
+          console.log(lastKeyRef.current);
+          if (lastKeyRef.current) {
+          lastKeyRef.current.lastKey = e.key;
+          }
       } else if (e.key === "q") {
         console.log("roomGameRef:", roomGameRef.current);
         console.log("myGameRef:", myGameRef.current);
         console.log("poofsRef", poofsRef.current);
       } else if (e.key === "p") {
-        lastKeyRef.current = "";
+        if (lastKeyRef.current) {
+          lastKeyRef.current.lastKey = "";
+        }
         myGameRef.current?.myTeam.changePlayerInControl();
         const tempTeamMate = myGameRef.current?.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current?.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-      }
+    }
     };
 
     window.addEventListener("keydown", handleKeyDown);

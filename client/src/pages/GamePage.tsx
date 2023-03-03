@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { useParams } from "react-router-dom";
 import Canvas from "../components/canvas/Canvas";
 import GamePageWrapper from "./GamePageWrapper";
-import { roomGameType, userType, myGameType } from "../types/Types";
+import { roomGameType, userType, myGameType, lastKeyType } from "../types/Types";
 import backgroundMusic from "../assets/backgroundMusic.wav";
 import {
   Kart,
@@ -31,6 +31,10 @@ const GamePage = (props: Props) => {
     myControl: "",
     myTeam: new Team(),
     myKart: new Kart(), // deprecated
+  });
+
+  const lastKeyRef = useRef<lastKeyType>({
+    lastKey: ""
   });
 
   const [roomGameStateWrapper, setRoomGameStateWrapper] = useState<roomGameType>({
@@ -68,10 +72,10 @@ const GamePage = (props: Props) => {
   // },[myGameStateWrapper, roomGameStateWrapper]
   // );
 
-  useEffect(()=> {
-    console.log(myGameStateWrapper);
-    console.log(roomGameStateWrapper);
-  }, [myGameStateWrapper, roomGameStateWrapper])
+  // useEffect(()=> {
+  //   console.log(myGameStateWrapper);
+  //   console.log(roomGameStateWrapper);
+  // }, [myGameStateWrapper, roomGameStateWrapper])
 
   const updateWrapperState = () => {
     // console.count();
@@ -85,24 +89,15 @@ const GamePage = (props: Props) => {
     // console.log(roomGameStateWrapper);
   }
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "q") {
-        console.log(roomGameStateWrapper);
-        console.log(myGameStateWrapper);
-  
-      } 
-    }});
-
   const handlePauseClick = () => {
     setIsMusicPlaying(!isMusicPlaying);
   };
 
   return (
     <div className={`app-container`}>
-      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState}/>
+      <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
       <div>
-        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} />
+        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
         {/*setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} />*/}
         
       </div>
