@@ -29,7 +29,7 @@ interface Props {
 }
 
 function GamePageWrapper (props:Props) {
-  const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, updateWrapperState, lastKeyRef } = props;
+  const { handlePauseClick, roomGameStateWrapper, myGameStateWrapper, lastKeyRef } = props;
   
   const verticalDirBothYellowSvgRef = useRef<HTMLImageElement | undefined>();
   const verticalDirBothGreySvgRef = useRef<HTMLImageElement | undefined>();
@@ -165,43 +165,28 @@ function GamePageWrapper (props:Props) {
     if (myGameStateWrapper.myTeam && roomGameStateWrapper.karts) {
       const myCurrentTeam = myGameStateWrapper.myTeam;
       const myCurrentKart = roomGameStateWrapper.karts.get(myCurrentTeam.color);
-      // console.log(roomGameStateWrapper);
-      // console.log(myGameStateWrapper);
-      // console.log(myCurrentTeam.color);
-      // console.log(myCurrentKart)
       setMyTeam(myCurrentTeam);
       setMyKart(myCurrentKart);
     }
-    displayTeam();
-    updateWrapperState();
+    displayWrapperContent();
     if (lastKeyRef.current) {
     if (lastKeyRef.current.lastKey === 'a' ||  lastKeyRef.current.lastKey === 'd' || lastKeyRef.current.lastKey === 's' || lastKeyRef.current.lastKey === 'w') {
       setLastKeyState(lastKeyRef.current.lastKey);
     }
     }
-    // console.count();
   });
 
-  // useEffect(() => {
-  //   displayTeam();
-  //   console.count();
-  // }, [roomGameStateWrapper, myGameStateWrapper])
-
-
-  const displayTeam = () => {
-    const teamInfo = document.getElementById("wrapper-info");
+  const displayWrapperContent = () => {
+    const wrapperInfo = document.getElementById("wrapper-info");
     if (roomGameStateWrapper && myGameStateWrapper) {
-      if (teamInfo) {        
-        teamInfo.innerHTML = "";
+      if (wrapperInfo) {        
+        wrapperInfo.innerHTML = "";
       } 
       const li = document.createElement("li");
         const teamImg = document.createElement("img"); 
         teamImg.setAttribute('id', 'team-img');
-        // console.log(myKart);
-        // console.log(myTeam);
         if (myKart?.isGhost === false) {
           if (myTeam?.color === "blue") {
-            // console.log(bluePacmanSvgRef.current?.src);
             teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
           } 
           else if (myTeam?.color === "orange") {
@@ -215,7 +200,7 @@ function GamePageWrapper (props:Props) {
           } else {
             teamImg.setAttribute('src', `${bluePacmanSvgRef.current?.src}`);
           }
-          li.textContent =`${myTeam?.color} pacman`;
+          
         }
 
         if (myKart?.isGhost === true) {
@@ -233,43 +218,47 @@ function GamePageWrapper (props:Props) {
           } else {
             teamImg.setAttribute('src', `${blueGhostSvgRef.current?.src}`);
           }
-          li.textContent =`${myTeam?.color} ghost`;
         }
         const divElement = document.createElement('div');
         divElement.style.display = 'block';
         divElement.appendChild(teamImg);
         li?.appendChild(divElement);
-        teamInfo?.appendChild(li);
+        wrapperInfo?.appendChild(li);
 
         const liTwo = document.createElement("li");
-        liTwo.setAttribute('id', 'my-team');
-        if (myKart) {
-          // liTwo.textContent =`${myKart.position.x} position`;
-        }
-        teamInfo?.appendChild(liTwo);
+        liTwo.setAttribute('id', 'team-name');
+        liTwo.textContent =`${myTeam?.color}`;
+        if (myTeam?.color === "blue") {
+          if (liTwo) {
+            liTwo.style.color = "#005487";
+          }
+         } else if (myTeam?.color === "orange") {
+            if (liTwo) {
+              liTwo.style.color = "#F69343";
+            }
+          } else if (myTeam?.color === "pink") {
+            if (liTwo) {
+              liTwo.style.color = "#F06ACA";
+            }
+          } else if (myTeam?.color === "red") {
+              if (liTwo) {
+                liTwo.style.color = "#D52527";
+              }
+          }
+        wrapperInfo?.appendChild(liTwo);
       }
-      // console.log(myTeam);
-      // console.log(myKart);
       
       const liThree = document.createElement("li");
-      liThree.setAttribute('id', 'my-direction-wrapper');
+      liThree.setAttribute('class', 'my-direction-wrapper');
       const dirImg = document.createElement("img"); 
-      dirImg.setAttribute('id', 'dir-img-wrapper');
-      // console.log(myTeam?.playerInControl);
       if (socketId === myTeam?.playerInControl) {
         if (myGameStateWrapper.myControl === 'y') {
-          // if (lastKeyRef.current?.lastKey === 'w') {
-          //   dirImg.setAttribute('src', `${verticalDirBottomGreySvgRef.current?.src}`)
-          //   dirImg.setAttribute('id', 'my-turn'); 
-          // } else if (lastKeyRef.current?.lastKey === 's') {
-          //   dirImg.setAttribute('src', `${verticalDirTopGreySvgRef.current?.src}`)
-          //   dirImg.setAttribute('id', 'my-turn'); 
-          // } else {
+            liThree.setAttribute('class', 'vertical');
             dirImg.setAttribute('src', `${verticalDirBothGreySvgRef.current?.src}`)
             dirImg.setAttribute('id', 'my-turn'); 
-          // }
         }
         else if (myGameStateWrapper.myControl === 'x') {
+            liThree.setAttribute('class', 'horizontal');
             dirImg.setAttribute('src', `${horizontalDirBothGreySvgRef.current?.src}`)
             dirImg.setAttribute('id', 'my-turn'); 
           }
@@ -297,13 +286,10 @@ function GamePageWrapper (props:Props) {
             }
           }
         }
-      //   // (myGameStateWrapper.myControl === 'x') 
-      //   {
-      //   dirImg.setAttribute('src', `${horizontalDirBothGreySvgRef.current?.src}`);
-      // }
+     
       liThree.appendChild(dirImg);
-      // console.log(liThree.textContent);
-      teamInfo?.appendChild(liThree);
+      
+      wrapperInfo?.appendChild(liThree);
       const liFour = document.createElement("li");
       const scoresArr = Array.from(roomGameStateWrapper.scores, function (score) {
         return [score[0], score[1]];
@@ -317,7 +303,7 @@ function GamePageWrapper (props:Props) {
           document.createTextNode(`${scoresArr[0]}`)
         )
       }
-      teamInfo?.appendChild(liFour);
+      wrapperInfo?.appendChild(liFour);
 
       const liFive = document.createElement("li");
       if (scoresArr[1]) {
@@ -327,12 +313,8 @@ function GamePageWrapper (props:Props) {
           document.createTextNode(`${scoresArr[1]}`)
         )
       }
-      teamInfo?.appendChild(liFive);
-      
-      
-      // liFour.appendChild(
-      //   document.createTextNode(`${teamTwoScore}`)
-      // )
+      wrapperInfo?.appendChild(liFive);
+
   } 
 
 

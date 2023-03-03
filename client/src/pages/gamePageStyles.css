@@ -27,30 +27,36 @@
 
     #wrapper-info {
       list-style: none;
-      line-height: 20px;
+      line-height: 5px;
       font-family: 'namco regular';
+      text-align: center;
+      padding: 5px;
     }
 
     #wrapper-info li {
     margin-bottom: 30px;
     }
 
-    #wrapper-info img {
+    /* #wrapper-info img {
       width: 150px;
+    } */
+
+    #wrapper-info #team-img{
+      width: 195px;
     }
 
-    #wrapper-info #my-direction-wrapper {
-      list-style: none;
-      font-family: arial;
-      font-size: 2rem;
-      border-radius: 1rem;
-      font-family: 'namco regular';
-      /* color: #005487; */
-      text-shadow: 2px 2px white;
-      line-height: 2.5rem;
-      letter-spacing: .2rem;
-      margin-bottom: 1.5em;
+    #wrapper-info #team-name{
+      font-size: 36px;
     }
+
+   #wrapper-info .my-direction-wrapper, .horizontal img {
+    width: 210px;
+    margin-top: 50px;
+   }
+
+   /* #wrapper-info .my-direction-wrapper img .vertical {
+    width: 200px;
+   } */
 
     #music-button {
     background-color:  #5D5D7E;
@@ -67,6 +73,5 @@
     }
 
     #my-turn {
-      /* box-shadow: 0px 0px 15px 5px rgba(255, 255, 190, .75); */
       filter: drop-shadow(0 0 15px rgba(255, 255, 0, 0.5));
     }
