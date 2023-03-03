@@ -54,10 +54,7 @@ export function GameOver(props: GameOverType) {
         });
       }
     }
-  }
   };
-
-  displayScores();
   return (
     <>
       {props.isGameOverModalOpen && (
