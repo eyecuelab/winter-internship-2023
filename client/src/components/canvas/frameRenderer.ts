@@ -116,10 +116,6 @@ function frameRenderer(
     this.restore();
   };
 
-  boundaries.forEach((boundary) => {
-    drawBoundary(boundary);
-  });
-
   pellets.forEach((pellet) => {
     drawPellet(pellet);
   });
@@ -136,6 +132,10 @@ function frameRenderer(
       entry.kart.angle.currentAngle,
       entry.kart.isGhost
     );
+  });
+
+  boundaries.forEach((boundary) => {
+    drawBoundary(boundary);
   });
 
   poofs.forEach((poof) => {

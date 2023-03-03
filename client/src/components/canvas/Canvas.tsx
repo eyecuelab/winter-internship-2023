@@ -50,12 +50,11 @@ function Canvas(props: Props) {
   const pinkKartSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeKartSvgRef = useRef<HTMLImageElement | undefined>();
   const blueKartSvgRef = useRef<HTMLImageElement | undefined>();
-
   const pinkGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const redGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
-
+  
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<any | null>(null);
   const requestIdRef = useRef<any>(null);
@@ -268,20 +267,20 @@ function Canvas(props: Props) {
   };
 
   const findFurthersSpawnPoint = (currentKart: Kart) => {
-    if(currentKart.position.x < 880){
-      if(currentKart.position.y < 560){
+    if (currentKart.position.x < 880) {
+      if (currentKart.position.y < 560) {
         return 0;
-      } else{
+      } else {
         return 2;
       }
     } else {
-      if(currentKart.position.y < 560){
+      if (currentKart.position.y < 560) {
         return 1;
-      } else{
+      } else {
         return 3;
       }
     }
-  }
+  };
 
   const checkForGhostCollisions = () => {
     const teamColor = myGameRef.current.myTeam.color;
@@ -303,7 +302,6 @@ function Canvas(props: Props) {
           if (
             ghostCollidesWithKart({ ghost: currentKart, paCart: item.pacKart })
           ) {
-
             const spawnNum = findFurthersSpawnPoint(currentKart);
 
             const kartColor = item.color;
@@ -917,7 +915,7 @@ function Canvas(props: Props) {
         const tempTeamMate = myGameRef.current.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-      } else if (e.key==="g"){
+      } else if (e.key === "g") {
         toggleToGhost(2);
       }
     };
