@@ -313,26 +313,6 @@ function GamePageWrapper (props:Props) {
               liFour.style.color = "#D52527";
             }
       }
-      // if (scoresArr[0][0] === "blue") {
-      //   if (liFour) {
-      //     liFour.style.color = "#005487";
-      //   }
-      // }
-      //  else if (scoresArr[0][0] === "orange") {
-      //     if (liFour) {
-      //       liFour.style.color = "#F69343";
-      //     }
-      //   } else if (scoresArr[0][0] === "pink") {
-      //     if (liFour) {
-      //       liFour.style.color = "#F06ACA";
-      //     }
-      //   } else if (scoresArr[0][0] === "red") {
-      //       if (liFour) {
-      //         liFour.style.color = "#D52527";
-      //       }
-      //   }
-      // }
-
   
       if (scoresArr[0]) {
         const teamOneScore = scoresArr[0][1];

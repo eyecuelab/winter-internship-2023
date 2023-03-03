@@ -25,14 +25,6 @@
 		#top { top: 0; }
 		#bottom { bottom: 0; }
 
-    #scores-info {
-      list-style: none;
-      line-height: 5px;
-      font-family: 'namco regular';
-      text-align: center;
-      padding: 5px;
-    }
-
     #wrapper-info {
       list-style: none;
       line-height: 5px;
@@ -70,6 +62,24 @@
    /* #wrapper-info .my-direction-wrapper img .vertical {
     width: 200px;
    } */
+
+   #scores-info {
+    list-style: none;
+    line-height: 30px;
+    font-family: 'namco regular';
+    text-align: left;
+    padding: 5px;
+    margin: 0px 30px;
+    font-size: 1.2em;
+  }
+
+   #score-heading-wrapper {
+    color: white;
+    font-size: .75em;
+    padding: 5px;
+    margin: 40px 10px 0px 20px;
+    font-family: 'namco regular';
+   }
 
     #music-button {
     background-color:  #5D5D7E;
