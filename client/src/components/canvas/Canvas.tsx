@@ -94,11 +94,9 @@ function Canvas(props: Props) {
   });
 
   //UPDATE GAME STATE FUNCTIONS:
-  //updates kart movement based on collision detection and player axis control:
-
   const updateKartYMovements = () => {
     const myColor = myGameRef.current.myTeam.color;
-    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
     const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
@@ -295,6 +293,7 @@ function Canvas(props: Props) {
 
             const kartColor = item.color;
             const ghostColor = myGameRef.current.myTeam.color;
+            currentKart.isGhost = false;
             socket.emit("ghost_kart_toggle", {
               kartColor,
               ghostColor,
@@ -302,7 +301,6 @@ function Canvas(props: Props) {
               gameId,
             });
             updateScore(200);
-            currentKart.isGhost = false;
           }
         }
       });
@@ -496,7 +494,6 @@ function Canvas(props: Props) {
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
-      //maybe only call removePellets if you're not a ghost?
       const kart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
       );
@@ -819,15 +816,15 @@ function Canvas(props: Props) {
 
     socket.on("receive_ghost_kart_toggle", (data) => {
       const { kartColor, ghostColor, spawnNum } = data;
-      playExplosionSound();
-      console.log("explosion sound!");
       if (
         myGameRef.current.myTeam.playerInControl === socket.id &&
         myGameRef.current.myTeam.color === kartColor
       ) {
+        console.log("toggling")
         toggleToGhost(spawnNum);
       }
       initiatePoofAnimation(spawnNum, ghostColor);
+      playExplosionSound();
     });
 
     socket.on("receive_pellet_update", (data) => {
@@ -907,6 +904,8 @@ function Canvas(props: Props) {
         const tempTeamMate = myGameRef.current.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+      } else if (e.key==="g"){
+        toggleToGhost(2);
       }
     };
 
@@ -920,9 +919,9 @@ function Canvas(props: Props) {
     const kart = roomGameRef.current?.karts.get(myGameRef.current.myTeam.color);
 
     if (kart) {
-      kart.isGhost = true;
       kart.position = spawnPointsRef.current[spawnNum].position;
       kart.velocity = { x: 0, y: 0 };
+      kart.isGhost = true;
     }
   };
 
@@ -967,13 +966,6 @@ function Canvas(props: Props) {
           alignItems: "center",
         }}
       >
-        <div>your kart: {myGameRef.current.myTeam.color}</div>
-        <div>
-          scores: <span id="team1"></span> || <span id="team2"></span>
-        </div>
-        <div>
-          <span id="playerControlDisplay"></span>
-        </div>
         <div id="canvas-container">
           <canvas {...size} ref={canvasRef} />
         </div>
