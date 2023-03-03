@@ -420,7 +420,7 @@ function Canvas(props: Props) {
       );
       if (myGameRef.current.myControl === "x") {
         if (kart?.velocity.x != 0) {
-          playTurningSound();
+          // playTurningSound();
           lastKeyRef.current = "";
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
@@ -430,7 +430,7 @@ function Canvas(props: Props) {
       }
       if (myGameRef.current.myControl === "y") {
         if (kart?.velocity.y != 0) {
-          playTurningSound();
+          // playTurningSound();
           lastKeyRef.current = "";
           myGameRef.current.myTeam.changePlayerInControl();
           const tempTeamMate = myGameRef.current.myTeamMate;
@@ -487,7 +487,7 @@ function Canvas(props: Props) {
           myGameRef.current.myTeam.color
         );
         const cxt = contextRef.current;
-        cxt.scale(1.5, 1.5);
+        cxt.scale(1.25, 1.25);
       }
     }
   }, []);
@@ -855,7 +855,7 @@ function Canvas(props: Props) {
     });
 
     socket.on("receive_toggle_player_control", (data) => {
-      playTurningSound();
+      // playTurningSound();
       myGameRef.current.myTeam.updateTeamWithJson(data);
     });
 
