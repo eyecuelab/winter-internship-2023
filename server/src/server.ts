@@ -30,6 +30,7 @@ io.on("connection", (socket) => {
 
   socket.on("join_game_room", async (data) => {
     const { gameId } = data;
+    
     if (gameId) {
       const room = gameId.toString();
       socket.join(room);

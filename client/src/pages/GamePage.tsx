@@ -67,26 +67,11 @@ const GamePage = (props: Props) => {
 
   }, [gameMusic, isMusicPlaying]);
 
-  // useMemo(() => {
-  //   updateWrapperState();
-  // },[myGameStateWrapper, roomGameStateWrapper]
-  // );
-
-  // useEffect(()=> {
-  //   console.log(myGameStateWrapper);
-  //   console.log(roomGameStateWrapper);
-  // }, [myGameStateWrapper, roomGameStateWrapper])
-
   const updateWrapperState = () => {
-    // console.count();
-    // console.log(myGameRef.current);
-    // console.log(roomGameRef.current);
     const myGameRefCurrent = myGameRef.current;
     const roomGameRefCurrent = roomGameRef.current
     setMyGameStateWrapper(myGameRefCurrent);
     setRoomGameStateWrapper(roomGameRefCurrent);
-    // console.log(myGameStateWrapper);
-    // console.log(roomGameStateWrapper);
   }
 
   const handlePauseClick = () => {

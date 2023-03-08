@@ -282,7 +282,6 @@ function GamePageWrapper (props:Props) {
           else if (myGameStateWrapper.myControl === 'x') {
             dirImg.removeAttribute('id'); 
             liThree.setAttribute('class', 'horizontal');
-            console.log(lastKeyState);
             if (lastKeyState === 'a') {
               dirImg.setAttribute('src', `${horizontalDirRightGreySvgRef.current?.src}`)
             } else if (lastKeyState === 'd') {
@@ -301,7 +300,6 @@ function GamePageWrapper (props:Props) {
         return [score[0], score[1]];
       }
       );
-      console.log(scoresArr);
       if (scoresArr[0]) {
         if (scoresArr[0][0] === "blue") {
           liFour.style.color = "#005487";
@@ -325,7 +323,6 @@ function GamePageWrapper (props:Props) {
       const liFive = document.createElement("li");
       if (scoresArr[1]) {
         const teamTwoScore = scoresArr[1][1];
-        console.log(teamTwoScore);
         liFive.appendChild(
           document.createTextNode(`${scoresArr[1]}`)
         )
