@@ -2,6 +2,8 @@
 
 ## 🧑🏽‍🤝‍🧑🏼 Creators
 
+Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.netlify.app/)
+
 - Joseph Jackson
 - Helen Lehrer
 - Patty Otero
