@@ -131,6 +131,7 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 - Split your terminal into two separate consoles
 - Navigate one terminal into the `/server` directory and run `npm start`
 - Navigate the second terminal into the `/client` directory and run `npm run dev`. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
+- For locally testing this particular game, you will need to open 2 browser windows to have 2 unique users enter the game, as the game will not run or be playable until at least 2 people have entered.
 
 
 ## Known 🐛 Bugs <a id="bugs"></a>
