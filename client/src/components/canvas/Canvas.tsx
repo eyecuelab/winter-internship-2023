@@ -456,9 +456,7 @@ function Canvas(props: Props) {
   }, []);
 
   useEffect (() => {
-    console.log("go");
     isWaitingForGameModalOpenRef.current = !isWaitingForGameModalOpenRef.current;
-    console.log(isWaitingForGameModalOpenRef.current);
   }, [isWaitingForGameModalOpen])
 
   const updateIsWaitingForGameModal = () => {
@@ -470,7 +468,6 @@ function Canvas(props: Props) {
           setIsCountingDown(true);
         }, 3000);
         setInterval(() => {
-          console.log("accessing setInterval")
           handleCloseWaitingForGameModal();
         }, 10000);
         setIsCountingDown(false);
@@ -493,7 +490,6 @@ function Canvas(props: Props) {
       return;
     }
     let updatedKart;
-    console.log(isWaitingForGameModalOpenRef.current);
     if (isWaitingForGameModalOpenRef.current === false) {
     if (myGameRef.current?.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
@@ -709,7 +705,6 @@ function Canvas(props: Props) {
   useEffect(() => {
     socket.on("receive_initial_game_data", (gameData) => {
       const initialGameData = JSON.parse(gameData);
-      //console.log(initialGameData);
       boundariesRef.current = initialGameData.boundaries;
       pelletsRef.current = initialGameData.pellets;
       spawnPointsRef.current = initialGameData.spawnPoints;

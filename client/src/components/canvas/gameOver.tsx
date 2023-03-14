@@ -24,7 +24,7 @@ export function GameOver(props: GameOverType) {
     //this function exists in canvas so we could combine them.
     if (props.scores) {
     const scoresArr = Array.from(props.scores, function (score) {
-      return [score[0], score[1] ?? 0];
+      return score ?? 0;
     });
 
       const scoresList = document.getElementById("scores-list");
