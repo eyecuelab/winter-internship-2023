@@ -55,6 +55,8 @@ const GamePage = (props: Props) => {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [gameMusic, setGameMusic] = useState(new Audio(backgroundMusic));
 
+  const [isWaitingForGameModalOpen, setIsWaitingForGameModalOpen] = useState(true);
+
   useEffect(() => {
     gameMusic.volume = 0.1;
     gameMusic.loop = true;
@@ -78,11 +80,15 @@ const GamePage = (props: Props) => {
     setIsMusicPlaying(!isMusicPlaying);
   };
 
+  const handleCloseWaitingForGameModal = () => {
+    setIsWaitingForGameModalOpen(false);
+  };
+
   return (
     <div className={`app-container`}>
       <GamePageWrapper handlePauseClick={handlePauseClick} roomGameStateWrapper={roomGameStateWrapper} myGameStateWrapper={myGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
       <div>
-        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef}/>
+        <Canvas gameId={gameId} userData={userData} roomGameRef={roomGameRef} myGameRef={myGameRef} setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} updateWrapperState={updateWrapperState} lastKeyRef={lastKeyRef} isWaitingForGameModalOpen={isWaitingForGameModalOpen} handleCloseWaitingForGameModal={handleCloseWaitingForGameModal}/>
         {/*setRoomGameStateWrapper={setRoomGameStateWrapper} setMyGameStateWrapper={setMyGameStateWrapper} />*/}
         
       </div>

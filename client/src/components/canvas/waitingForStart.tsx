@@ -22,6 +22,7 @@ interface WaitingForStartType {
 }
 
 export function WaitingForStart(props: WaitingForStartType) {
+  console.log("waitingForStart component")
   const { roomGameState, myGameState, isWaitingForGameModalOpen, isCountingDown } = props;
   const [myKart, setMyKart] = useState<Kart | undefined>(undefined);
   const [myTeam, setMyTeam] = useState<Team | null>(null);
@@ -37,6 +38,8 @@ export function WaitingForStart(props: WaitingForStartType) {
   const redGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const blueGhostSvgRef = useRef<HTMLImageElement | undefined>();
   const orangeGhostSvgRef = useRef<HTMLImageElement | undefined>();
+
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     const verticalDirImg = new Image();
@@ -290,9 +293,36 @@ export function WaitingForStart(props: WaitingForStartType) {
 
     }
 
+    const displayModal = () => {
+      console.log(isWaitingForGameModalOpen);
+      if (isWaitingForGameModalOpen === true){
+        return (
+          <div className="waitingforstart-overlay">
+          <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
+            <div id="heading">
+              <h1>lobby</h1>
+            </div>
+            <div>
+              <ul id="teamInfo"></ul>
+            </div>
+          </div>
+        </div>
+        )
+      }
+    }
+    
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setCount(prevCount => prevCount + 1);
+  //   }, 33);
+
+  //   return () => clearInterval(interval);
+  // }, []);
+
   return (
     <>
-      {isWaitingForGameModalOpen && (
+    {displayModal()}
+      {/* {isWaitingForGameModalOpen && (
         <div className="waitingforstart-overlay">
           <div onClick={(e) => e.stopPropagation()} className="waitingforstart-box">
             <div id="heading">
@@ -303,7 +333,7 @@ export function WaitingForStart(props: WaitingForStartType) {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };

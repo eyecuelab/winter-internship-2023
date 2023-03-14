@@ -47,16 +47,17 @@ interface Props {
   roomGameRef: React.RefObject<roomGameType>;
   myGameRef: React.RefObject<myGameType>;
   lastKeyRef:  React.RefObject<lastKeyType>;
+  isWaitingForGameModalOpen: boolean;
   setRoomGameStateWrapper: (state: roomGameType) => void;
   setMyGameStateWrapper: (state: myGameType) => void;
   updateWrapperState: () => void;
+  handleCloseWaitingForGameModal: () => void; 
 }
 
 function Canvas(props: Props) {
-  const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper, lastKeyRef } = props;
+  const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper, lastKeyRef, isWaitingForGameModalOpen, handleCloseWaitingForGameModal } = props;
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
-    useState(true);
+  const isWaitingForGameModalOpenRef = useRef(true);
 
   const explosionSound = new Audio(explosionSoundEffect);
   const turningSound = new Audio(turningSoundEffect);
@@ -454,8 +455,32 @@ function Canvas(props: Props) {
       }
   }, []);
 
+  useEffect (() => {
+    console.log("go");
+    isWaitingForGameModalOpenRef.current = false;
+  }, [isWaitingForGameModalOpen])
+
+  const updateIsWaitingForGameModal = () => {
+    if (isWaitingForGameModalOpen && myGameRef.current) {
+      setMyGameState(myGameRef.current);
+      setMyGameStateWrapper(myGameRef.current);
+      if (isTimerReady) {
+        setInterval(async () => {
+          setIsCountingDown(true);
+        }, 3000);
+        setInterval(() => {
+          console.log("accessing setInterval")
+          handleCloseWaitingForGameModal();
+        }, 10000);
+        setIsCountingDown(false);
+        setIsTimerReady(false);
+      }
+    }
+  }
+
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
+    console.log(isWaitingForGameModalOpen);
     props.updateWrapperState();
     if (roomGameRef.current) {
       setRoomGameStateWrapper(roomGameRef.current);
@@ -467,14 +492,15 @@ function Canvas(props: Props) {
     if (!canvas) {
       return;
     }
-    let updatedKart; //should this be referencing local state?
-
+    let updatedKart;
+    if (isWaitingForGameModalOpenRef.current === false) {
     if (myGameRef.current?.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {
         updatedKart = new Kart(updateKartXMovements());
       } else if (myGameRef.current.myControl === "y") {
         updatedKart = new Kart(updateKartYMovements());
       }
+    
       //maybe only call removePellets if you're not a ghost?
       const kart = roomGameRef.current?.karts.get(
         myGameRef.current.myTeam.color
@@ -486,6 +512,7 @@ function Canvas(props: Props) {
           checkForGhostCollisions();
         }
       }
+    
 
       //consolidate this emit with game_update
       const tempColor = myGameRef.current.myTeam.color;
@@ -494,6 +521,7 @@ function Canvas(props: Props) {
 
       socket.emit("game_update", { jsonKart, tempColor, tempScore, gameId });
     }
+  }
 
     // displayScores();
     updatePlayerControl();
@@ -694,6 +722,7 @@ function Canvas(props: Props) {
 
         if (socketId === socketIds[numberOfUsers - 1]) {
           if (numberOfUsers % 2 === 0) {
+            updateIsWaitingForGameModal();
             const spawnPosition = spawnPointsRef.current[numberOfUsers / 2 - 1];
 
             if (gameId) {
@@ -753,20 +782,6 @@ function Canvas(props: Props) {
             }
           }
         }
-        if (isWaitingForGameModalOpen) {
-          setMyGameState(myGameRef.current);
-          setMyGameStateWrapper(myGameRef.current);
-          if (numberOfUsers === 4 && isTimerReady) {
-            setInterval(async () => {
-              setIsCountingDown(true);
-            }, 3000);
-            setInterval(async () => {
-              setWaitingForGameModalOpen(false);
-            }, 10000);
-            setIsCountingDown(false);
-            setIsTimerReady(false);
-          }
-        }
       }
     });
 
@@ -777,6 +792,7 @@ function Canvas(props: Props) {
 
       if (myGameRef.current) {
         if (tempTeam.players.x === socketId) {
+          updateIsWaitingForGameModal();
           myGameRef.current.myTeam.updateTeamWithJson(jsonTeam);
           myGameRef.current.myKart.updateKartWithJson(jsonKart);
           myGameRef.current.myControl = "x";
@@ -809,7 +825,6 @@ function Canvas(props: Props) {
       const tempKart = new Kart(JSON.parse(jsonKart));
       roomGameRef.current?.karts.set(tempColor, tempKart);
       roomGameRef.current?.scores.set(tempColor, tempScore);
-      // displayScores();
     });
 
     socket.on("receive_ghost_kart_toggle", (data) => {
@@ -896,19 +911,20 @@ function Canvas(props: Props) {
           lastKeyRef.current.lastKey = e.key;
           }
       } 
-    //   else if (e.key === "q") {
-    //     console.log("roomGameRef:", roomGameRef.current);
-    //     console.log("myGameRef:", myGameRef.current);
-    //     console.log("poofsRef", poofsRef.current);
-    //   } else if (e.key === "p") {
-    //     if (lastKeyRef.current) {
-    //       lastKeyRef.current.lastKey = "";
-    //     }
-    //     myGameRef.current?.myTeam.changePlayerInControl();
-    //     const tempTeamMate = myGameRef.current?.myTeamMate;
-    //     const jsonTeam = JSON.stringify(myGameRef.current?.myTeam);
-    //     socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
-    // }
+      else if (e.key === "q") {
+        console.log("roomGameRef:", roomGameRef.current);
+        console.log("myGameRef:", myGameRef.current);
+        console.log("poofsRef", poofsRef.current);
+        console.log("isWaitingForGameModalOpen:", isWaitingForGameModalOpen)
+      } else if (e.key === "p") {
+        if (lastKeyRef.current) {
+          lastKeyRef.current.lastKey = "";
+        }
+        myGameRef.current?.myTeam.changePlayerInControl();
+        const tempTeamMate = myGameRef.current?.myTeamMate;
+        const jsonTeam = JSON.stringify(myGameRef.current?.myTeam);
+        socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+    }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -932,7 +948,6 @@ function Canvas(props: Props) {
   //GAME OVER FUNCTIONS:
   const toggleGameOver = () => {
     setIsGameOverModalOpen(!isGameOverModalOpen);
-    setWaitingForGameModalOpen(false);
   };
 
   const hasPellets = () => {
@@ -983,12 +998,14 @@ function Canvas(props: Props) {
           <canvas {...size} ref={canvasRef} />
         </div>
         <div>
+       {isWaitingForGameModalOpen && (
           <WaitingForStart
             isWaitingForGameModalOpen={isWaitingForGameModalOpen}
             roomGameState={roomGameState}
             myGameState={myGameState}
             isCountingDown={isCountingDown}
           ></WaitingForStart>
+       )}
         </div>
         <div>
           <GameOver
