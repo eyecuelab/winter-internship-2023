@@ -2,6 +2,8 @@
 
 ## 🧑🏽‍🤝‍🧑🏼 Creators
 
+Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.netlify.app/)
+
 - Joseph Jackson
 - Helen Lehrer
 - Patty Otero
@@ -19,113 +21,85 @@
   - [Installation](#installation)
   - [Required Files](#required-files)
   - [Running The App Locally](#running-the-app-locally)
-- [Super Pacart API Reference](#the-super-pacart-api-reference)
 - [Bugs](#bugs)
 - [License](#license)
 
 ## 📝 Summary <a id="summary"></a>
 
-_This is a full stack application that uses prisma and postgresql for the backend, node/express for the server, and react for the front-end and is written using typescript._
+_This is a full stack application that uses prisma and postgresql for the database, node/express for the server, and react for the front-end. It is written using typescript and utilizes Socket.IO for real-time game play with mutliple players from different computers._
 
 ## ✅ Description <a id="description"></a>
 
-_This is a web application that will allow a group of users to play a PacMan/Mario Cart inspired game. The objective of the game is for PacMan controlled carts is to collect all pellets on the map. If you are playing as a Ghost on spawn, your objective is to take down the PacMan cart. When a Ghost catches a PacMan, The Ghost then becomes a PacMan cart allowing them to start collecting pellets. The caught PacMan now becomes a ghost and has to try and get it's body back. The game ends when all of the pellets on the map have been collected.._
+#### General Instructions:
+_This is a web application that will allow a group of users to play a PacMan/Mario Cart inspired game. The objective of the game is for PacMan controlled carts to collect all pellets on the map. Each cart in the game is controlled by two players, one player will control up and down using the "W" and "S" keys, and the other teammate will control left and right using "A" and "D" keys. Control of the cart toggles between teammates after each move has been made. If you are playing as a Ghost on spawn, your objective is to take down the PacMan cart. When a Ghost catches a PacMan, The Ghost then becomes a PacMan cart allowing them to start collecting pellets. The caught PacMan now becomes a ghost and has to try and get catch a PacMan cart. The game ends when all of the pellets on the map have been collected. Whichever team has the highest score in the end is the winner!_
 
-## 🎯 MVP/MVP Rules <a id="mvp"></a>
+## 🎯 MVP <a id="mvp"></a>
 
-### Authentication
+✅ Users can login via Google Auth
 
-- Login Screen
-- Users can login via Google Auth, have the email and name field in the database be fille, have user persistence throughout the application, have game data stored in the user table at game end.
-- API create endpoint (Models, Controllers, Routes) for creating new user entries
+✅ Clicking "join a public game" button will send users to game rooms until they are filled, and then create new games as needed.
 
-### Lobby
+✅ Game can accomodate 4 players on 2 teams.
 
-- Input for nickname
-- Join a public game button
+✅+ The map will be hard coded and not randomly generated, with 2 spawn points.
 
-### Game Instance
+✅ When carts eat pellets, they gain points and the pellets disappear.
 
-- Canvas element surrounded by a UI wrapper
-- Database connection to the players that keeps track of player locations & scores
-- Four players on two teams
+✅+  All carts are pacman carts.
 
-### Hard-coded Map
+✅ Players control cars with WASD keys.
 
-- Populated by pellets
-- Spawning mechanics
-- Spawning logic: Two spawn points
+✅ Carts cannot move backwards and have inertia.
 
-### Game Play
+✅ When a player disconnects the game will end.
 
-- Pellets ingested gives points to teams
-- Pellets disappear
-- Two teams of pacarts
-- When pacarts collide, they switch directions
-- When pellets = 0 the game ends
-- Players can interact with their pacarts via key inputs (WASD)
-- Disconnect error handling
-- Game-over handling
+✅ When pellets run out, the game is over.
 
-### Rules
-
-- There are four players per game playing on teams of two
-- Games are 2.5 minutes long
-- Players are randomly assigned character and steering roles (players can control either up/down or left/right). Players cannot reverse directions.
-- The database saves the last input from a player and will act upon the last input
-- The character will pause when it hits a wall if the next direction move has not been inputted.
-- Map is randomly generated each game
-- Each character (teams of 2) has a score
-- Ghost scores points for catching pacart
-- Game ends when time runs out or pellets run out
-- Whoever has the most points at the end of the game wins!!!
-- After game ends player scores are displayed and option to play again appears.
-
+✅ When a game is over, all players will see the final scores and be able to click a button to return to the home screen.
 
 ### ⭐ Stretch Goals <a id="stretch-goals"></a>
 
-[] One-player/demo mode
+❌ One-player/demo mode
 
-[] Chat/messenger
+✅ maps are randomly generated
 
-[] Customizable colors for Pacarts/Ghosts
+❌ Chat/messenger
 
-[] Power-ups are viable based on different factors
+❌ Customizable colors for Pacarts/Ghosts
 
-[] Camera focused on the player and can move around
+❌ Power-ups are viable based on different factors
 
-[] Choose size on the map
+✅ Camera focused on the player and can move around
 
-[] Rounds
+❌ Choose size on the map
 
-[] Collection of maps
+❌ Rounds
 
-[] Waiting Room with setting, sharable game links
+❌ Collection of maps
 
-[] Multiple games happening simultaneously
+❌ Waiting Room with setting, sharable game links
 
-[] Multiple cart stats
+✅ Multiple games happening simultaneously
 
-[] Having up to eight players in one game
+❌ Carts have different stats: top speed, handling
 
-[] Leader-boards
+✅ Having up to eight players in one game
 
-[] Smart respawn: Characters respawn based on the location of capture
+❌ Leader-boards
 
-[] Option the rematch with the same players
+✅ Smart respawn: Characters respawn based on the location of capture
+
+❌ Option the rematch with the same players
 
 ## 🖥️ Technologies Used <a id="technologies-used"></a>
 
 - _[React](https://reactjs.org/)_
-- _[React Query](https://tanstack.com/query/v4/?from=reactQueryV3&original=https://react-query-v3.tanstack.com/)_
 - _[React Router](https://reactrouter.com/)_
 - _[Typescript](https://www.typescriptlang.org/)_
 - _[Socket.IO](https://socket.io/)_
 - _[Prisma](https://www.prisma.io/)_
 - _[PostgreSQL](https://www.postgresql.org/)_
 - _[ExpressJs](https://expressjs.com/)_
-- _[Express-Session](https://www.npmjs.com/package/express-session/v/1.17.3)_
-- _[Prisma-session-store](https://www.npmjs.com/package/@quixo3/prisma-session-store)_
 - _[ViteJS](https://vitejs.dev/)_
 - _[Nodemon](https://www.npmjs.com/package/nodemon)_
 - _[Fly.IO](https://fly.io/)_
@@ -147,7 +121,7 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 
 ### Required .env Files <a id="required-files"></a>
 
-- In the `/server` directory, create an .env file and insert the following: `DATABASE_URL="postgresql://postgres:yourPasswordGoesHere@localhost:5432/yourDatabaseNameGoesHere?schema=yourSchemaNameGoesHere"` & `SESSION_SECRET="yourSecretGoesHere"`
+- In the `/server` directory, create an .env file and insert the following: `DATABASE_URL="postgresql://postgres:yourPasswordGoesHere@localhost:5432/yourDatabaseNameGoesHere?schema=yourSchemaNameGoesHere"`
 - Then save
 - In the `/client` directory, create an .env file (separate from the previous), and insert the following: `VITE_API_ENDPOINT=http://localhost:3000`
 - Then save
@@ -156,43 +130,9 @@ _This is a web application that will allow a group of users to play a PacMan/Mar
 
 - Split your terminal into two separate consoles
 - Navigate one terminal into the `/server` directory and run `npm start`
-- Navigate the second terminal into the `/client` directory and run `npm run dev` as well. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
+- Navigate the second terminal into the `/client` directory and run `npm run dev`. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
+- For locally testing this particular game, you will need to open 2 browser windows to have 2 unique users enter the game, as the game will not run or be playable until at least 2 people have entered.
 
-## Super Pacart API Reference <a id="the-super-pacart-api-reference"></a>
-
-- Everything you need to interact with our API.
-- If you want to access our API directly, you can use the following base URL: `http://localhost:3000/` after running the app locally.
-
-### Making Requests
-
-- All requests should be made to the base URL: `http://localhost:3000/` and use Postman/Thunderclient and requests should be made using the HTTP verbs `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`.
-
-- Player:
-  - GET `/player` retrieves a single player by Id.
-  - GET `/player/:gameId` retrieves all players by gameId.
-  - POST `/player/` creates a new player.
-  - PUT `/player/:id` updates a single player by Id.
-
-- Game:
-  - GET `/games` retrieves all games.
-  - GET `/game/:id` retrieves a single game by Id.
-  - POST `/game/:id` creates a new game.
-
-- Round:
-  - GET `/round/:id` retrieves specific round from game.
-  - GET `/rounds/:gameID` retrieves all rounds from game.
-
-- Role:
-  - GET `/roles` retrieves all roles.
-  - GET `/role/:id` retrieves a single role by Id.
-  - POST `/role/` creates a new role.
-
-- Vote:
-  - GET `/vote/:id` retrieves a single vote by Id.
-  - GET `/votes/:gameId` retrieves all votes by gameId.
-  - POST `/vote/` creates a new vote.
-  - POST `/tallyVote` Counts casted votes and tally them.
-  - POST `/vote/` casted votes are collected.
 
 ## Known 🐛 Bugs <a id="bugs"></a>
 
