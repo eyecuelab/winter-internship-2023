@@ -1,5 +1,4 @@
 import { Kart } from "./gameClasses";
-import { kartType } from "../../types/Types";
 
 export function ghostCollidesWithKart({
   ghost,
