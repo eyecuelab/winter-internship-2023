@@ -114,7 +114,6 @@ const Lobby = (props: Props) => {
 
   const startAGame = () => {
     const quads = generateMapQuadrants();
-    console.log(quads);
     const newGameMap = new GameMap(quads);
     newGameMap.generateMapArr();
     newGameMap.generateMapPropertiesArrs();
@@ -141,7 +140,6 @@ const Lobby = (props: Props) => {
 
   const handleStartGameClick = async () => {
     await getData(`/game/lastpost/desc`).then((lastPost) => {
-      console.log(lastPost);
       if (!lastPost) {
         startAGame();
       } else {

@@ -38,7 +38,6 @@ interface Props {
 
 function Canvas(props: Props) {
   const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper, lastKeyRef } = props;
-  console.log(roomGameRef);
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
   const [isWaitingForGameModalOpen, setWaitingForGameModalOpen] =
     useState(false);
@@ -92,7 +91,7 @@ function Canvas(props: Props) {
   const updateKartYMovements = () => {
     const myColor = myGameRef.current?.myTeam.color;
     if (myColor) {
-    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart(); //not sure about this..
+    const kart: Kart = roomGameRef.current?.karts.get(myColor) ?? new Kart();
     const velocityUnit = kart.isGhost ? 20 : 10;
 
     if (isGameOverModalOpen === false) {
@@ -270,15 +269,15 @@ function Canvas(props: Props) {
   const findFurthestSpawnPoint = (currentKart: Kart) => {
     if (currentKart.position.x < 880) {
       if (currentKart.position.y < 560) {
-        return 0;
+        return 3;
       } else {
-        return 2;
+        return 1;
       }
     } else {
       if (currentKart.position.y < 560) {
-        return 1;
+        return 2;
       } else {
-        return 3;
+        return 0;
       }
     }
   };
@@ -305,6 +304,7 @@ function Canvas(props: Props) {
             ghostCollidesWithKart({ ghost: currentKart, paCart: item.pacKart })
           ) {
             const spawnNum = findFurthestSpawnPoint(currentKart);
+            console.log(spawnNum);
 
             const kartColor = item.color;
             const ghostColor = myGameRef.current?.myTeam.color;
@@ -315,6 +315,10 @@ function Canvas(props: Props) {
               gameId,
             });
             updateScore(200);
+            currentKart.isGhost = false;
+            if (ghostColor){
+              roomGameRef.current?.karts.set(ghostColor, currentKart);
+            }
           }
         }
       });
@@ -690,7 +694,6 @@ function Canvas(props: Props) {
   useEffect(() => {
     socket.on("receive_initial_game_data", (gameData) => {
       const initialGameData = JSON.parse(gameData);
-      //console.log(initialGameData);
       boundariesRef.current = initialGameData.boundaries;
       pelletsRef.current = initialGameData.pellets;
       spawnPointsRef.current = initialGameData.spawnPoints;
@@ -901,8 +904,6 @@ function Canvas(props: Props) {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "w" || e.key === "a" || e.key === "s" || e.key === "d") {
-          console.log(lastKeyRef);
-          console.log(lastKeyRef.current);
           if (lastKeyRef.current) {
           lastKeyRef.current.lastKey = e.key;
           }
@@ -918,6 +919,8 @@ function Canvas(props: Props) {
         const tempTeamMate = myGameRef.current?.myTeamMate;
         const jsonTeam = JSON.stringify(myGameRef.current?.myTeam);
         socket.emit("toggle_player_control", { tempTeamMate, jsonTeam });
+      } else if(e.key === "g"){
+        toggleToGhost(0)
       }
     };
 
@@ -929,13 +932,14 @@ function Canvas(props: Props) {
 
   const toggleToGhost = (spawnNum: number) => {
     if(myGameRef.current){
-      const kart = roomGameRef.current?.karts.get(myGameRef.current
-        .myTeam.color);
-  
-      if (kart) {
-        kart.position = spawnPointsRef.current[spawnNum].position;
-        kart.velocity = { x: 0, y: 0 };
-        kart.isGhost = true;
+      const currentKartColor = myGameRef.current
+      .myTeam.color
+      const currentKart = roomGameRef.current?.karts.get(currentKartColor);
+      if (currentKart) {
+        currentKart.position = spawnPointsRef.current[spawnNum].position;
+        currentKart.velocity = { x: 0, y: 0 };
+        currentKart.isGhost = true;
+        roomGameRef.current?.karts.set(currentKartColor, currentKart)
       }
     }
   };
