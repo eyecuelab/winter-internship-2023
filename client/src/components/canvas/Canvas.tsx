@@ -57,7 +57,7 @@ interface Props {
 function Canvas(props: Props) {
   const { gameId, userData, roomGameRef, myGameRef, setRoomGameStateWrapper, setMyGameStateWrapper, lastKeyRef, isWaitingForGameModalOpen, handleCloseWaitingForGameModal } = props;
   const [isGameOverModalOpen, setIsGameOverModalOpen] = useState(false);
-  const isWaitingForGameModalOpenRef = useRef(true);
+  const isWaitingForGameModalOpenRef = useRef(false);
 
   const explosionSound = new Audio(explosionSoundEffect);
   const turningSound = new Audio(turningSoundEffect);
@@ -457,7 +457,8 @@ function Canvas(props: Props) {
 
   useEffect (() => {
     console.log("go");
-    isWaitingForGameModalOpenRef.current = false;
+    isWaitingForGameModalOpenRef.current = !isWaitingForGameModalOpenRef.current;
+    console.log(isWaitingForGameModalOpenRef.current);
   }, [isWaitingForGameModalOpen])
 
   const updateIsWaitingForGameModal = () => {
@@ -480,7 +481,6 @@ function Canvas(props: Props) {
 
   //CANVAS ANIMATION FUNCTIONS:
   const renderFrame = () => {
-    console.log(isWaitingForGameModalOpen);
     props.updateWrapperState();
     if (roomGameRef.current) {
       setRoomGameStateWrapper(roomGameRef.current);
@@ -493,6 +493,7 @@ function Canvas(props: Props) {
       return;
     }
     let updatedKart;
+    console.log(isWaitingForGameModalOpenRef.current);
     if (isWaitingForGameModalOpenRef.current === false) {
     if (myGameRef.current?.myTeam.playerInControl === socketId) {
       if (myGameRef.current.myControl === "x") {

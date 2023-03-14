@@ -303,7 +303,6 @@ function GamePageWrapper (props:Props) {
 
       for (let i = 0; i < scoresArr.length; i++) {
         const li = document.createElement("li");
-        // const teamScore = scoresArr[i][1];
         li.appendChild(document.createTextNode(`${scoresArr[i]}`));
         if (scoresArr[i][0] === "blue") {
           li.style.color = "#005487";
@@ -316,48 +315,6 @@ function GamePageWrapper (props:Props) {
         }
         scoresInfo?.appendChild(li);
       }
-
-
-  //     const liFour = document.createElement("li");
-  //     if (scoresArr[0]) {
-  //       if (scoresArr[0][0] === "blue") {
-  //         liFour.style.color = "#005487";
-  //       } else if (scoresArr[0][0] === "orange") {
-  //           liFour.style.color = "#F69343";
-  //         } else if (scoresArr[0][0] === "pink") {
-  //           liFour.style.color = "#F06ACA";
-  //           } else if (scoresArr[0][0] === "red") {
-  //             liFour.style.color = "#D52527";
-  //           }
-  //     }
-  
-  //     if (scoresArr[0]) {
-  //       const teamOneScore = scoresArr[0][1];
-  //       liFour.appendChild(
-  //         document.createTextNode(`${scoresArr[0]}`)
-  //       )
-  //     }
-  //     scoresInfo?.appendChild(liFour);
-
-  //     const liFive = document.createElement("li");
-  //     if (scoresArr[1]) {
-  //       const teamTwoScore = scoresArr[1][1];
-  //       liFive.appendChild(
-  //         document.createTextNode(`${scoresArr[1]}`)
-  //       )
-  //     }
-  //     if (scoresArr[1]) {
-  //       if (scoresArr[1][0] === "blue") {
-  //         liFive.style.color = "#005487";
-  //       } else if (scoresArr[1][0] === "orange") {
-  //           liFive.style.color = "#F69343";
-  //         } else if (scoresArr[1][0] === "pink") {
-  //           liFive.style.color = "#F06ACA";
-  //           } else if (scoresArr[1][0] === "red") {
-  //             liFive.style.color = "#D52527";
-  //           }
-  //     }
-  //     scoresInfo?.appendChild(liFive);
   } 
 
 
