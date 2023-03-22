@@ -151,15 +151,15 @@ Are you ready to take on the challenge and compete against your friends in this 
 
 - Game:
   - GET `/game/:id` retrieves a single game by id.
-      parameters:
-        - in: body
+      - parameters:
+       - in: body
             required: id
               properties:
                 id:
                   type: number
   - GET `/game/lastpost/desc` retrieves the last game that was created
   - PATCH `/game/:id` updates an existing game by id.
-       parameters:
+       - parameters:
         - in: body
             required: id, pellets, isActive
               properties:
@@ -170,7 +170,7 @@ Are you ready to take on the challenge and compete against your friends in this 
                 isActive:
                   type: Boolean
   - POST `/game` creates a new game.
-       parameters:
+       - parameters:
         - in: body
             required: map, boundaries, pellets, spawnPoints, isActive
               properties:
@@ -186,23 +186,23 @@ Are you ready to take on the challenge and compete against your friends in this 
                   type: Boolean
 - User:
   - GET `/user/:email` retrieves a user by email.
-       parameters:
+       - parameters:
         - in: body
             required: email
               properties:
                 email:
                   type: string
   - POST `/user` creates a new user.
-       parameters:
-            - in: body
-                required: email
-                  properties:
-                    name:
-                      type: string
-                    email:
-                      type: string
+       - parameters:
+        - in: body
+            required: email
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
   - PUT `/user/:userId/deactivate-last-game` deactivates an existing game associated with a user id.
-       parameters:
+       - parameters:
         - in: body
             required: id
               properties:
@@ -211,7 +211,7 @@ Are you ready to take on the challenge and compete against your friends in this 
   
 - GameUser:
   - POST `/gameUser` creates a new gameUser.
-      parameters:
+      - parameters:
             - in: body
                 required: game id, user id
                   properties:
@@ -220,7 +220,7 @@ Are you ready to take on the challenge and compete against your friends in this 
                     userId:
                       type: number
   - GET `/game/:gameId/gameUser` retrieves all gameUsers that that have a specific game id.
-       parameters:
+       - parameters:
         - in: body
             required: id
               properties:
@@ -229,43 +229,43 @@ Are you ready to take on the challenge and compete against your friends in this 
 
 - Role:
   - GET `/round/:id` retrieves specific role by id.
-       parameters:
+       - parameters:
         - in: body
             required: id
               properties:
                 id:
                   type: number
   - POST `/role` creates a new role.
-       parameters:
-          - in: body
+       - parameters:
+        - in: body
               required: name
                 properties:
                   name:
                     type: string
 - Team:
   - POST `/team` creates a new team.
-     parameters:
-          - in: body
-              required: color, score, position, velocity, angle, characterId, gameId, kartId
-                properties:
-                  color:
-                    type: string
-                  score:
-                    type: number
-                  position:
-                    type: JSON
-                  velocity:
-                    type: JSON
-                  angle:
-                    type: JSON
-                  characterId:
-                    type: number
-                  gameId:
-                    type: number
-                  kartId:
-                    type: number
+     - parameters:
+      - in: body
+          required: color, score, position, velocity, angle, characterId, gameId, kartId
+            properties:
+              color:
+                type: string
+              score:
+                type: number
+              position:
+                type: JSON
+              velocity:
+                type: JSON
+              angle:
+                type: JSON
+              characterId:
+                type: number
+              gameId:
+                type: number
+              kartId:
+                type: number
   - PATCH `/team/:id` updates an existing team by id.
-       parameters:
+       - parameters:
         - in: body
             required: id
               properties:
@@ -289,7 +289,7 @@ Are you ready to take on the challenge and compete against your friends in this 
                   type: number
 - TeamUser:
   - POST `/teamUser` creates a new teamUser.
-     parameters:
+     - parameters:
               - in: body
                   required: teamId, userId, axisControl
                     properties:
