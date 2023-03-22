@@ -19,8 +19,10 @@ Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.n
 - [Technologies Used](#technologies-used)
 - [Installation, Setup, and Running The App](#installation-setup-and-running-the-app)
   - [Installation](#installation)
+  - [Database Seeding](#database-seeding)
   - [Required Files](#required-files)
   - [Running The App Locally](#running-the-app-locally)
+- [Super Pacart API Reference](#super-pacart-api-reference)
 - [Bugs](#bugs)
 - [License](#license)
 
@@ -123,7 +125,7 @@ Are you ready to take on the challenge and compete against your friends in this 
 - Also, Prisma Studio is a visual editor for the data in your database.
   - Run `npx prisma studio` in your terminal.
 
-### Database Seeding
+### Database Seeding <a id="database-seeding"></a>
 - Using _[Postman](https://www.postman.com/)_, make a post request to http://localhost:3000/seed to seed the database with default data. 
 
 ### Required .env Files <a id="required-files"></a>
@@ -138,6 +140,170 @@ Are you ready to take on the challenge and compete against your friends in this 
 - Navigate the second terminal into the `/client` directory and run `npm run dev`. If your browser does not automatically load, type `http://localhost:3000/` manually in the browser
 - For locally testing this particular game, you will need to open 2 browser windows to have 2 unique users enter the game, as the game will not run or be playable until at least 2 people have entered.
 
+## Super Pacart API Reference <a id="super-pacart-api-reference"></a>
+
+- Everything you need to interact with our API.
+
+### Making Requests
+
+- All requests should be made to the base URL: `http://localhost:3000/` and use Postman/Thunderclient and requests should be made using the HTTP verbs `GET`, `POST`, `PUT`, `PATCH`, and `DELETE`.
+- All request bodies should be in JSON format.
+
+- Game:
+  - GET `/game/:id` retrieves a single game by id.
+      parameters:
+        - in: body
+            required: id
+              properties:
+                id:
+                  type: number
+  - GET `/game/lastpost/desc` retrieves the last game that was created
+  - PATCH `/game/:id` updates an existing game by id.
+       parameters:
+        - in: body
+            required: id, pellets, isActive
+              properties:
+                id:
+                  type: number
+                pellets:
+                  type: JSON[]
+                isActive:
+                  type: Boolean
+  - POST `/game` creates a new game.
+       parameters:
+        - in: body
+            required: map, boundaries, pellets, spawnPoints, isActive
+              properties:
+                map:
+                  type: JSON
+                boundaries:
+                  type: JSON[]
+                pellets:
+                  type: JSON[]
+                map:
+                  type: JSON
+                isActive:
+                  type: Boolean
+- User:
+  - GET `/user/:email` retrieves a user by email.
+       parameters:
+        - in: body
+            required: email
+              properties:
+                email:
+                  type: string
+  - POST `/user` creates a new user.
+       parameters:
+            - in: body
+                required: email
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+  - PUT `/user/:userId/deactivate-last-game` deactivates an existing game associated with a user id.
+       parameters:
+        - in: body
+            required: id
+              properties:
+                id:
+                  type: number
+  
+- GameUser:
+  - POST `/gameUser` creates a new gameUser.
+      parameters:
+            - in: body
+                required: game id, user id
+                  properties:
+                    gameId:
+                      type: number
+                    userId:
+                      type: number
+  - GET `/game/:gameId/gameUser` retrieves all gameUsers that that have a specific game id.
+       parameters:
+        - in: body
+            required: id
+              properties:
+                id:
+                  type: number
+
+- Role:
+  - GET `/round/:id` retrieves specific role by id.
+       parameters:
+        - in: body
+            required: id
+              properties:
+                id:
+                  type: number
+  - POST `/role` creates a new role.
+       parameters:
+          - in: body
+              required: name
+                properties:
+                  name:
+                    type: string
+- Team:
+  - POST `/team` creates a new team.
+     parameters:
+          - in: body
+              required: color, score, position, velocity, angle, characterId, gameId, kartId
+                properties:
+                  color:
+                    type: string
+                  score:
+                    type: number
+                  position:
+                    type: JSON
+                  velocity:
+                    type: JSON
+                  angle:
+                    type: JSON
+                  characterId:
+                    type: number
+                  gameId:
+                    type: number
+                  kartId:
+                    type: number
+  - PATCH `/team/:id` updates an existing team by id.
+       parameters:
+        - in: body
+            required: id
+              properties:
+                id:
+                  type: number
+                color:
+                    type: string
+                score:
+                  type: number
+                position:
+                  type: JSON
+                velocity:
+                  type: JSON
+                angle:
+                  type: JSON
+                characterId:
+                  type: number
+                gameId:
+                  type: number
+                kartId:
+                  type: number
+- TeamUser:
+  - POST `/teamUser` creates a new teamUser.
+     parameters:
+              - in: body
+                  required: teamId, userId, axisControl
+                    properties:
+                      teamId:
+                        type: number
+                      userId:
+                        type: number
+                      axisControl:
+                        type: string
+- GoogleRoutes:
+  - GET `/userData` retrieves Google Auth user data.
+  
+- Seed:
+  - POST `/seed` seeds the database.
 
 ## Known 🐛 Bugs <a id="bugs"></a>
 
