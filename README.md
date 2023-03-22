@@ -26,12 +26,18 @@ Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.n
 
 ## 📝 Summary <a id="summary"></a>
 
-_This is a full stack application that uses prisma and postgresql for the database, node/express for the server, and react for the front-end. It is written using typescript and utilizes Socket.IO for real-time game play with mutliple players from different computers._
+_This is a full-stack application that uses Prisma/PostgreSQL for the database, Node.js/Express for the server, and React for the front-end. It is written in Typescript and utilizes Socket.io for real-time game play with mutliple players from different computers._
 
 ## ✅ Description <a id="description"></a>
 
 #### General Instructions:
-_This is a web application that will allow a group of users to play a PacMan/Mario Cart inspired game. The objective of the game is for PacMan controlled carts to collect all pellets on the map. Each cart in the game is controlled by two players, one player will control up and down using the "W" and "S" keys, and the other teammate will control left and right using "A" and "D" keys. Control of the cart toggles between teammates after each move has been made. If you are playing as a Ghost on spawn, your objective is to take down the PacMan cart. When a Ghost catches a PacMan, The Ghost then becomes a PacMan cart allowing them to start collecting pellets. The caught PacMan now becomes a ghost and has to try and get catch a PacMan cart. The game ends when all of the pellets on the map have been collected. Whichever team has the highest score in the end is the winner!_
+_Get ready for an exciting gaming experience with our web application inspired by Pac-Man and Mario Kart! This multiplayer game allows a group of up to 8 users to control Pac-Man and Ghost karts, with each kart controlled by two players. One teammate controls up and down using the "W" and "S" keys, while the other controls left and right using "A" and "D" keys. Control of the kart switches between teammates after each move, requiring strategic planning and seamless coordination.
+
+If you are on a Pac-Man kart, your objective is to collect all pellets scattered across the map. But be warned! If you're a Ghost, your goal is to take down the Pac-Man kart. When a Ghost catches a Pac-Man, the Ghost transforms into a Pac-Man kart and begins collecting pellets. The captured Pac-Man becomes a Ghost and must try to catch a Pac-Man kart.
+
+However, Ghost karts do not collect pellets but receive points for catching a Pac-Man. The game continues until all pellets on the map have been collected, and the team with the highest score at the end is declared the winner!
+
+Are you ready to take on the challenge and compete against your friends in this fast-paced multiplayer game? Join us and experience the thrill of the race as you maneuver through the map and outsmart your opponents!_
 
 ## 🎯 MVP <a id="mvp"></a>
 
