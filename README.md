@@ -107,6 +107,7 @@ Are you ready to take on the challenge and compete against your friends in this 
 - _[ViteJS](https://vitejs.dev/)_
 - _[Nodemon](https://www.npmjs.com/package/nodemon)_
 - _[Fly.IO](https://fly.io/)_
+- _[Netlify](https://www.netlify.com/)_
 
 ## ⚙️ Installation, Setup, and Running The App <a id="installation-setup-and-running-the-app"></a>
 
@@ -117,17 +118,17 @@ Are you ready to take on the challenge and compete against your friends in this 
 - _Navigate to the root folder `winter-internship-2023` and then `cd server` and run `npm install` and then `cd client` and run `npm install`_.
 - See below for required .env files
 - You will also need to have your database setup in PostgreSQL
-- To ensure the prisma schema has been updated to PostgreSQL, Run a migration to create your database tables with Prisma Migrate:
+- To ensure the prisma schema has been updated to PostgreSQL, run a migration to create your database tables with Prisma Migrate:
   - `npx prisma migrate dev --name init`
-  - `npm run seed` to seed the database with the default roles
 - Also, Prisma Studio is a visual editor for the data in your database.
   - Run `npx prisma studio` in your terminal.
+
+### Database Seeding
+- Using _[Postman](https://www.postman.com/)_, make a post request to http://localhost:3000/seed to seed the database with default data. 
 
 ### Required .env Files <a id="required-files"></a>
 
 - In the `/server` directory, create an .env file and insert the following: `DATABASE_URL="postgresql://postgres:yourPasswordGoesHere@localhost:5432/yourDatabaseNameGoesHere?schema=yourSchemaNameGoesHere"`
-- Then save
-- In the `/client` directory, create an .env file (separate from the previous), and insert the following: `VITE_API_ENDPOINT=http://localhost:3000`
 - Then save
 
 ### Running the App Locally <a id="running-the-app-locally"></a>
