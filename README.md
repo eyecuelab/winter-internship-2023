@@ -31,11 +31,11 @@ _This is a full-stack application that uses Prisma/PostgreSQL for the database, 
 ## ✅ Description <a id="description"></a>
 
 #### General Instructions:
-_Get ready for an exciting gaming experience with our web application inspired by Pac-Man and Mario Kart! This multiplayer game allows a group of up to 8 users to control Pac-Man and Ghost karts, with each kart controlled by two players. One teammate controls up and down using the "W" and "S" keys, while the other controls left and right using "A" and "D" keys. Control of the kart switches between teammates after each move, requiring strategic planning and seamless coordination.
+_Get ready for an exciting gaming experience with our web application inspired by Pac-Man and Mario Kart! This multiplayer game allows a group of up to 8 users to control Pac-Man and Ghost 'PaCarts', with each PaCart controlled by two players. One teammate controls up and down using the "W" and "S" keys, while the other controls left and right using "A" and "D" keys. Control of the PaCart switches between teammates after each move, requiring strategic planning and seamless coordination.
 
-If you are on a Pac-Man kart, your objective is to collect all pellets scattered across the map. But be warned! If you're a Ghost, your goal is to take down the Pac-Man kart. When a Ghost catches a Pac-Man, the Ghost transforms into a Pac-Man kart and begins collecting pellets. The captured Pac-Man becomes a Ghost and must try to catch a Pac-Man kart.
+If you are a Pac-Man, your objective is to collect all pellets scattered across the map. But be warned! If you're a Ghost, your goal is to take down the Pac-Man. When a Ghost catches a Pac-Man, the Ghost transforms into a Pac-Man and begins collecting pellets. The captured Pac-Man becomes a Ghost and must try to catch a Pac-Man.
 
-However, Ghost karts do not collect pellets but receive points for catching a Pac-Man. The game continues until all pellets on the map have been collected, and the team with the highest score at the end is declared the winner!
+However, Ghosts do not collect pellets but receive points for catching a Pac-Man. The game continues until all pellets on the map have been collected, and the team with the highest score at the end is declared the winner!
 
 Are you ready to take on the challenge and compete against your friends in this fast-paced multiplayer game? Join us and experience the thrill of the race as you maneuver through the map and outsmart your opponents!_
 
@@ -43,21 +43,21 @@ Are you ready to take on the challenge and compete against your friends in this 
 
 ✅ Users can login via Google Auth
 
-✅ Clicking "join a public game" button will send users to game rooms until they are filled, and then create new games as needed.
+✅ Clicking "Join a Public Game" button will send users to game rooms until they are filled, and then create new games as needed.
 
 ✅ Game can accomodate 4 players on 2 teams.
 
-✅+ The map will be hard coded and not randomly generated, with 2 spawn points.
+✅ The map will be hard coded and not randomly generated, with 2 spawn points.
 
-✅ When carts eat pellets, they gain points and the pellets disappear.
+✅ When Pacarts eat pellets, they gain points and the pellets disappear.
 
-✅+  All carts are pacman carts.
+✅ All Pacarts are Pac-Mans.
 
-✅ Players control cars with WASD keys.
+✅ Players control Pacarts with WASD keys.
 
-✅ Carts cannot move backwards and have inertia.
+✅ Pacarts cannot move backwards and have inertia.
 
-✅ When a player disconnects the game will end.
+✅ When a player disconnects, the game will end.
 
 ✅ When pellets run out, the game is over.
 
@@ -65,35 +65,33 @@ Are you ready to take on the challenge and compete against your friends in this 
 
 ### ⭐ Stretch Goals <a id="stretch-goals"></a>
 
-❌ One-player/demo mode
+✅ Game can accomodate 8 players on 4 teams.
 
-✅ maps are randomly generated
+✅ Maps are randomly generated
+
+✅ Camera focused on the player
+
+✅ Multiple games can happen simultaneously
+
+✅ Smart respawn: Characters respawn based on the location of capture
+
+❌ One-player/demo mode
 
 ❌ Chat/messenger
 
-❌ Customizable colors for Pacarts/Ghosts
+❌ Customizable colors for PaCarts
 
 ❌ Power-ups are viable based on different factors
-
-✅ Camera focused on the player and can move around
 
 ❌ Choose size on the map
 
 ❌ Rounds
 
-❌ Collection of maps
-
 ❌ Waiting Room with setting, sharable game links
 
-✅ Multiple games happening simultaneously
-
-❌ Carts have different stats: top speed, handling
-
-✅ Having up to eight players in one game
+❌ PaCarts have different stats: top speed, handling
 
 ❌ Leader-boards
-
-✅ Smart respawn: Characters respawn based on the location of capture
 
 ❌ Option the rematch with the same players
 
