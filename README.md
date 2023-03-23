@@ -4,23 +4,18 @@
 
 # _Super Pacart_
 ### _Winter Internship 2023_
+Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.netlify.app/)
 
 ## 🧑🏽‍🤝‍🧑🏼 Creators
 
-Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.netlify.app/)
-
-- Joseph Jackson
-- Helen Lehrer
-- Patty Otero
-- Spencer Dennis
+- [Joseph Jackson](https://github.com/josephjacksonw)
+- [Helen Lehrer](https://github.com/helen-lehrer)
+- [Patty Otero](https://github.com/patty-rose)
+- [Spencer Dennis](https://github.com/SpencerJDennis)
 
 ## 📂 Table Of Contents
-
+- [Summary](#summary)
 - [Description](#description)
-  - [Summary](#summary)
-  - [MVP](#mvp)
-  - [Stretch Goals](#stretch-goals)
-
 - [Technologies Used](#technologies-used)
 - [Installation, Setup, and Running The App](#installation-setup-and-running-the-app)
   - [Installation](#installation)
@@ -28,6 +23,10 @@ Deployed Application: [https://super-pacart.netlify.app/](https://super-pacart.n
   - [Required Files](#required-files)
   - [Running The App Locally](#running-the-app-locally)
 - [Super Pacart API Reference](#super-pacart-api-reference)
+
+- [MVP](#mvp)
+  - [Stretch Goals](#stretch-goals)
+
 - [Bugs](#bugs)
 - [License](#license)
 
@@ -38,69 +37,14 @@ _This is a full-stack application that uses Prisma/PostgreSQL for the database, 
 ## ✅ Description <a id="description"></a>
 
 #### General Instructions:
-_Get ready for an exciting gaming experience with our web application inspired by Pac-Man and Mario Kart! This multiplayer game allows a group of up to 8 users to control Pac-Man and Ghost 'PaCarts', with each PaCart controlled by two players. One teammate controls up and down using the "W" and "S" keys, while the other controls left and right using "A" and "D" keys. Control of the PaCart switches between teammates after each move, requiring strategic planning and seamless coordination.
 
-If you are a Pac-Man, your objective is to collect all pellets scattered across the map. But be warned! If you're a Ghost, your goal is to take down the Pac-Man. When a Ghost catches a Pac-Man, the Ghost transforms into a Pac-Man and begins collecting pellets. The captured Pac-Man becomes a Ghost and must try to catch a Pac-Man.
+_Get ready for an exciting gaming experience with our web application inspired by Pac-Man and Mario Kart! This multiplayer game allows a group of up to 8 users to control Pac-Man and Ghost 'PaCarts', with each PaCart controlled by two players. One teammate controls up and down using the "W" and "S" keys, while the other controls left and right using "A" and "D" keys. Control of the PaCart switches between teammates after each move, requiring strategic planning and seamless coordination._
 
-However, Ghosts do not collect pellets but receive points for catching a Pac-Man. The game continues until all pellets on the map have been collected, and the team with the highest score at the end is declared the winner!
+_If you are a Pac-Man, your objective is to collect all pellets scattered across the map. But be warned! If you're a Ghost, your goal is to take down the Pac-Man. When a Ghost catches a Pac-Man, the Ghost transforms into a Pac-Man and begins collecting pellets. The captured Pac-Man becomes a Ghost and must try to catch a Pac-Man._
 
-Are you ready to take on the challenge and compete against your friends in this fast-paced multiplayer game? Join us and experience the thrill of the race as you maneuver through the map and outsmart your opponents!_
+_However, Ghosts do not collect pellets but receive points for catching a Pac-Man. The game continues until all pellets on the map have been collected, and the team with the highest score at the end is declared the winner!_
 
-## 🎯 MVP <a id="mvp"></a>
-
-✅ Users can login via Google Auth
-
-✅ Clicking "Join a Public Game" button will send users to game rooms until they are filled, and then create new games as needed.
-
-✅ Game can accomodate 4 players on 2 teams.
-
-✅ The map will be hard coded and not randomly generated, with 2 spawn points.
-
-✅ When Pacarts eat pellets, they gain points and the pellets disappear.
-
-✅ All Pacarts are Pac-Mans.
-
-✅ Players control Pacarts with WASD keys.
-
-✅ Pacarts cannot move backwards and have inertia.
-
-✅ When a player disconnects, the game will end.
-
-✅ When pellets run out, the game is over.
-
-✅ When a game is over, all players will see the final scores and be able to click a button to return to the home screen.
-
-### ⭐ Stretch Goals <a id="stretch-goals"></a>
-
-✅ Game can accomodate 8 players on 4 teams.
-
-✅ Maps are randomly generated
-
-✅ Camera focused on the player
-
-✅ Multiple games can happen simultaneously
-
-✅ Smart respawn: Characters respawn based on the location of capture
-
-❌ One-player/demo mode
-
-❌ Chat/messenger
-
-❌ Customizable colors for PaCarts
-
-❌ Power-ups are viable based on different factors
-
-❌ Choose size on the map
-
-❌ Rounds
-
-❌ Waiting Room with setting, sharable game links
-
-❌ PaCarts have different stats: top speed, handling
-
-❌ Leader-boards
-
-❌ Option the rematch with the same players
+_Are you ready to take on the challenge and compete against your friends in this fast-paced multiplayer game? Join us and experience the thrill of the race as you maneuver through the map and outsmart your opponents!_
 
 ## 🖥️ Technologies Used <a id="technologies-used"></a>
 
@@ -308,12 +252,66 @@ Are you ready to take on the challenge and compete against your friends in this 
   
 - Seed:
   - POST `/seed` seeds the database.
+  
+## 🎯 MVP <a id="mvp"></a>
 
-## Known 🐛 Bugs <a id="bugs"></a>
+✅ Users can login via Google Auth
+
+✅ Clicking "Join a Public Game" button will send users to game rooms until they are filled, and then create new games as needed.
+
+✅ Game can accomodate 4 players on 2 teams.
+
+✅ The map will be hard coded and not randomly generated, with 2 spawn points.
+
+✅ When Pacarts eat pellets, they gain points and the pellets disappear.
+
+✅ All Pacarts are Pac-Mans.
+
+✅ Players control Pacarts with WASD keys.
+
+✅ Pacarts cannot move backwards and have inertia.
+
+✅ When a player disconnects, the game will end.
+
+✅ When pellets run out, the game is over.
+
+✅ When a game is over, all players will see the final scores and be able to click a button to return to the home screen.
+
+## ⭐ Stretch Goals <a id="stretch-goals"></a>
+
+✅ Game can accomodate 8 players on 4 teams.
+
+✅ Maps are randomly generated
+
+✅ Camera focused on the player
+
+✅ Multiple games can happen simultaneously
+
+✅ Smart respawn: Characters respawn based on the location of capture
+
+❌ One-player/demo mode
+
+❌ Chat/messenger
+
+❌ Power-ups are viable based on different factors
+
+❌ Choose size on the map
+
+❌ Rounds
+
+❌ Waiting Room with setting, sharable game links
+
+❌ PaCarts have different stats: top speed, handling
+
+❌ Leader-boards
+
+❌ Option the rematch with the same players
+
+## 🐛 Known Bugs <a id="bugs"></a>
 
 - _No Known Issues_
 
-## 🎫License <a id="license"></a>
+## 🎫 License <a id="license"></a>
 
 [MIT](LICENSE) 👈
 
