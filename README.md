@@ -201,103 +201,103 @@ Are you ready to take on the challenge and compete against your friends in this 
         - email:
           - type: `string`
   - PUT `/user/:userId/deactivate-last-game` deactivates an existing game associated with a user id.
-       - parameters:
+      - parameters:
         - in: `body`
-            -required: `id`
-              properties:
-                id:
-                  type: `number`
+          - required: `id`
+              - properties:
+                - id:
+                  - type: `number`
   
 - GameUser:
   - POST `/gameUser` creates a new gameUser.
       - parameters:
-            - in: `body`
-                required: `game id`, `user id`
-                  properties:
-                    gameId:
+          - in: `body`
+            - required: `game id`, `user id`
+                - properties:
+                    - gameId:
                       type: `number`
-                    userId:
+                    - userId:
                       type: `number`
   - GET `/game/:gameId/gameUser` retrieves all gameUsers that that have a specific game id.
        - parameters:
-        - in: `body`
-            required: `id`
-              properties:
-                id:
+         - in: `body`
+            - required: `id`
+              - properties:
+                - id:
                   type: `number`
 
 - Role:
   - GET `/round/:id` retrieves specific role by id.
        - parameters:
         - in: `body`
-            required: `id`
-              properties:
-                id:
-                  type: `number`
+            - required: `id`
+              - properties:
+                - id:
+                  - type: `number`
   - POST `/role` creates a new role.
        - parameters:
         - in: `body`
-              required: `name`
-                properties:
-                  name:
-                    type: `string`
+          - required: `name`
+            - properties:
+              - name:
+                - type: `string`
 - Team:
   - POST `/team` creates a new team.
      - parameters:
       - in: `body`
-          required: `color, score, position, velocity, angle, characterId, gameId, kartId`
-            properties:
-              color:
-                type: `string`
-              score:
-                type: `number`
-              position:
-                type: `JSON`
-              velocity:
-                type: `JSON`
-              angle:
-                type: `JSON`
-              characterId:
-                type: `number`
-              gameId:
-                type: `number`
-              kartId:
-                type: `number`
+          - required: `color, score, position, velocity, angle, characterId, gameId, kartId`
+            - properties:
+              - color:
+                - type: `string`
+              - score:
+                - type: `number`
+              - position:
+                - type: `JSON`
+              - velocity:
+                - type: `JSON`
+              - angle:
+                - type: `JSON`
+              - characterId:
+                - type: `number`
+              - gameId:
+                - type: `number`
+              - kartId:
+                - type: `number`
   - PATCH `/team/:id` updates an existing team by id.
        - parameters:
         - in: `body`
-            required: `id`
-              properties:
-                id:
-                  type: `number`
-                color:
-                    type: `string`
-                score:
-                  type: `number`
-                position:
-                  type: `JSON`
-                velocity:
-                  type: `JSON`
-                angle:
-                  type: `JSON`
-                characterId:
-                  type: `number`
-                gameId:
-                  type: `number`
-                kartId:
-                  type: `number`
+            - required: `id`
+              - properties:
+                - id:
+                  - type: `number`
+                - color:
+                    - type: `string`
+                - score:
+                  - type: `number`
+                - position:
+                  - type: `JSON`
+                - velocity:
+                  - type: `JSON`
+                - angle:
+                  - type: `JSON`
+                - characterId:
+                  - type: `number`
+                - gameId:
+                  - type: `number`
+                - kartId:
+                  - type: `number`
 - TeamUser:
   - POST `/teamUser` creates a new teamUser.
      - parameters:
-              - in: `body`
-                  required: `teamId, userId, axisControl`
-                    properties:
-                      teamId:
-                        type: `number`
-                      userId:
-                        type: `number`
-                      axisControl:
-                        type: `string`
+       - in: `body`
+          - required: `teamId, userId, axisControl`
+            - properties:
+              - teamId:
+                - type: `number`
+              - userId:
+                - type: `number`
+              - axisControl:
+                - type: `string`
 - GoogleRoutes:
   - GET `/userData` retrieves Google Auth user data.
   
