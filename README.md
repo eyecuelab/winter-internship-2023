@@ -151,154 +151,153 @@ Are you ready to take on the challenge and compete against your friends in this 
 
 - Game:
   - GET `/game/:id` retrieves a single game by id.
-      - parameters:
-       - in: body
-            required: id
-              properties:
-                id:
-                  type: number
+    - parameters: 
+        - in: `body`
+        - required: `id`
+        - properties:
+            - id:
+                - type: `number`
   - GET `/game/lastpost/desc` retrieves the last game that was created
   - PATCH `/game/:id` updates an existing game by id.
-       - parameters:
-        - in: body
-            required: id, pellets, isActive
-              properties:
-                id:
-                  type: number
-                pellets:
-                  type: JSON[]
-                isActive:
-                  type: Boolean
+    - parameters:
+      - in: `body`
+      - required: `id, pellets, isActive`
+      - properties:
+        - id:
+            - type: `number`
+        - pellets:
+            - type: `JSON[]`
+        - isActive:
+            - type: `Boolean`
   - POST `/game` creates a new game.
-       - parameters:
-        - in: body
-            required: map, boundaries, pellets, spawnPoints, isActive
-              properties:
-                map:
-                  type: JSON
-                boundaries:
-                  type: JSON[]
-                pellets:
-                  type: JSON[]
-                map:
-                  type: JSON
-                isActive:
-                  type: Boolean
+    - parameters:
+      - in: `body`
+      - required: `map, boundaries, pellets, spawnPoints, isActive`
+      - properties:
+          - map:
+              - type: `JSON`
+          - boundaries:
+              - type: `JSON[]`
+          - pellets:
+              - type: `JSON[]`
+          - map:
+              - type: `JSON`
+          - isActive:
+                - type: `Boolean`
 - User:
   - GET `/user/:email` retrieves a user by email.
-       - parameters:
-        - in: body
-            required: email
-              properties:
-                email:
-                  type: string
+    - parameters:
+    - in: `body`
+    - required: `email`
+    - properties:
+        - email:
+        - type: `string`
   - POST `/user` creates a new user.
-       - parameters:
-        - in: body
-            required: email
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
+    - parameters:
+    - in: `body` required: `email`
+      - properties:
+        - name:
+          - type: `string`
+        - email:
+          - type: `string`
   - PUT `/user/:userId/deactivate-last-game` deactivates an existing game associated with a user id.
        - parameters:
-        - in: body
-            required: id
+        - in: `body`
+            -required: `id`
               properties:
                 id:
-                  type: number
+                  type: `number`
   
 - GameUser:
   - POST `/gameUser` creates a new gameUser.
       - parameters:
-            - in: body
-                required: game id, user id
+            - in: `body`
+                required: `game id`, `user id`
                   properties:
                     gameId:
-                      type: number
+                      type: `number`
                     userId:
-                      type: number
+                      type: `number`
   - GET `/game/:gameId/gameUser` retrieves all gameUsers that that have a specific game id.
        - parameters:
-        - in: body
-            required: id
+        - in: `body`
+            required: `id`
               properties:
                 id:
-                  type: number
+                  type: `number`
 
 - Role:
   - GET `/round/:id` retrieves specific role by id.
        - parameters:
-        - in: body
-            required: id
+        - in: `body`
+            required: `id`
               properties:
                 id:
-                  type: number
+                  type: `number`
   - POST `/role` creates a new role.
        - parameters:
-        - in: body
-              required: name
+        - in: `body`
+              required: `name`
                 properties:
                   name:
-                    type: string
+                    type: `string`
 - Team:
   - POST `/team` creates a new team.
      - parameters:
-      - in: body
-          required: color, score, position, velocity, angle, characterId, gameId, kartId
+      - in: `body`
+          required: `color, score, position, velocity, angle, characterId, gameId, kartId`
             properties:
               color:
-                type: string
+                type: `string`
               score:
-                type: number
+                type: `number`
               position:
-                type: JSON
+                type: `JSON`
               velocity:
-                type: JSON
+                type: `JSON`
               angle:
-                type: JSON
+                type: `JSON`
               characterId:
-                type: number
+                type: `number`
               gameId:
-                type: number
+                type: `number`
               kartId:
-                type: number
+                type: `number`
   - PATCH `/team/:id` updates an existing team by id.
        - parameters:
-        - in: body
-            required: id
+        - in: `body`
+            required: `id`
               properties:
                 id:
-                  type: number
+                  type: `number`
                 color:
-                    type: string
+                    type: `string`
                 score:
-                  type: number
+                  type: `number`
                 position:
-                  type: JSON
+                  type: `JSON`
                 velocity:
-                  type: JSON
+                  type: `JSON`
                 angle:
-                  type: JSON
+                  type: `JSON`
                 characterId:
-                  type: number
+                  type: `number`
                 gameId:
-                  type: number
+                  type: `number`
                 kartId:
-                  type: number
+                  type: `number`
 - TeamUser:
   - POST `/teamUser` creates a new teamUser.
      - parameters:
-              - in: body
-                  required: teamId, userId, axisControl
+              - in: `body`
+                  required: `teamId, userId, axisControl`
                     properties:
                       teamId:
-                        type: number
+                        type: `number`
                       userId:
-                        type: number
+                        type: `number`
                       axisControl:
-                        type: string
+                        type: `string`
 - GoogleRoutes:
   - GET `/userData` retrieves Google Auth user data.
   
