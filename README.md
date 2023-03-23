@@ -1,4 +1,9 @@
-# _Winter Internship 2023_
+<p align="center">
+<img src=/client/src/assets/cover.png width="40%">
+</p>
+
+# _Super Pacart_
+### _Winter Internship 2023_
 
 ## 🧑🏽‍🤝‍🧑🏼 Creators
 
